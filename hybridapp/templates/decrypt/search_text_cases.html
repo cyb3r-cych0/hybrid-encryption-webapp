@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% load static %}
+
+<!-- Navbar links control -->
+{% block links %}{% endblock %}
+
+<title>{% block title %} CMS - Search Text {% endblock %}</title>
+
+<!-- Block NavBar Content -->
+{% block nav-content %}
+  {% if user.is_staff == False %}
+    <i class="fa-solid fa-user-check mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Investigator &nbsp;{{ user }}</i>
+  {% elif user.is_staff == True %}
+    <i class="fa-solid fa-user-tie mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Admin/Judge &nbsp;{{ user  }}</i>
+  {% endif %}
+{% endblock %}
+
+<!-- Logout Button -->
+{% block nav-btn %}
+    <a class="btn btn-custom" id="btn-nav-view" href="{% url 'decrypt' %}"><i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i></a>
+    <a class="btn btn-custom" id="btn-nav-back" href="{% url 'filter_texts' %}" ><i class="fas fa-filter">&nbsp;&nbsp;Filter</i></a>
+    <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout"><i class="fas fa-right-from-bracket">&nbsp;&nbsp;Logout</i></a>
+{% endblock %}
+
+<!-- Block TopBar -->
+{% block topbar %}
+<div class="top-bar mt-4 pt-5">
+        <div class="container mt-5">
+            <div class="row align-items-center">
+                <div class="col-lg-4 col-md-12">
+                    <div class="logo">
+                        <img src="{% static 'img/icon.ico' %}" alt="Logo">
+                        <h1><span>C</span>M<span>S</span></h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+<!-- Page Content -->
+{% block content %}
+    <br>
+    <div class="container mt-2 mb-5 col-md-12" style="width: 95%; font-size: 14px">
+        <button class="btn btn-danger w-100 mt-3 mb-3 no-pointer" style="color: black;">
+            <i class="fas fa-search">&nbsp;&nbsp;SEARCH &nbsp;TEXT &nbsp;RECORDS</i>
+        </button>
+
+        <!-- Message From BackEnd -->
+        {% for message in messages %}
+            {% if message.tags == 'success' %}
+                <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
+                    <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
+                </div>
+            {% elif message.tags == 'error' %}
+                <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
+                    <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
+                </div>
+            {% endif %}
+        {% endfor%}
+
+      <div class="container m-2" style="width: 100%; font-size: 14px">
+        <div class="row align-items-center">
+            <div class="row col-lg-4">
+              <i class="fas fa-keyboard">&nbsp;&nbsp;Enter CASE-ID To Search</i>
+            </div>
+            <div class="col-lg-4 m-3">
+              <form method="GET" action="{% url 'search_text_cases' %}">
+                  <input type="text" name="caseID" placeholder="text caseID...">
+                  &nbsp;&nbsp;&nbsp;<button class="btn btn-secondary" type="submit"><i class="fas fa-search">&nbsp;&nbsp;Search</i></button>
+              </form>
+            </div>
+            <div class="row col-lg-4 ml-2">
+              <i class="fas fa-list-ol">&nbsp;&nbsp;Match Found: {{ count }} !</i>
+            </div>
+        </div>
+      </div>
+
+        <ul>
+            <!--Table-->
+            <div class="container">
+                <div class="row my-4">
+                    <div class="col-md-12">
+                        <table class="table bg-white">
+                            <thead class="bg-info">
+                            <tr>
+                              <th scope="col"><i class="fas fa-table-list">&nbsp;&nbsp;DB.ID</i></th>
+                              <th scope="col"><i class="fas fa-folder-closed">&nbsp;&nbsp;CASE-ID</i></th>
+                              <th scope="col"><i class="fas fa-file-lines">&nbsp;&nbsp;FILE NAME</i></th>
+                              <th scope="col"><i class="fas fa-user-tag">&nbsp;&nbsp;USER-ID</i></th>
+                              <th scope="col"><i class="fas fa-calendar-day">&nbsp;&nbsp;DATE</i></th>
+                              <th scope="col"><i class="fas fa-circle-info">&nbsp;&nbsp;DETAILS</i></th>
+                              <th scope="col"><i class="fas fa-bars-progress">&nbsp;&nbsp;ACTION</i></th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                          {% if cases %}
+                          {% for case in cases %}
+                            <tr>
+                                <td>{{ case.id }}</td>
+                                <td>{{ case.caseID }}</td>
+                                <td>{{ case.caseName }}</td>
+                                <td>{{ case.user.email }}</td>
+                                <td>{{ case.encryption_date }}</td>
+                                <td><a href="{% url 'view_file_decrypt' case.id %}">
+                    <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
+                    </a></td>
+                                <td>
+                                  {% if user.is_staff == False %}
+                                  <a href="#">
+                                    <button type="button" class="btn btn-sm btn-outline-danger" disabled><i class="fas fa-triangle-exclamation">&nbsp;Decrypt</i></button>
+                                  </a>
+                                {% elif user.is_staff == True %}
+                                  <a href="{% url 'view_dec_file' case.id %}">
+                                    <button type="button" class="btn btn-sm btn-outline-success"><i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i></button>
+                                  </a>
+                                  {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% endif %}
+                        </tbody>
+                    </table>
+            </div>
+          </div>
+        </div>
+
+            <!--End Table-->
+            <div class="">
+              <a href="{% url 'export_cases_csv' %}">
+                  <button class="btn btn-outline-success mb-1 ml-5"><i class="fas fa-file-export">&nbsp;&nbsp;texts.csv</i></button>
+              </a>
+            </div>
+        </ul>
+    </div>
+
+{% endblock content %}
+
+<!-- Block Encrypt -->
+{% block encrypt %} {% endblock %}
+
+<!-- Block Decrypt -->
+{% block decrypt %} {% endblock %}
+
+<!-- Block Footer -->
+{% block footer %} style="color: #ff7f7f;" {% endblock %}

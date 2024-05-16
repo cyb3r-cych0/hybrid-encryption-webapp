@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+    {% load static %}
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport"
+              content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <!-- Bootstrap & CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+        <!-- FontAwesome -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <!-- Google Font -->
+        <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+        <!-- Logo -->
+        <link href="{% static 'img/icon.ico' %}" rel="shortcut icon">
+        <!-- Static CSS -->
+        <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+        <!-- CSS Libraries -->
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+
+        <title>{% block title %} CMS - Home {% endblock %}</title>
+    </head>
+
+    <body>
+        <!-- Top Bar Start -->
+        {% block topbar%}
+        <div class="top-bar m-5 pt-5 pb-3">
+            <div class="container mt-5">
+                <div class="row align-items-center">
+                    <div class="col-lg-12 col-md-12">
+                        <div class="logo">
+                            <img src="{% static 'img/icon.png' %}" alt="Logo">
+                            <h1><span>C</span>M<span>S</span></h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endblock %}
+        <!-- Top Bar End -->
+
+        <!-- NavBar -->
+        <div class="nav-bar">
+            <div class="container">
+                <nav class="fixed-top navbar navbar-expand-lg navbar-dark bg-dark p-2">
+                    <!-- FontAwesome + Title (Left Side) -->
+                    {% block nav-content %}
+                    <div class="col-sm">
+                        <a href="#" class="navbar-brand flex-grow-1 text-center text-light">
+                            <i class="fa-solid fa-car mb-3" style="color: #fff; font-size: 20px"></i>   &nbsp;&nbsp; <h2 style="color: #fff; font-size: 20px">CMS</h2>
+                        </a>
+                    </div>
+                     {% endblock %}
+
+                    <!-- section (Middle) -->
+                    <div>
+                        {% block links %}
+                        <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
+                            <div class="navbar-nav mr-5">
+                                <a href="{% url 'frontend' %}" class="nav-item nav-link">Home</a>
+                                <a href="{% url 'encrypt' %}" class="nav-item nav-link">Encrytion</a>
+                                <a href="{% url 'decrypt' %}" class="nav-item nav-link">Decryption</a>
+                                <a href="{% url 'frontend' %}" class="nav-item nav-link">System-Info</a>
+                            </div>
+                        </div>
+                        {% endblock %}
+                    </div>
+
+                    <!-- Button (Right Side) -->
+                    <div class="ml-auto m-2">
+                        {% block nav-btn %}
+                        <a href="{% url 'backend' %}" class="btn btn-custom" id="btn-nav"><i class="fas fa-right-to-bracket">&nbsp;&nbsp;Login</i></a>
+                        <a href="{% url 'register_user' %}" class="btn btn-custom" id="btn-nav"><i class="fas fa-arrow-right-to-bracket">&nbsp;&nbsp;Register</i></a>
+                        {% endblock %}
+                    </div>
+                </nav>
+            </div>
+        </div>
+
+        <!-- === Block Content (ROOT) === -->
+        {% block content %} {% endblock content %}
+
+        <!-- Includes (NO PK) -->
+        {% include 'components/modals/logout.html' %}
+
+        <!-- Encryption Start -->
+            {% block encrypt %}
+            <div class="about">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-lg-6">
+                            <div class="about-img mt-5">
+                                <img src="{% static 'img/encrypt.webp' %}" alt="Image" style="height: 450px; padding: 1.5rem">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="section-header text-left">
+                                <p>Encryption</p>
+                                <h2>Encrypt Case Records</h2>
+                            </div>
+                            <div class="about-content">
+                                <p>
+                                  Type of file-record extentions:
+                                </p>
+                                <ul>
+                                    <li><i class="far fa-check-circle"></i>.txt</li>
+                                    <li><i class="far fa-check-circle"></i>.jpg</li>
+                                    <li><i class="far fa-check-circle"></i>.jpeg</li>
+                                    <li><i class="far fa-check-circle"></i>.csv</li>
+                                </ul>
+                                <a class="btn btn-custom" href="{% url 'encrypt' %}"><i class="fas fa-caret-right">&nbsp;&nbsp;GO TO ENCRYPTION</i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endblock %}
+        <!-- Encryption End -->
+
+        <!-- Decryption Start -->
+            {% block decrypt %}
+            <div class="about">
+                <div class="container">
+                    <div class="row align-items-center">
+
+                        <div class="col-lg-6">
+                            <div class="section-header text-left">
+                                <p>Decryption</p>
+                                <h2>Decrypt Case Records</h2>
+                            </div>
+                            <div class="about-content">
+                                <p>
+                                    Type of file-record extentions:
+                                </p>
+                                <ul>
+                                    <li><i class="far fa-check-circle"></i>.bin</li>
+                                    <li><i class="far fa-check-circle"></i>.txt</li>
+                                    <li><i class="far fa-check-circle"></i>.enc</li>
+                                    <li><i class="far fa-check-circle"></i>.*</li>
+                                </ul>
+                                <a class="btn btn-custom" href="{% url 'decrypt' %}"><i class="fas fa-caret-right">&nbsp;&nbsp;GO TO DECRYPTION</i></a>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="about-img">
+                                <img src="{% static 'img/decryption.webp' %}" alt="Image" style="height: 450px; padding: 1.5rem">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endblock %}
+        <!-- Decrypt End -->
+
+
+        <!-- Footer -->
+            <footer class="bg-dark text-center text-lg-start text-light" id="footer">
+                <div class="text-center p-3 m-1" style="background-color: rgba(0, 0, 0, 0.2);">
+                    &copy; {% now "Y" %}
+                    <a class="text-light" href="#" style="text-decoration: none;">
+                        <span  {% block footer %} style="color: greenyellow;" {% endblock %} >cyb3r-cych0</span>
+                    </a>
+                </div>
+            </footer>
+        <!-- EndFooter -->
+
+        <!-- Back to top button -->
+        <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+
+        <!-- Pre Loader -->
+        <div id="loader" class="show">
+            <div class="loader"></div>
+        </div>
+
+        <!-- JavaScript Libraries -->
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="{% static 'js/node_modules/chartjs/dist/chart.umd.js' %}"></script>
+
+
+
+        <!-- Static JS -->
+        <script src="{% static 'js/script.js' %}"></script>
+
+        <!-- JQuery -->
+
+        <!-- Bootsrap 5 JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js" integrity="sha384-zYPOMqeu1DAVkHiLqWBUTcbYfZ8osu1Nd6Z89ify25QV9guujx43ITvfi12/QExE" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.min.js" integrity="sha384-Y4oOpwW3duJdCWv5ly8SCFYWqFDsfob/3GkgExXKV4idmbt98QcxXYs9UoXAB7BZ" crossorigin="anonymous"></script>
+
+        <!-- Jquery Mask CDN -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/0.9.0/jquery.mask.min.js" integrity="sha512-oJCa6FS2+zO3EitUSj+xeiEN9UTr+AjqlBZO58OPadb2RfqwxHpjTU8ckIC8F4nKvom7iru2s8Jwdo+Z8zm0Vg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    </body>
+</html>

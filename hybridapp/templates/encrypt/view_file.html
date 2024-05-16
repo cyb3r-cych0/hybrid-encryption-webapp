@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load static %}
+
+<!-- Navbar links control -->
+{% block links %}{% endblock %}
+
+<!-- Block NavBar Content -->
+{% block nav-content %}
+  {% if user.is_staff == False %}
+    <i class="fa-solid fa-user-check mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Investigator &nbsp;{{ user }}</i>
+  {% elif user.is_staff == True %}
+    <i class="fa-solid fa-user mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Admin/Judge &nbsp;{{ user  }}</i>
+  {% endif %}
+{% endblock %}
+
+<!-- Block Title -->
+<title>{% block title %} CMS - Text Details {% endblock %}</title>
+
+<!-- Logout Button -->
+{% block nav-btn %}
+    <a class="btn btn-custom" id="btn-nav-view" href="{% url 'encrypt' %}"><i class="fa fa-chevron-left">&nbsp;&nbsp; Back</i></a>
+    <a class="btn btn-custom" id="btn-nav-back" href="{% url 'backend' %}" ><i class="fa fa-sliders">&nbsp;&nbsp; Control Panel</i></a>
+    <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout"><i class="fa fa-right-from-bracket">&nbsp;&nbsp; Logout</i></a>
+{% endblock %}
+
+{% block topbar %}
+<div class="top-bar mt-4 pt-5">
+        <div class="container mt-5">
+            <div class="row align-items-center">
+                <div class="col-lg-4 col-md-12">
+                    <div class="logo">
+                        <img src="{% static 'img/icon.ico' %}" alt="Logo">
+                        <h1><span>C</span>M<span>S</span></h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+<!-- Page Content -->
+{% block content %}
+<br>
+    <div class="container mt-1 mb-5 pb-2">
+
+        <button class="btn btn-warning w-100 mt-3 mb-2 no-pointer">
+            <i class="fa-solid fa-circle-info">&nbsp;&nbsp;RECORD &nbsp;DETAILS</i>
+        </button>
+
+        <div id="pt" class="col-12">
+            <div class="card p-3 mt-3 mb-4">
+                <div class="row" >
+                    <h3>ENCRYPTED TEXT INFORMATION</h3>
+                    <!-- <h4>CASE ID  : {{ file.caseID }}<small class="text-body-secondary fw-light" style="font-size: 17px">&nbsp;&nbsp;&nbsp;</small></h4> -->
+                    <div class="container m-3">
+                      <p> CASE ID  : {{ file.caseID }} </p>
+                      <p> USER ID: {{ file.user.email }}</p>
+                      <p> DATE ENCRYPTED: {{ file.encryption_date }}</p>
+                      <p> TEXT NAME: {{ file.caseName }}</p>
+                      <p> TEXT DATA: {{ file.caseData }}</p>
+                    </div>
+                </div>
+            </div>
+              <a href="">
+                  <button onclick="myfun('pt')" type="button" class="btn btn-outline-primary m-1 p-2"><i class="fas fa-print">&nbsp;&nbsp;Print</i></button>
+              </a>
+      </div>
+
+</div> <!-- END // container -->
+
+<script type="text/javascript">
+    function myfun(pa){
+    var bk = document.body.innerHTML;
+    var dv = document.getElementById(pa).innerHTML;
+        document.body.innerHTML = dv;
+        window.print();
+    }
+</script>
+
+{% endblock content %}
+
+<!-- Block Footer -->
+{% block footer %} style="color: #ff7f7f;" {% endblock %}
+
+<!-- Block Encrypt -->
+{% block encrypt %} {% endblock %}
+
+<!-- Block Decrypt -->
+{% block decrypt %} {% endblock %}

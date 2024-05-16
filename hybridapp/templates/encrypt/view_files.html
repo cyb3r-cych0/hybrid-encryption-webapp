@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load static %}
+
+<!-- Block Title -->
+<title>{% block title %} CMS - Encrypted Records {% endblock %}</title>
+
+
+<!-- Navbar links control -->
+{% block links %}{% endblock %}
+
+
+<!-- Block NavBar Content -->
+{% block nav-content %}
+  {% if user.is_staff == False %}
+    <i class="fa-solid fa-user-check mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Investigator &nbsp;{{ user }}</i>
+  {% elif user.is_staff == True %}
+    <i class="fa-solid fa-user mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Admin/Judge &nbsp;{{ user  }}</i>
+  {% endif %}
+{% endblock %}
+
+
+<!-- Logout Button -->
+{% block nav-btn %}
+    <a class="btn btn-custom" id="btn-nav-view" href="{% url 'encrypt' %}"><i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i></a>
+    <a class="btn btn-custom" id="btn-nav-back" href="{% url 'search_cases_encrypt' %}" ><i class="fas fa-search">&nbsp;&nbsp;Search</i></a>
+    <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout"><i class="fas fa-right-from-bracket">&nbsp;&nbsp;Logout</i></a>
+{% endblock %}
+
+<!-- Block TopBar -->
+{% block topbar %}
+<div class="top-bar mt-4 pt-5">
+        <div class="container mt-5">
+            <div class="row align-items-center">
+                <div class="col-lg-4 col-md-12">
+                    <div class="logo">
+                        <img src="{% static 'img/icon.ico' %}" alt="Logo">
+                        <h1><span>C</span>M<span>S</span></h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+<!-- Page Content -->
+{% block content %}
+    <br>
+    <div class="container mt-2 mb-5" style="width: 95%; font-size: 14px">
+
+        <button class="btn btn-secondary w-100 mt-3 mb-1 no-pointer">
+            <i class="fas fa-folder-tree">&nbsp;&nbsp;ENCRYPTED &nbsp;RECORDS</i>
+        </button>
+
+<!--Table-->
+<div class="container">
+    <div class="row my-4">
+        <div class="col-md-12">
+            <table class="table bg-white">
+                <thead class="bg-info">
+                    <tr>
+                        <th scope="col"><i class="fas fa-table-list">&nbsp;&nbsp;DB.ID</i></th>
+                        <th scope="col"><i class="fas fa-folder-closed">&nbsp;&nbsp;CASE-ID</i></th>
+                        <th scope="col"><i class="fas fa-file">&nbsp;&nbsp;file NAME</i></th>
+                        <th scope="col"><i class="fas fa-user-tag">&nbsp;&nbsp;USER-ID</i></th>
+                        <th scope="col"><i class="fas fa-calendar-day">&nbsp;&nbsp;DATE</i></th>
+                        <th scope="col"><i class="fas fa-circle-info">&nbsp;&nbsp;DETAILS</i></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for file in files %}
+                    <tr>
+                        <td>{{ file.id }}</td>
+                        <td>{{ file.case_id }}</td>
+                        <td>{{ file.file }}</td>
+                        <td>{{ file.user.email }}</td>
+                        <td>{{ file.encryption_date }}</td>
+                        <td><a href="{% url 'view_data' file.id %}">
+            <button type="button" class="w-100 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
+            </a></td>
+                    </tr>
+                    {% endfor %}
+                    {% for txt in texts %}
+                    <tr>
+                        <td>{{ txt.id }}</td>
+                        <td>{{ txt.caseID }}</td>
+                        <td>{{ txt.caseName }}</td>
+                        <td>{{ txt.user.email }}</td>
+                        <td>{{ txt.encryption_date }}</td>
+                        <td><a href="{% url 'view_file' txt.id %}">
+            <button type="button" class="w-100 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
+            </a></td>
+                    </tr>
+                    {% endfor %}
+                    {% for repo in reports %}
+                    <tr>
+                        <td>{{ repo.id }}</td>
+                        <td>{{ repo.case_id }}</td>
+                        <td>{{ repo.case_file }}</td>
+                        <td>{{ repo.user_id.email }}</td>
+                        <td>{{ repo.encryption_date }}</td>
+                        <td><a href="{% url 'view_report_encrypt' repo.id %}">
+            <button type="button" class="w-100 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
+            </a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!--End Table-->
+</div>
+
+{% endblock content %}
+
+
+<!-- Block Footer -->
+{% block footer %} style="color: #ff7f7f;" {% endblock %}
+
+<!-- Block Encrypt -->
+{% block encrypt %} {% endblock %}
+
+<!-- Block Decrypt -->
+{% block decrypt %} {% endblock %}

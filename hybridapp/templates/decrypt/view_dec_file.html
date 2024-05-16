@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+
+<!-- Navbar links control -->
+{% block links %}{% endblock %}
+
+<!-- Block Title -->
+<title>{% block title %} Decryption Details {% endblock %}</title>
+
+<!-- Block NavBar Content -->
+{% block nav-content %}
+  {% if user.is_staff == False %}
+    <i class="fa-solid fa-user-check mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Investigator &nbsp;{{ user }}</i>
+  {% elif user.is_staff == True %}
+    <i class="fa-solid fa-user-tie mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Admin/Judge &nbsp;{{ user  }}</i>
+  {% endif %}
+{% endblock %}
+
+
+<!-- Logout Button -->
+{% block nav-btn %}
+    <a class="btn btn-custom" id="btn-nav-view" href="{% url 'decrypt' %}"><i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i></a>
+    <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout"><i class="fas fa-right-from-bracket">&nbsp;&nbsp;Logout</i></a>
+{% endblock %}
+
+{% block topbar %}
+<div class="top-bar mt-4 pt-5">
+        <div class="container mt-5">
+            <div class="row align-items-center">
+                <div class="col-lg-4 col-md-12">
+                    <div class="logo">
+                        <img src="{% static 'img/icon.ico' %}" alt="Logo">
+                        <h1><span>C</span>M<span>S</span></h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+<!-- Page Content -->
+{% block content %}
+<br>
+    <div class="container mt-1 mb-5 pb-2">
+        <!-- links|cards -->
+        <button class="btn btn-warning w-100 mt-3 mb-2 no-pointer">
+            <i class="fa-solid fa-circle-info">&nbsp;&nbsp;RECORD &nbsp;DETAILS</i>&nbsp;&nbsp;FILE DECRYPTION DETAILS
+        </button>
+        <div id="pt" class="col-12">
+            <div class="card p-3 mt-3 mb-4">
+                <div class="row" >
+                    <h3>DECRYPTED FILE INFORMATION</h3>
+                    <div class="container m-3">
+
+                      <p> CASE ID  : {{ case.caseID }} </p>
+                      <p> USER ID  : {{ case.user_id }} </p>
+                      <p> ENCRYPTED DATE : {{ case.encryption_date }} </p>
+                      <p> ENCRYPTED DATA  : {{ encrypted_data }} </p>
+                      <p> PRIVATE KEY: {{ private_key }}</p>
+                      <p> CIPHER RSA: {{ cipher_rsa }}</p>
+                      <p> KEY LEN: {{ key_len }}</p>
+
+                      <p> TAG: {{ tag }}</p>
+                      <p> NONCE: {{ nonce }}</p>
+                      <p> ENC SESSION KEY: {{ enc_session_key }}</p>
+                      <p> SESSION KEY: {{ session_key }}</p>
+                      <p> CIPHER AES: {{ cipher_aes }}</p>
+                      <p> CIPHERTEXT: {{ ciphertext }}</p>
+                      <p> DECRYPTED DATA {{ decrypted_data }}</p>
+                      <p> ORIGINAL HASH: {{ original_hash }}</p>
+                      <p> CALCULATED HASH: {{ calculated_hash }}</p>
+                      <p> RESPONSE : {{ response }}</p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <!-- <a href="/delete_rest_data/{{ rd.id }}">
+                <button type="button" class="btn btn-outline-secondary m-1 p-2">Delete</button>
+            </a>
+            <a href="/update_rest_data/{{ rd.id }}">
+                <button type="button" class="btn btn-outline-primary m-1 p-2">Update</button>
+            </a> -->
+            <a href="{% url 'decrypt' %}">
+                <button onclick="myfun('pt')" type="button" class="btn btn-outline-success m-1 p-2"><i class="fas fa-print">&nbsp;Print</i></button>
+            </a>
+        </div>
+        <button class="btn w-100 mt-3 mb-5 no-pointer"></button>
+</div> <!-- END // container -->
+
+<script type="text/javascript">
+    function myfun(pa){
+    var bk = document.body.innerHTML;
+    var dv = document.getElementById(pa).innerHTML;
+        document.body.innerHTML = dv;
+        window.print();
+    }
+</script>
+
+{% endblock content %}
+
+<!-- Block Encrypt -->
+{% block encrypt %} {% endblock %}
+
+<!-- Block Decrypt -->
+{% block decrypt %} {% endblock %}
+
+<!-- Block Footer -->
+{% block footer %} style="color: #d3d3d3;" {% endblock %}

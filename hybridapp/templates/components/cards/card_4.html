@@ -1,0 +1,6 @@
+{% extends 'components/cards/base_card.html' %}
+
+{% block link %} fa-solid fa-search {% endblock %}
+{% block link-title %} Search Record
+<a href="{% url 'search_cases' %}"><button class="btn btn-secondary w-100 p-1 m-1"><i class="fa-solid fa-magnifying-glass-arrow-right">&nbsp;&nbsp;Proceed</i></button></a>
+{% endblock %}

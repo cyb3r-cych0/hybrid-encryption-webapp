@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load static %}
+
+<!-- Navbar links control -->
+{% block links %}{% endblock %}
+
+<!-- Block NavBar Content -->
+{% block nav-content %}
+  {% if user.is_staff == False %}
+    <i class="fa-solid fa-user-check mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Investigator &nbsp;{{ user }}</i>
+  {% elif user.is_staff == True %}
+    <i class="fa-solid fa-user mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Admin/Judge &nbsp;{{ user  }}</i>
+  {% endif %}
+{% endblock %}
+
+<!-- Block Title -->
+<title>{% block title %} CMS - Text Details {% endblock %}</title>
+
+<!-- Logout Button -->
+{% block nav-btn %}
+    <a class="btn btn-custom" id="btn-nav-view" href="{% url 'decrypt' %}"><i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i></a>
+    <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout"><i class="fas fa-right-from-bracket">&nbsp;&nbsp;Logout</i></a>
+{% endblock %}
+
+{% block topbar %}
+<div class="top-bar mt-4 pt-5">
+        <div class="container mt-5">
+            <div class="row align-items-center">
+                <div class="col-lg-4 col-md-12">
+                    <div class="logo">
+                        <img src="{% static 'img/icon.ico' %}" alt="Logo">
+                        <h1><span>C</span>M<span>S</span></h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+<!-- Page Content -->
+{% block content %}
+<br>
+    <div class="container mt-1 mb-5 pb-2">
+        <button class="btn btn-warning w-100 mt-3 mb-2 no-pointer">
+          <i class="fa-solid fa-circle-info">&nbsp;&nbsp;CASE &nbsp;TEXT &nbsp;DETAILS</i>
+        </button>
+        <div id="pt" class="col-12">
+            <div class="card p-3 mt-3 mb-4">
+                <div class="row" >
+                    <h3>ENCRYPTED TEXT INFORMATION</h3>
+                    <div class="container m-3">
+                      <p>CASE ID  : {{ file.case_id }} </p>
+                      <p>USER ID: {{ file.user.email }}</p>
+                      <p>DATE ENCRYPTED: {{ file.encryption_date }}</p>
+                      <p>TEXT NAME: {{ file.file }}</p>
+                      <p>TEXT DATA: {{ file.encrypted_data }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+              <a href="/delete_case_file/{{ file.id }}">
+                  <button type="button" class="btn btn-outline-danger m-1 p-2"><i class="fas fa-trash-can">&nbsp;Delete</i></button>
+              </a>
+
+              <a href="{% url 'decrypt_and_download' file.id %}">
+                <button type="button" class="btn btn-outline-success m-1 p-2"><i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i></button>
+              </a>
+              <a href="">
+                  <button onclick="myfun('pt')" type="button" class="btn btn-outline-primary m-1 p-2"><i class="fas fa-print">&nbsp;Print</i></button>
+              </a>
+</div> <!-- END // container -->
+
+<script type="text/javascript">
+    function myfun(pa){
+    var bk = document.body.innerHTML;
+    var dv = document.getElementById(pa).innerHTML;
+        document.body.innerHTML = dv;
+        window.print();
+    }
+</script>
+
+{% endblock content %}
+
+<!-- Block Encrypt -->
+{% block encrypt %} {% endblock %}
+
+<!-- Block Decrypt -->
+{% block decrypt %} {% endblock %}
+
+<!-- Block Footer -->
+{% block footer %} style="color: #d3d3d3;" {% endblock %}

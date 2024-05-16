@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+
+<!-- Block Title -->
+<title>{% block title %} CMS - Home {% endblock %}</title>
+
+<!-- Block NavBar Content -->
+{% block nav-content %}
+    <i class="fa-solid fa-house mb-2 ml-2 " style="color: #fff; font-size: 20px">&nbsp;&nbsp;Home</i>    <h2 style="color: #fff; font-size: 20px; margin-right: 200px;"></h2>
+{% endblock %}
+
+{% block content %}
+<!-- Carousel Start -->
+<div class="carousel">
+    <div class="container-fluid">
+        <div class="owl-carousel">
+            <div class="carousel-item">
+                <div class="carousel-img">
+                    <img src="{% static 'img/erp_bg.avif' %}" alt="Image">
+                </div>
+                <div class="carousel-text">
+                    <h3>key to data forensic transformation</h3>
+                    <h1>Cryptography Management Software</h1>
+                    <p>
+                        Equipped Digital Solutions
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Carousel End -->
+{% endblock content %}

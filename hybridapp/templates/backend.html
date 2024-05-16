@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+
+<!-- Block Title -->
+<title>{% block title %} CMS - Control Panel {% endblock %}</title>
+
+<!-- Navbar links control -->
+{% block links %}{% endblock %}
+
+<!-- Block NavBar Content -->
+{% block nav-content %}
+    <i class="fa-solid fa-user-tie ml-2 mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Administration</i>    <h2 style="color: #fff; font-size: 20px"></h2>
+{% endblock %}
+
+<!-- Logout Button -->
+{% block nav-btn %}
+    <a class="btn btn-custom" id="btn-nav-home" href="{% url 'frontend' %}" ><i class="fas fa-home">&nbsp;&nbsp;Home</i></a>
+    <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout"><i class="fas fa-right-from-bracket">&nbsp;&nbsp;Logout</i></a>
+{% endblock %}
+
+<!-- Block TopBar -->
+{% block topbar %}
+<div class="top-bar mt-4 pt-5">
+        <div class="container mt-5">
+            <div class="row align-items-center">
+                <div class="col-lg-12 col-md-12">
+                    <div class="logo">
+                        <img src="{% static 'img/icon.png' %}" alt="Logo">
+                        <h1><span>C</span>M<span>S</span></h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+<!-- Page Content -->
+{% block content %}
+    <br>
+    <div class="container mb-5 pb-5" style="width: 95%; font-size: 14px">
+        <!-- links|cards -->
+        <button class="btn btn-success w-100 mb-4 mt-3 no-pointer" style="color: black;">
+            <i class="fas fa-sliders">&nbsp;&nbsp;CONTROL PANEL</i>
+        </button>
+        <div class="card p-3 mt-2">
+            <div class="row">
+                {% include 'components/cards/all_cards.html' %}
+            </div>
+        </div>
+
+
+    </div> <!-- END // container -->
+
+{% endblock content %}
+
+<!-- Block Footer -->
+{% block footer %} style="color: #ff7f7f;" {% endblock %}
+
+<!-- Block Encrypt -->
+{% block encrypt %} {% endblock %}
+
+<!-- Block Decrypt -->
+{% block decrypt %} {% endblock %}
