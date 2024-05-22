@@ -20,15 +20,15 @@ urlpatterns = [
     path('backend/encrypt/', views.encrypt, name='encrypt'),
     path('backend/decrypt/', views.decrypt, name='decrypt'),
 
-<<<<<<< HEAD
-=======
+# <<<<<<< HEAD
+# =======
     path('backend/view_users_backend/', views.view_users_backend, name='view_users_backend'),
     path('backend/user_details_backend/<id>/', views.user_details_backend, name='user_details_backend'),
     path('backend/user_cases_backend/<id>/', views.user_cases_backend, name='user_cases_backend'),
     path('backend/filter_user_cases/<id>/', views.filter_user_cases, name='filter_user_cases'),
     path('backend/search_users/', views.search_users, name='search_users'),
 
->>>>>>> ac2bd1e (cms-v0.3)
+# >>>>>>> ac2bd1e (cms-v0.3)
     path('decrypt/search_text_cases/', views.search_text_cases, name='search_text_cases'),
     path('decrypt/search_file_cases/', views.search_file_cases, name='search_file_cases'),
     path('decrypt/search_report_cases/', views.search_report_cases, name='search_report_cases'),

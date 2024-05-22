@@ -1,4 +1,78 @@
-# cms-web-app
-## Cryptography Management Software
-### Python Hybrid Encryption/Decryption Web Application
-> Encrypts and Decrypts, text, documents, images and other file types; using hybrid encryption from python cryptography modules
+# Hybrid Encryption Web Application
+
+A web application that combines symmetric and asymmetric encryption techniques to secure user data. This project demonstrates the implementation of hybrid encryption in a web environment, ensuring robust security and performance.
+
+## Table of Contents
+
+- [Installation](#installation)
+- [Usage](#usage)
+- [Features](#features)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact Information](#contact-information)
+
+## Installation
+
+To get a local copy up and running, follow these steps.
+
+### Prerequisites
+
+- Python 3.x
+- Node.js and npm
+- Virtual environment (optional but recommended)
+
+### Backend Setup
+
+1. Clone the repo
+   ```sh
+   git clone https://github.com/cyb3r-cych0/hybrid-encryption-webapp.git
+   cd hybrid-encryption-webapp
+
+2. Set up the environment
+    ``sh
+    python -m venv venv
+    source venv/bin/activate  
+    # on windows
+    venv\Scripts\activate
+
+3. Install backend dependencies
+    ``sh
+    pip install -r requirements.txt
+
+## Usage
+
+### Running the Backend
+
+1. Navigate to the project root directory
+   ``sh
+    cd hybrid-encryption-webapp
+
+2. Start the backend server
+   ``sh
+        python manage.py runserver
+
+        Open your browser and go to http://localhost:8000
+
+## Features
+
+    Hybrid Encryption: Combines AES (symmetric) and RSA (asymmetric) encryption techniques.
+    User Authentication: Secure user login and registration.
+    Data Encryption: Encrypt and decrypt data seamlessly.
+    Responsive Design: User-friendly GUI.
+
+## Contributing
+
+  Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are greatly appreciated.
+
+    Fork the Project
+    Create your Feature Branch (git checkout -b feature/AmazingFeature)
+    Commit your Changes (git commit -m 'Add some AmazingFeature')
+    Push to the Branch (git push origin feature/AmazingFeature)
+    Open a Pull Request
+
+## License
+
+  This project is licensed under the Apache 2.0 License - see the [LICENSE](http://www.apache.org/licenses/LICENSE-2.0) file for details.
+
+    Your Name - @cyb3r-cych0 - minigates21@gmail.com
+    Project Link: https://github.com/cyb3r-cych0/hybrid-encryption-webapp

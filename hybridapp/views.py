@@ -199,7 +199,7 @@ def search_users(request):
 
 
 
->>>>>>> ac2bd1e (cms-v0.3)
+# >>>>>>> ac2bd1e (cms-v0.3)
 """ START ENCRYPT CASES """
 
 @login_required(login_url='login')
@@ -737,11 +737,11 @@ def search_cases_decrypt(request):
         return redirect('search_cases_decrypt')
 
 
-<<<<<<< HEAD
-
-
-=======
->>>>>>> ac2bd1e (cms-v0.3)
+# <<<<<<< HEAD
+#
+# 
+# =======
+# >>>>>>> ac2bd1e (cms-v0.3)
 @login_required(login_url='login')
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def search_text_cases(request):
