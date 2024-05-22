@@ -29,14 +29,13 @@ To get a local copy up and running, follow these steps.
 
 2. Set up the environment
 
-    python -m venv venv
-    source venv/bin/activate  
-
-    venv\Scripts\activate # on windows
+    - python -m venv venv
+    - source venv/bin/activate  
+    - venv\Scripts\activate # on windows
 
 3. Install backend dependencies
 
-    pip install -r requirements.txt
+    - pip install -r requirements.txt
 
 ## Usage
 
@@ -44,12 +43,12 @@ To get a local copy up and running, follow these steps.
 
 1. Navigate to the project root directory
 
-    cd hybrid-encryption-webapp
+    - cd hybrid-encryption-webapp
 
 2. Start the backend server
 
-    python manage.py runserver
-    Open your browser and go to http://localhost:8000
+    - python manage.py runserver
+    - Open your browser and go to http://localhost:8000
 
 ## Features
 

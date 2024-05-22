@@ -90,10 +90,6 @@
     });
 
 
-    // Testimonials carousel
-
-
-
     // Related post carousel
     $(".related-slider").owlCarousel({
         autoplay: true,

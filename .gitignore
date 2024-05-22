@@ -20,7 +20,6 @@ db.sqlite3
 
 # Environment variables
 .env
-.enn
 
 # Static and media files
 staticfiles/
