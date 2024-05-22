@@ -29,8 +29,8 @@ import io
 """Functions To Handle Frontend Requests"""
 
 
-<<<<<<< HEAD
-=======
+# <<<<<<< HEAD
+# =======
 """ START USER INFO """
 @login_required(login_url='login')
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
