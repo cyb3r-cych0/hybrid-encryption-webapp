@@ -29,8 +29,6 @@ import io
 """Functions To Handle Frontend Requests"""
 
 
-# <<<<<<< HEAD
-# =======
 """ START USER INFO """
 @login_required(login_url='login')
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
@@ -168,19 +166,9 @@ def search_users(request):
     query = request.GET.get('q')
     try:
         if query:
-            # Perform search in both tables
-            # case_files = EncryptedFile.objects.filter(case_id__icontains=query)
-            # case_texts = Case.objects.filter(caseID__icontains=query)
-            # case_reports = EncryptCase.objects.filter(case_id__icontains=query)
-            # count = case_files.count() + case_texts.count() + case_reports.count()
             users = User.objects.filter(username__icontains=query)
             count = users.count()
             context = {
-                # 'case_files': case_files,
-                # 'case_texts': case_texts,
-                # 'case_reports': case_reports,
-                # 'query': query,
-                # 'count': count,
                 'user': user,
                 'users': users,
                 'count': count
@@ -198,8 +186,6 @@ def search_users(request):
 """ END USER INFO """
 
 
-
-# >>>>>>> ac2bd1e (cms-v0.3)
 """ START ENCRYPT CASES """
 
 @login_required(login_url='login')
@@ -737,11 +723,6 @@ def search_cases_decrypt(request):
         return redirect('search_cases_decrypt')
 
 
-# <<<<<<< HEAD
-#
-#
-# =======
-# >>>>>>> ac2bd1e (cms-v0.3)
 @login_required(login_url='login')
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def search_text_cases(request):
