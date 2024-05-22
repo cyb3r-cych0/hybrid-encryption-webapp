@@ -1,1 +1,41 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+venv/
+ENV/
+env/
+.env/
+.venv/
+
+# Django stuff
+*.log
+*.pot
+*.pyc
+*.py[cod]
+*.so
+local_settings.py
+db.sqlite3
+
+# Environment variables
+.env
+.enn
+
+# Static and media files
+staticfiles/
+media/
+
+# IDE files
+.idea/
+.vscode/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+
+
 SECRET_KEY=django-insecure-t-dnz&m1!dj!+nregs_uq76$nr_avu7vq&ivst^!7q+o)lot6h

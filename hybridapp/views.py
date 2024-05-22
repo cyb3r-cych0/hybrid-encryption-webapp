@@ -739,7 +739,7 @@ def search_cases_decrypt(request):
 
 # <<<<<<< HEAD
 #
-# 
+#
 # =======
 # >>>>>>> ac2bd1e (cms-v0.3)
 @login_required(login_url='login')
@@ -1046,14 +1046,15 @@ def generate_keys(request):
 def register_user(request):
     form = RegisterForm()
     if request.method == 'POST':
-        form = RegisterForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'SUCCESS! User Registered Successfully.')
-            return redirect('login')
-        else:
+        try:
+            form = RegisterForm(request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'SUCCESS! User Registered Successfully.')
+                return redirect('login')
+        except Exception as e:
+            messages.error(request, f'FAILED! Error: {str(e)}')
             form = RegisterForm()
-            messages.error(request, 'FAILED! Something Went Wrong.')
             context = {
                 'form': form
             }

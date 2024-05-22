@@ -18,7 +18,6 @@ To get a local copy up and running, follow these steps.
 ### Prerequisites
 
 - Python 3.x
-- Node.js and npm
 - Virtual environment (optional but recommended)
 
 ### Backend Setup
@@ -29,14 +28,14 @@ To get a local copy up and running, follow these steps.
    cd hybrid-encryption-webapp
 
 2. Set up the environment
-    ``sh
+
     python -m venv venv
     source venv/bin/activate  
-    # on windows
-    venv\Scripts\activate
+
+    venv\Scripts\activate # on windows
 
 3. Install backend dependencies
-    ``sh
+
     pip install -r requirements.txt
 
 ## Usage
@@ -44,14 +43,13 @@ To get a local copy up and running, follow these steps.
 ### Running the Backend
 
 1. Navigate to the project root directory
-   ``sh
+
     cd hybrid-encryption-webapp
 
 2. Start the backend server
-   ``sh
-        python manage.py runserver
 
-        Open your browser and go to http://localhost:8000
+    python manage.py runserver
+    Open your browser and go to http://localhost:8000
 
 ## Features
 
@@ -73,6 +71,8 @@ To get a local copy up and running, follow these steps.
 ## License
 
   This project is licensed under the Apache 2.0 License - see the [LICENSE](http://www.apache.org/licenses/LICENSE-2.0) file for details.
+
+## Contact Information
 
     Your Name - @cyb3r-cych0 - minigates21@gmail.com
     Project Link: https://github.com/cyb3r-cych0/hybrid-encryption-webapp
