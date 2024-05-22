@@ -29,6 +29,177 @@ import io
 """Functions To Handle Frontend Requests"""
 
 
+<<<<<<< HEAD
+=======
+""" START USER INFO """
+@login_required(login_url='login')
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+def view_users_backend(request):
+    users = User.objects.all()
+    user = request.user
+
+    context = {
+        'users': users,
+        'user': user
+    }
+    return render(request, 'backend/view_users_backend.html', context)
+
+
+@login_required(login_url='login')
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+def user_details_backend(request, id):
+    user = request.user
+    try:
+        user_details = User.objects.get(id=id)
+        texts = Case.objects.filter(user=user_details).count()
+        files = EncryptedFile.objects.filter(user=user_details).count()
+        reports = EncryptCase.objects.filter(user_id=user_details).count()
+        total_files = files + texts + reports
+
+        text = Case.objects.filter(user=user_details).order_by('-id')[:1]
+        file = EncryptedFile.objects.filter(user=user_details).order_by('-id')[:1]
+        report = EncryptCase.objects.filter(user_id=user_details).order_by('-id')[:1]
+
+    except User.DoesNotExist:
+        raise Http404('User Details Not Found!')
+    except Exception as e:
+        messages.error(request, f'Error: {str(e)}')
+        raise Http404(f'User Details Not Found! {str(e)}')
+
+
+    context = {
+        'user_details': user_details,
+        'total_files': total_files,
+        'user': user,
+        'file': file,
+        'text': text,
+        'report': report
+    }
+    return render(request, 'backend/user_details_backend.html', context)
+
+
+@login_required(login_url='login')
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+def user_cases_backend(request, id):
+    user = request.user
+    try:
+        user_details = User.objects.get(id=id)
+        text = Case.objects.filter(user=user_details).order_by('-id')
+        file = EncryptedFile.objects.filter(user=user_details).order_by('-id')
+        report = EncryptCase.objects.filter(user_id=user_details).order_by('-id')
+    except User.DoesNotExist:
+        raise Http404('User Details Not Found!')
+    except Exception as e:
+        messages.error(request, f'Error: {str(e)}')
+        # raise Http404(f'User Details Not Found! {str(e)}')
+
+    context = {
+        'user_details': user_details,
+        'user': user,
+        'file': file,
+        'text': text,
+        'report': report
+    }
+    return render(request, 'backend/user_cases_backend.html', context)
+
+
+@login_required(login_url='login')
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+def filter_user_cases(request, id):
+    is_superuser = request.user.is_superuser
+    # user_details = User.objects.get(id=id)
+    user_details = get_object_or_404(User, id=id)
+    user = request.user
+    try:
+        if request.method == 'POST':
+            from_date = request.POST.get('from_date')
+            to_date = request.POST.get('to_date')
+
+            search_file_result = EncryptedFile.objects.filter(
+                user=user_details,
+                encryption_date__range=[from_date, to_date]
+            )
+            search_text_result = Case.objects.filter(
+                user=user_details,
+                encryption_date__range=[from_date, to_date]
+            )
+            search_report_result = EncryptCase.objects.filter(
+                user_id=user_details,
+                encryption_date__range=[from_date, to_date]
+            )
+
+            # Extract date values from the filtered querysets
+            date_values = [item.encryption_date for item in search_report_result]
+            date = date_values[0] if date_values else None
+
+            context = {
+                'files': search_file_result,
+                'texts': search_text_result,
+                'reports': search_report_result,
+                'date_values': date_values,
+                'date': date,
+                'is_superuser': is_superuser,
+                'user_details': user_details,
+                'user': user
+            }
+            return render(request, 'backend/filter_user_cases.html', context)
+        else:
+            messages.error(request, f'Select Calender Date To Filter Searched Cases.')
+            context = {
+                'is_superuser': is_superuser,
+                'user_details': user_details,
+                'user': user
+            }
+            return render(request, 'backend/filter_user_cases.html', context)
+    except Exception as e:
+        messages.error(request, f'Error: Please Choose Valid Date To Filter!')
+        context = {
+            'is_superuser': is_superuser,
+            'user_details': user_details,
+            'user': user
+        }
+        return render(request, 'backend/filter_user_cases.html', context)
+
+
+@login_required(login_url='login')
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+def search_users(request):
+    user = request.user
+    query = request.GET.get('q')
+    try:
+        if query:
+            # Perform search in both tables
+            # case_files = EncryptedFile.objects.filter(case_id__icontains=query)
+            # case_texts = Case.objects.filter(caseID__icontains=query)
+            # case_reports = EncryptCase.objects.filter(case_id__icontains=query)
+            # count = case_files.count() + case_texts.count() + case_reports.count()
+            users = User.objects.filter(username__icontains=query)
+            count = users.count()
+            context = {
+                # 'case_files': case_files,
+                # 'case_texts': case_texts,
+                # 'case_reports': case_reports,
+                # 'query': query,
+                # 'count': count,
+                'user': user,
+                'users': users,
+                'count': count
+            }
+            messages.success(request, f'{count} - Matching Cases Found')
+        else:
+            context = {'user': user}  # Empty context if no query provided
+            messages.error(request, f'Type Case ID In TextBox To Search All Cases')
+        return render(request, 'backend/search_users.html', context)
+    except Exception as e:
+        messages.error(request, f'Error: {str(e)}')
+        return redirect('search_users')
+
+
+""" END USER INFO """
+
+
+
+>>>>>>> ac2bd1e (cms-v0.3)
 """ START ENCRYPT CASES """
 
 @login_required(login_url='login')
@@ -566,8 +737,11 @@ def search_cases_decrypt(request):
         return redirect('search_cases_decrypt')
 
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> ac2bd1e (cms-v0.3)
 @login_required(login_url='login')
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def search_text_cases(request):

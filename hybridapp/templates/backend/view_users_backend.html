@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load static %}
+
+<!-- Navbar links control -->
+{% block links %}{% endblock %}
+
+<title>{% block title %} CMS - Users Records {% endblock %}</title>
+
+
+<!-- Block NavBar Content -->
+{% block nav-content %}
+  {% if user.is_staff == False %}
+    <i class="fa-solid fa-user-check mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Investigator &nbsp;{{ user }}</i>
+  {% elif user.is_staff == True %}
+    <i class="fa-solid fa-user-tie mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Admin/Judge &nbsp;{{ user  }}</i>
+  {% endif %}
+{% endblock %}
+
+<!-- Logout Button -->
+{% block nav-btn %}
+    <a class="btn btn-custom" id="btn-nav-view" href="{% url 'backend' %}"><i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i></a>
+    <a class="btn btn-custom" id="btn-nav-view" href="{% url 'search_users' %}"><i class="fas fa-search">&nbsp;&nbsp;Search</i></a>
+    <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout"><i class="fas fa-right-from-bracket">&nbsp;&nbsp;Logout</i></a>
+{% endblock %}
+
+<!-- Block TopBar -->
+{% block topbar %}
+<div class="top-bar mt-4 pt-5">
+        <div class="container mt-5">
+            <div class="row align-items-center">
+                <div class="col-lg-4 col-md-12">
+                    <div class="logo">
+                        <img src="{% static 'img/icon.ico' %}" alt="Logo">
+                        <h1><span>C</span>M<span>S</span></h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+<!-- Page Content -->
+{% block content %}
+    <br>
+    <div class="container mt-2 mb-5 col-md-12" style="width: 95%; font-size: 14px">
+        <button class="btn btn-secondary w-100 mt-3 mb-1 no-pointer">
+            <i class="fas fa-users">&nbsp;&nbsp;USERS &nbsp;RECORDS</i>
+        </button>
+
+        <!-- Message From BackEnd -->
+        {% for message in messages %}
+            {% if message.tags == 'success' %}
+                <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
+                    <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
+                </div>
+            {% elif message.tags == 'error' %}
+                <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
+                    <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
+                </div>
+            {% endif %}
+        {% endfor%}
+
+
+        <!--Table-->
+        <div class="container">
+            <div class="row my-4">
+                <div class="col-md-12">
+                    <table class="table bg-white">
+                        <thead class="bg-info">
+                        <tr>
+                          <th scope="col"><i class="fas fa-table-list">&nbsp;&nbsp;ID</i></th>
+                          <th scope="col"><i class="fas fa-folder-closed">&nbsp;&nbsp;NAME</i></th>
+                          <th scope="col"><i class="fas fa-envelope">&nbsp;&nbsp;EMAIL</i></th>
+                          <th scope="col"><i class="fas fa-user-tag">&nbsp;&nbsp;STAFF STATUS</i></th>
+                          <th scope="col"><i class="fas fa-calendar-day">&nbsp;&nbsp;DATE JOINED</i></th>
+                          <th scope="col"><i class="fas fa-clock">&nbsp;&nbsp;LAST LOGIN</i></th>
+                          <th scope="col"><i class="fas fa-circle-info">&nbsp;&nbsp;DETAILS</i></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>
+                              {% if user.is_staff == False %}
+                                  Investigator
+                              {% elif user.is_staff == True %}
+                                  Admin/Judge
+                              {% endif %}
+                            </td>
+                            <td>{{ user.date_joined }}</td>
+                            <td>{{ user.last_login }}</td>
+                            <td><a href="{% url 'user_details_backend' user.id %}">
+                              <button type="button" class="btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
+                            </a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+              </div>
+            </div>
+        </div>
+        <!--End Table-->
+    </div>
+
+{% endblock content %}
+
+<!-- Block Encrypt -->
+{% block encrypt %} {% endblock %}
+
+<!-- Block Decrypt -->
+{% block decrypt %} {% endblock %}
+
+<!-- Block Footer -->
+{% block footer %} style="color: #ff7f7f;" {% endblock %}
