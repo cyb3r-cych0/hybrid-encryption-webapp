@@ -1173,68 +1173,68 @@ def update(request, id):
 @login_required(login_url='login')
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def delete_case_file(request, id):
-    try:
-        is_superuser = request.user.is_superuser
-        if is_superuser:
-            listing_file = EncryptedFile.objects.get(id=id)
-            listing_file.delete()
-            messages.success(request, 'SUCCESS! File Deleted Successfully')
-            return redirect('decrypt')
+    is_superuser = request.user.is_superuser
+    listing_case_file = get_object_or_404(EncryptedFile, id=id)
 
-        elif not is_superuser:
-            user = request.user
-            messages.error(request, f'FAILED! Unauthorized User: {user}')
-            return redirect('encrypt')
-        else:
-            messages.error(request, 'FAILED! Something Went Wrong')
+    if request.method == 'POST':
+        try:
+            if is_superuser:
+                listing_case_file.delete()
+                messages.success(request, 'SUCCESS! File Deleted Successfully')
+                return redirect('decrypt')
+            else:
+                messages.error(request, f'FAILED! Unauthorized User: {request.user}')
+                return redirect('encrypt')
+        except Exception as e:
+            messages.error(request, f'Error: {str(e)}')
             return redirect('decrypt')
-    except Exception as e:
-        messages.error(request, f'Error: {str(e)}')
-        return redirect('decrypt')
+    else:
+        return render(request, 'confirm_delete.html', {'object': listing_case_file})
 
 
 @login_required(login_url='login')
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def delete_case_text(request, id):
     is_superuser = request.user.is_superuser
-    try:
-        if is_superuser:
-            listing_case = Case.objects.get(id=id)
-            listing_case.delete()
-            messages.success(request, 'SUCCESS! File Deleted Successfully')
+    listing_case_text = get_object_or_404(Case, id=id)
+
+    if request.method == 'POST':
+        try:
+            if is_superuser:
+                listing_case_text.delete()
+                messages.success(request, 'SUCCESS! File Deleted Successfully')
+                return redirect('decrypt')
+            else:
+                messages.error(request, f'FAILED! Unauthorized User: {request.user}')
+                return redirect('encrypt')
+        except Exception as e:
+            messages.error(request, f'Error: {str(e)}')
             return redirect('decrypt')
-        elif not is_superuser:
-            user = request.user
-            messages.error(request, f'FAILED! Unauthorized User: {user}')
-            return redirect('encrypt')
-        else:
-            messages.error(request, 'FAILED! Something Went Wrong')
-            return redirect('decrypt')
-    except Exception as e:
-        messages.error(request, f'Error: {str(e)}')
-        return redirect('decrypt')
+    else:
+        return render(request, 'confirm_delete.html', {'object': listing_case_text})
 
 
 @login_required(login_url='login')
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def delete_case_report(request, id):
     is_superuser = request.user.is_superuser
-    try:
-        if is_superuser:
-            listing_case_report = EncryptCase.objects.get(id=id)
-            listing_case_report.delete()
-            messages.success(request, 'SUCCESS! File Deleted Successfully')
+    listing_case_report = get_object_or_404(EncryptCase, id=id)
+
+    if request.method == 'POST':
+        try:
+            if is_superuser:
+                listing_case_report.delete()
+                messages.success(request, 'SUCCESS! File Deleted Successfully')
+                return redirect('decrypt')
+            else:
+                messages.error(request, f'FAILED! Unauthorized User: {request.user}')
+                return redirect('encrypt')
+        except Exception as e:
+            messages.error(request, f'Error: {str(e)}')
             return redirect('decrypt')
-        elif not is_superuser:
-            user = request.user
-            messages.error(request, f'FAILED! Unauthorized User: {user}')
-            return redirect('encrypt')
-        else:
-            messages.error(request, 'FAILED! Something Went Wrong')
-            return redirect('decrypt')
-    except Exception as e:
-        messages.error(request, f'Error: {str(e)}')
-        return redirect('decrypt')
+    else:
+        return render(request, 'confirm_delete.html', {'object': listing_case_report})
+
 
 """ END DELETE CASE RECORDS """
 

@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+
+<!-- Block Title -->
+<title>{% block title %} CMS - Control Panel {% endblock %}</title>
+
+<!-- Navbar links control -->
+{% block links %}{% endblock %}
+
+<!-- Block NavBar Content -->
+{% block nav-content %}
+  {% if user.is_staff == False %}
+    <i class="fa-solid fa-user-check mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Investigator &nbsp;{{ user }}</i>
+  {% elif user.is_staff == True %}
+    <i class="fa-solid fa-user-tie mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Admin/Judge &nbsp;{{ user  }}</i>
+  {% endif %}
+{% endblock %}
+
+<!-- Logout Button -->
+{% block nav-btn %}
+    <!-- <a class="btn btn-custom" id="btn-nav-home" href="{% url 'decrypt' %}" ><i class="fas fa-home">&nbsp;&nbsp;back</i></a> -->
+    <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout"><i class="fas fa-right-from-bracket">&nbsp;&nbsp;Logout</i></a>
+{% endblock %}
+
+<!-- Block TopBar -->
+{% block topbar %}
+<div class="top-bar mt-4 pt-5">
+        <div class="container mt-5">
+            <div class="row align-items-center">
+                <div class="col-lg-12 col-md-12">
+                    <div class="logo">
+                        <img src="{% static 'img/icon.png' %}" alt="Logo">
+                        <h1><span>C</span>M<span>S</span></h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+<!-- Page Content -->
+{% block content %}
+    <br>
+    <div class="container mb-5 pb-5" style="width: 95%; font-size: 14px">
+        <!-- links|cards -->
+        <button class="btn btn-warning w-100 mb-4 mt-3 no-pointer" style="color: black;">
+            <i class="fas fa-trash-can">&nbsp;&nbsp;DELETE &nbsp;RECORD</i>
+        </button>
+
+        <!-- confirm_delete.html -->
+        <div class="card p-3 mt-2">
+            <div class="row">
+              <h5 class="mb-5"><i class="fas fa-circle-exclamation">&nbsp;&nbsp;Are you sure you want to delete this file?</i></h5>
+              <form method="post">
+                  {% csrf_token %}
+                  <button type="submit" class="w-90 btn btn-lg btn-outline-danger m-2"><i class="fas fa-trash-arrow-up">&nbsp;&nbsp;Yes, Delete</i></button>
+
+                  <a href="{% url 'decrypt' %}">
+                    <button type="button" class="w-90 btn btn-lg btn-outline-secondary m-2"><i class="fas fa-xmark">&nbsp;&nbsp;Cancel</i></button>
+              </form>
+            </div>
+        </div>
+
+
+    </div> <!-- END // container -->
+
+{% endblock content %}
+
+<!-- Block Footer -->
+{% block footer %} style="color: #ff7f7f;" {% endblock %}
+
+<!-- Block Encrypt -->
+{% block encrypt %} {% endblock %}
+
+<!-- Block Decrypt -->
+{% block decrypt %} {% endblock %}
