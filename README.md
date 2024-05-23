@@ -41,9 +41,11 @@ To get a local copy up and running, follow these steps.
 
 ### Running the Backend
 
-1. Navigate to the project root directory
+1. Navigate to the project root directory and apply migrations
 
     - cd hybrid-encryption-webapp
+    - python manage.py makemigrations
+    - python manage.py migrate
 
 2. Start the backend server
 
@@ -56,6 +58,7 @@ To get a local copy up and running, follow these steps.
     User Authentication: Secure user login and registration.
     Data Encryption: Encrypt and decrypt data seamlessly.
     Responsive Design: User-friendly GUI.
+    Special Feature: All users can encrypt data but ONLY Staff/Superuser decrypts data.
 
 ## Contributing
 
