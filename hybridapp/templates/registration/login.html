@@ -3,7 +3,7 @@
 {% load static %}
 
 <!-- Block Title -->
-<title>{% block title %} CMS - Login {% endblock %}</title>
+<title>{% block title %} CBDET | Login {% endblock %}</title>
 
 <!-- Navbar links control -->
 {% block links %}{% endblock %}
@@ -16,7 +16,7 @@
 <!-- Logout Button -->
 {% block nav-btn %}
   <a href="{% url 'frontend' %}" class="btn btn-custom" id="btn-nav"><i class="fas fa-chevron-left">&nbsp;&nbsp;Go Back</i></a>
-  <a href="{% url 'register_user' %}" class="btn btn-custom" id="btn-nav"><i class="fas fa-arrow-right-to-bracket">&nbsp;&nbsp;Register</i></a>
+  <a href="{% url 'register_user' %}" class="btn btn-custom" id="btn-nav-register"><i class="fas fa-arrow-right-to-bracket">&nbsp;&nbsp;Register</i></a>
 {% endblock %}
 
 <!-- Block TopBar -->
@@ -27,7 +27,7 @@
                 <div class="col-lg-4 col-md-12">
                     <div class="logo">
                         <img src="{% static 'img/icon.png' %}" alt="Logo">
-                        <h1><span>C</span>M<span>S</span></h1>
+                        <h1><span>CB</span>DET</h1>
                     </div>
                 </div>
             </div>

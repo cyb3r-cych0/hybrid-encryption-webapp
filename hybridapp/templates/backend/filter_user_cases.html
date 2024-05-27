@@ -4,7 +4,7 @@
 <!-- Navbar links control -->
 {% block links %}{% endblock %}
 
-<title>{% block title %} CMS | Filter User Cases {% endblock %}</title>
+<title>{% block title %} CBDET | Filter User Cases {% endblock %}</title>
 
 
 
@@ -23,7 +23,7 @@
                 <div class="col-lg-4 col-md-12">
                     <div class="logo">
                         <img src="{% static 'img/icon.ico' %}" alt="Logo">
-                        <h1><span>C</span>M<span>S</span></h1>
+                        <h1><span>CB</span>DET<span></span></h1>
                     </div>
                 </div>
             </div>
@@ -68,7 +68,7 @@
             <div class="col-8 m-3 ">
               <form method="POST" action="{% url 'filter_user_cases' user_details.id %}">
                     {% csrf_token %}
-                      <label for=""><i class="fas fa-hand-pointer">&nbsp;&nbsp;Select Date &nbsp;&nbsp;</i></label>
+                      <label><i class="fas fa-hand-pointer">&nbsp;&nbsp;Select Date &nbsp;&nbsp;</i></label>
                       <i class="fas fa-">&nbsp;&nbsp;From: &nbsp;&nbsp;</i> <input type="date" name="from_date">
                       <i class="fas fa-">&nbsp;&nbsp;To: &nbsp;&nbsp;</i><input type="date" name="to_date">
                       &nbsp;&nbsp;&nbsp;<button class="btn btn-secondary" type="submit"><i class="fas fa-search">&nbsp;&nbsp; Search</i></button>

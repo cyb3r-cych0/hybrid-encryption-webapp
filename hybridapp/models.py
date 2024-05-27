@@ -1,9 +1,5 @@
-import dateutil.utils
 from django.db import models
 from django.utils import timezone
-
-import datetime
-
 from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import User
@@ -12,14 +8,13 @@ from django.dispatch import receiver
 from Crypto.PublicKey import RSA
 
 
-
 class KeyPair(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     public_key = models.TextField()
     private_key = models.TextField()
 
     def __str__(self):
-        return self.user.username
+        return self.user
 
 
 @receiver(post_save, sender=User)
@@ -32,7 +27,6 @@ def create_key_pair(sender, instance, created, **kwargs):
         key_pair.private_key = key.export_key().decode('utf-8')
         key_pair.save()
         print("[+] KeyPair created successfully.")
-
 
 
 class EncryptedFile(models.Model):

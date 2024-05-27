@@ -5,12 +5,12 @@
 {% block links %}{% endblock %}
 
 <!-- Block Title -->
-<title>{% block title %} CMS - Encrypt Case Record {% endblock %}</title>
+<title>{% block title %} CBDET | Encrypt Case Record {% endblock %}</title>
 
 
 <!-- Logout Button -->
 {% block nav-btn %}
-    <a class="btn btn-custom" id="btn-nav-back" href="{% url 'search_cases_encrypt' %}" ><i class="fa fa-search">&nbsp;&nbsp; Search</i></a>
+    <a class="btn btn-custom" id="btn-nav-search" href="{% url 'search_cases_encrypt' %}" ><i class="fa fa-search">&nbsp;&nbsp; Search</i></a>
     <a class="btn btn-custom" id="btn-nav-back" href="{% url 'backend' %}" ><i class="fa fa-sliders">&nbsp;&nbsp; Control Panel</i></a>
     <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout"><i class="fa fa-right-from-bracket">&nbsp;&nbsp; Logout</i></a>
 {% endblock %}
@@ -26,13 +26,13 @@
 
 <!-- Block TopBar -->
 {% block topbar %}
-<div class="top-bar mt-4 pt-5">
+<div class="top-bar mt-5 pt-5">
         <div class="container mt-5">
             <div class="row align-items-center">
                 <div class="col-lg-12 col-md-12">
                     <div class="logo">
                         <img src="{% static 'img/icon.ico' %}" alt="Logo">
-                        <h1><span>C</span>M<span>S</span></h1>
+                        <h1><span>CB</span>DET<span><small>&nbsp;&nbsp;Dashboard</small></span></h1>
                     </div>
                 </div>
             </div>
@@ -44,11 +44,10 @@
 {% block content %}
 
 <br>
-<div class="container mb-5" style="width: 95%; font-size: 14px">
-    <!--  -->
-    <button class="btn btn-danger w-100 mt-4 mb-2 no-pointer" style="color: black;">
-        <i class="fa fa-lock">&nbsp;&nbsp; ENCRYPT &nbsp;CASE &nbsp;RECORD</i>
-    </button>
+<div class="container mt-5 mb-5" style="width: 95%; font-size: 14px">
+<!--    <button class="btn btn-danger w-100 mt-4 mb-2 no-pointer" style="color: black;">-->
+<!--        <i class="fa fa-lock">&nbsp;&nbsp; ENCRYPT &nbsp;CASE &nbsp;RECORD</i>-->
+<!--    </button>-->
 
     <!-- Message From BackEnd -->
     {% for message in messages %}

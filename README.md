@@ -17,24 +17,24 @@ To get a local copy up and running, follow these steps.
 
 ### Prerequisites
 
-- Python 3.x
+- Python 3.12
 - Virtual environment (optional but recommended)
 
 ### Backend Setup
 
 1. Clone the repo
-   ```sh
+   ````
    git clone https://github.com/cyb3r-cych0/hybrid-encryption-webapp.git
    cd hybrid-encryption-webapp
 
 2. Set up the environment
-
+   ````
     - python -m venv venv
     - source venv/bin/activate  
     - venv\Scripts\activate # on windows
 
 3. Install backend dependencies
-
+   ````
     - pip install -r requirements.txt
 
 ## Usage
@@ -42,23 +42,23 @@ To get a local copy up and running, follow these steps.
 ### Running the Backend
 
 1. Navigate to the project root directory and apply migrations
-
+   ````
     - cd hybrid-encryption-webapp
     - python manage.py makemigrations
     - python manage.py migrate
 
 2. Start the backend server
-
+   ````
     - python manage.py runserver
     - Open your browser and go to http://localhost:8000
 
 ## Features
 
-    Hybrid Encryption: Combines AES (symmetric) and RSA (asymmetric) encryption techniques.
-    User Authentication: Secure user login and registration.
-    Data Encryption: Encrypt and decrypt data seamlessly.
-    Responsive Design: User-friendly GUI.
-    Special Feature: All users can encrypt data but ONLY Staff/Superuser decrypts data.
+    - Hybrid Encryption: Combines AES (symmetric) and RSA (asymmetric) encryption techniques.
+    - User Authentication: Secure user login and registration.
+    - Data Encryption: Encrypt and decrypt data seamlessly.
+    - Responsive Design: User-friendly GUI.
+    - Special Feature: All users can encrypt data but ONLY Staff/Superuser decrypts data.
 
 ## Contributing
 
@@ -76,5 +76,5 @@ To get a local copy up and running, follow these steps.
 
 ## Contact Information
 
-    Your Name - @cyb3r-cych0 - minigates21@gmail.com
+    Name: @cyb3r-cych0 | minigates21@gmail.com
     Project Link: https://github.com/cyb3r-cych0/hybrid-encryption-webapp

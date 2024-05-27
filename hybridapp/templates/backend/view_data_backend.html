@@ -5,7 +5,7 @@
 {% block links %}{% endblock %}
 
 <!-- Block Title -->
-<title>{% block title %} CMS - File Details {% endblock %}</title>
+<title>{% block title %} CBDET | File Details {% endblock %}</title>
 
 <!-- Block NavBar Content -->
 {% block nav-content %}
@@ -18,7 +18,7 @@
 
 <!-- Logout Button -->
 {% block nav-btn %}
-    <a class="btn btn-custom" id="btn-nav-view" href="{% url 'backend' %}"><i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i></a>
+    <a class="btn btn-custom" id="btn-nav-back" href="{% url 'backend' %}"><i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i></a>
     <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout"><i class="fas fa-right-from-bracket">&nbsp;&nbsp;Logout</i></a>
 {% endblock %}
 
@@ -29,7 +29,7 @@
                 <div class="col-lg-4 col-md-12">
                     <div class="logo">
                         <img src="{% static 'img/icon.ico' %}" alt="Logo">
-                        <h1><span>C</span>M<span>S</span></h1>
+                        <h1><span>CB</span>DET<span></span></h1>
                     </div>
                 </div>
             </div>
