@@ -5,7 +5,7 @@
 {% block links %}{% endblock %}
 
 <!-- Block Title -->
-<title>{% block title %} CBDET | Decryption Details {% endblock %}</title>
+<title>{% block title %} CBDET | Decrypt Case Details {% endblock %}</title>
 
 <!-- Block NavBar Content -->
 {% block nav-content %}
@@ -45,17 +45,17 @@
     <div class="container mt-1 mb-5 pb-2">
         <!-- links|cards -->
         <button class="btn btn-warning w-100 mt-3 mb-2 no-pointer">
-            <i class="fa-solid fa-circle-info">&nbsp;&nbsp;RECORD &nbsp;DETAILS</i>&nbsp;&nbsp;FILE DECRYPTION DETAILS
+            <i class="fa-solid fa-circle-info">&nbsp;&nbsp;CASE &nbsp;DETAILS</i>
         </button>
         <div id="pt" class="col-12">
             <div class="card p-3 mt-3 mb-4">
                 <div class="row" >
-                    <h3>DECRYPTED FILE INFORMATION</h3>
+                    <h3>DECRYPTED TEXT INFORMATION</h3>
                     <div class="container m-3">
 
-                      <p> CASE ID  : {{ case.caseID }} </p>
-                      <p> USER ID  : {{ case.user_id }} </p>
-                      <p> ENCRYPTED DATE : {{ case.encryption_date }} </p>
+                      <p> CASE ID  : {{ encrypted_file.case_id }} </p>
+                      <p> USER ID  : {{ encrypted_file.user }} </p>
+                      <p> ENCRYPTED DATE : {{ encrypted_file.case_date }} </p>
                       <p> ENCRYPTED DATA  : {{ encrypted_data }} </p>
                       <p> PRIVATE KEY: {{ private_key }}</p>
                       <p> CIPHER RSA: {{ cipher_rsa }}</p>
@@ -70,7 +70,6 @@
                       <p> DECRYPTED DATA {{ decrypted_data }}</p>
                       <p> ORIGINAL HASH: {{ original_hash }}</p>
                       <p> CALCULATED HASH: {{ calculated_hash }}</p>
-                      <p> RESPONSE : {{ response }}</p>
 
                     </div>
                 </div>

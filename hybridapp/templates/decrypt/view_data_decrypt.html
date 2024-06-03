@@ -14,7 +14,7 @@
 {% endblock %}
 
 <!-- Block Title -->
-<title>{% block title %} CBDET | Text Details {% endblock %}</title>
+<title>{% block title %} CBDET | File Details {% endblock %}</title>
 
 <!-- Logout Button -->
 {% block nav-btn %}
@@ -42,18 +42,18 @@
 <br>
     <div class="container mt-1 mb-5 pb-2">
         <button class="btn btn-warning w-100 mt-3 mb-2 no-pointer">
-          <i class="fa-solid fa-circle-info">&nbsp;&nbsp;CASE &nbsp;TEXT &nbsp;DETAILS</i>
+          <i class="fa-solid fa-circle-info">&nbsp;&nbsp;FILE &nbsp;DETAILS</i>
         </button>
         <div id="pt" class="col-12">
             <div class="card p-3 mt-3 mb-4">
                 <div class="row" >
-                    <h3>ENCRYPTED TEXT INFORMATION</h3>
+                    <h3>ENCRYPTED FILE INFORMATION</h3>
                     <div class="container m-3">
                       <p>CASE ID  : {{ file.case_id }} </p>
                       <p>USER ID: {{ file.user.email }}</p>
-                      <p>DATE ENCRYPTED: {{ file.encryption_date }}</p>
-                      <p>TEXT NAME: {{ file.file }}</p>
-                      <p>TEXT DATA: {{ file.encrypted_data }}</p>
+                      <p>DATE ENCRYPTED: {{ file.case_date }}</p>
+                      <p>TEXT NAME: {{ file.case_file }}</p>
+                      <p>TEXT DATA: {{ file.case_data }}</p>
                     </div>
                 </div>
             </div>

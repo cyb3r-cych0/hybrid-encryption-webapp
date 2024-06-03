@@ -5,7 +5,7 @@
 {% block links %}{% endblock %}
 
 <!-- Block Title -->
-<title>{% block title %} CMS - Decrypt Case Record  {% endblock %}</title>
+<title>{% block title %} CBDET - Decrypt Dashboard  {% endblock %}</title>
 
 <!-- Block NavBar Content -->
 {% block nav-content %}
@@ -26,13 +26,13 @@
 
 <!-- Block TopBar -->
 {% block topbar %}
-<div class="top-bar mt-5 pt-5">
+<div class="top-bar mt-5 pt-5 mb-5 pb-5">
         <div class="container mt-5">
             <div class="row align-items-center">
                 <div class="col-lg-12 col-md-12">
                     <div class="logo">
                         <img src="{% static 'img/icon.ico' %}" alt="Logo">
-                        <h1><span>CB</span>DET<span><small>&nbsp;&nbsp;Dashboard</small></span></h1>
+                        <h1><span></span>DECRYPT<span><small>&nbsp;&nbsp;Dashboard</small></span></h1>
                     </div>
                 </div>
             </div>
@@ -44,10 +44,6 @@
 {% block content %}
 
 <div class="container mt-5 mb-5" style="width: 95%; font-size: 14px">
-<!--  <button class="btn btn-danger w-100 mt-5 mb-2 no-pointer" style="color: black;">-->
-<!--      <i class="fa fa-unlock-keyhole">&nbsp;&nbsp; DECRYPT RECORD</i>-->
-<!--  </button>-->
-
     <!-- Restricted Page - Check User -->
     {% if is_superuser %}
     <!-- Content accessible only by superusers -->
@@ -68,7 +64,7 @@
     {% endfor%}
 
     <!--Topside-->
-    <div class="container">
+    <div class="container mt-2">
         <div class="row mt-4">
             <div class="col-md-4">
                 <div class="card">
@@ -106,7 +102,7 @@
                             <div class="col-md-4">
                                 <a class="text-decoration-none text-dark" href="{% url 'view_all' %}">
                                   <div class="card my-card shadow text-center p-3" style="color: green;">
-                                      <h5 class="border" style="color: black;">Case Records</h5>
+                                      <h5 class="border" style="color: black;">Encrypted Cases</h5>
                                       <h1><i class="fa fa-folder-plus" >&nbsp;&nbsp;{{ case_files }}</i></h1>
                                   </div>
                                 </a>
@@ -132,7 +128,7 @@
         <div class="col">
             <div class="card mb-5 rounded-3 shadow-lg border-secondary">
               <div class="card-header py-3 text-bg-secondary border-secondary">
-                <h6 class="my-0 fw-normal" style="color: white;"><i class="fa fa-folder-closed">&nbsp;&nbsp;GET &nbsp;CASE &nbsp;RECORD &nbsp;FOR &nbsp;DECRYPTION</i></h6>
+                <h6 class="my-0 fw-normal" style="color: white;"><i class="fa fa-folder-closed">&nbsp;&nbsp;GET &nbsp;ENCRYPTED &nbsp;CASE &nbsp;FOR &nbsp;DECRYPTION</i></h6>
               </div>
               <div class="card-body">
                 <div class="container mb-2">
@@ -143,17 +139,17 @@
                     </ul>
 
                     <div class="mt-5 mb-4">
-                      <p style="font-size: 18px; font-type: bold;">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-lightbulb" style="color: orange;"></i><i class="fa fa-">&nbsp;&nbsp;Select options below to decrypt case records</i></p>
+                      <p style="font-size: 18px; font-type: bold;">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-lightbulb" style="color: orange;"></i><i class="fa fa-">&nbsp;&nbsp;Select option to get encrypted case for decryption</i></p>
                     </div>
                 </div>
                 <a href="/decrypt/search_text_cases">
-                    <button type="button" class="w-90 btn btn-lg btn-outline-success m-2"><i class="fas fa-file-lines">&nbsp;&nbsp;GET TEXT RECORD</i></button>
+                    <button type="button" class="w-90 btn btn-lg btn-outline-success m-2"><i class="fas fa-file-lines">&nbsp;&nbsp;GET TEXT CASE</i></button>
                 </a>
                 <a href="/decrypt/search_file_cases">
-                    <button type="button" class="w-90 btn btn-lg btn-outline-primary m-2"><i class="fas fa-file">&nbsp;&nbsp;GET FILE RECORD</i></button>
+                    <button type="button" class="w-90 btn btn-lg btn-outline-primary m-2"><i class="fas fa-file">&nbsp;&nbsp;GET FILE CASE</i></button>
                 </a>
                 <a href="/decrypt/search_report_cases">
-                    <button type="button" class="w-90 btn btn-lg btn-outline-secondary m-2"><i class="fas fa-folder-open">&nbsp;&nbsp;GET REPORT RECORD</i></button>
+                    <button type="button" class="w-90 btn btn-lg btn-outline-secondary m-2"><i class="fas fa-folder-open">&nbsp;&nbsp;GET TEXTFILE CASE</i></button>
                 </a>
               </div>
             </div>
@@ -163,7 +159,7 @@
 
 
         <button class="btn btn-secondary w-100 mt-3 mb-2 no-pointer">
-          <i class="fa fa-folder-tree">&nbsp;&nbsp; RECENT &nbsp;ENCRYPTED &nbsp;RECORDS</i>
+          <i class="fa fa-folder-tree">&nbsp;&nbsp; RECENT &nbsp;ENCRYPTED &nbsp;CASES</i>
         </button>
 
     <!--Table-->
@@ -187,9 +183,9 @@
                         <tr>
                             <td>{{ fil.id }}</td>
                             <td>{{ fil.case_id }}</td>
-                            <td>{{ fil.file }}</td>
+                            <td>{{ fil.case_file }}</td>
                             <td>{{ fil.user.email }}</td>
-                            <td>{{ fil.encryption_date }}</td>
+                            <td>{{ fil.case_date }}</td>
                             <td><a href="{% url 'view_data_decrypt' fil.id %}">
                             <button type="button" class="w-100 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
                             </a></td>
@@ -204,10 +200,10 @@
                         {% for txt in text %}
                         <tr>
                             <td>{{ txt.id }}</td>
-                            <td>{{ txt.caseID }}</td>
-                            <td>{{ txt.caseName }}</td>
+                            <td>{{ txt.case_id }}</td>
+                            <td>{{ txt.case_name }}</td>
                             <td>{{ txt.user.email }}</td>
-                            <td>{{ txt.encryption_date }}</td>
+                            <td>{{ txt.case_date }}</td>
                             <td><a href="{% url 'view_file_decrypt' txt.id %}">
                             <button type="button" class="w-100 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
                             </a></td>
@@ -219,13 +215,13 @@
                     </tbody>
 
                     <tbody>
-                        {% for repo in report %}
+                        {% for repo in textfile %}
                         <tr>
                             <td>{{ repo.id }}</td>
                             <td>{{ repo.case_id }}</td>
-                            <td>{{ repo.case_name }}</td>
-                            <td>{{ repo.user_id.email }}</td>
-                            <td>{{ repo.encryption_date }}</td>
+                            <td>{{ repo.case_file }}</td>
+                            <td>{{ repo.user.email }}</td>
+                            <td>{{ repo.case_date }}</td>
                             <td><a href="{% url 'view_report_decrypt' repo.id %}">
                             <button type="button" class="w-100 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
                             </a></td>
@@ -240,20 +236,20 @@
             </div>
         </div>
         <a href="{% url 'view_all' %}">
-            <button class="btn btn-secondary mb-1 ml-5"><i class="fa fa-folder-plus">&nbsp;&nbsp;More &nbsp;Records</i></button>
+            <button class="btn btn-secondary mb-1 ml-5"><i class="fa fa-folder-plus">&nbsp;&nbsp;More &nbsp;Cases</i></button>
         </a>
     </div>
     <!--End Table-->
 
     {% else %}
-        <div class="container mt-5 mb-5">
+        <div class="container pt-5 pl-5 mt-5 mb-5">
             <!-- Content accessible by regular users -->
             {% if request.user.is_authenticated %}
             {% else %}<a href="{% url django.contrib.auth.login %}">Login</a>{% endif %}
             <p style="color: black; font-size: 20px;"><i class="fas fa-triangle-exclamation">&nbsp;&nbsp;PAGE RESTRICTED!</i></p>
             <p style="color: red; font-size: 20px;"><i class="fas fa-user-xmark">&nbsp;&nbsp;Unauthorized User: '{{ request.user.username }}'</i></p>
             <a href="{% url 'backend' %}">
-                <button class="btn btn-outline-secondary mt-2 mb-1 ml-5"><i class="fas fa-chevron-left">&nbsp;Go Back</i></button>
+                <button class="btn btn-outline-secondary mt-5 mb-1 ml-1"><i class="fas fa-chevron-left">&nbsp;Go Back</i></button>
             </a>
         </div>
     {% endif %}

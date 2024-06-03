@@ -5,7 +5,7 @@
 {% block links %}{% endblock %}
 
 <!-- Block Title -->
-<title>{% block title %} CBDET | Encrypt Case Record {% endblock %}</title>
+<title>{% block title %} CBDET | Encrypt Dashboard {% endblock %}</title>
 
 
 <!-- Logout Button -->
@@ -32,7 +32,7 @@
                 <div class="col-lg-12 col-md-12">
                     <div class="logo">
                         <img src="{% static 'img/icon.ico' %}" alt="Logo">
-                        <h1><span>CB</span>DET<span><small>&nbsp;&nbsp;Dashboard</small></span></h1>
+                        <h1><span></span>ENCRYPT<span><small>&nbsp;&nbsp;Dashboard</small></span></h1>
                     </div>
                 </div>
             </div>
@@ -45,10 +45,6 @@
 
 <br>
 <div class="container mt-5 mb-5" style="width: 95%; font-size: 14px">
-<!--    <button class="btn btn-danger w-100 mt-4 mb-2 no-pointer" style="color: black;">-->
-<!--        <i class="fa fa-lock">&nbsp;&nbsp; ENCRYPT &nbsp;CASE &nbsp;RECORD</i>-->
-<!--    </button>-->
-
     <!-- Message From BackEnd -->
     {% for message in messages %}
         {% if message.tags == 'success' %}
@@ -101,9 +97,8 @@
                             <div class="col-md-4">
                                 <a class="text-decoration-none text-dark" href="{% url 'view_files'%}">
                                     <div class="card my-card shadow text-center p-3" style="color: green;">
-                                        <h5 class="border" style="color: black;">User Records</h5>
+                                        <h5 class="border" style="color: black;">Encrypted Cases</h5>
                                         <h1><i class="fa fa-folder-plus" >&nbsp;&nbsp;{{ total_files }}</i></h1>
-                                        <!-- <h6>{{ total_files }}</h6> -->
                                     </div>
                                 </a>
                             </div>
@@ -112,7 +107,6 @@
                                     <div class="card my-card shadow text-center p-3" style="color: green;">
                                         <h5 class="border" style="color: black;">Last Login</h5>
                                         <h5><i class="fa fa-clock">&nbsp;&nbsp;{{ user.last_login }}</i></h5>
-                                        <!-- <h6>{{ user.last_login }}</h6> -->
                                     </div>
                                 </a>
                             </div>
@@ -129,35 +123,28 @@
         <div class="col">
             <div class="card mb-5 rounded-3 shadow-lg border-secondary ">
               <div class="card-header py-3 text-bg-secondary border-secondary">
-                <h6 class="my-0 fw-normal" style="color: white;"><i class="fa fa-folder-closed">&nbsp;&nbsp;ADD &nbsp;NEW &nbsp;CASE &nbsp;RECORD &nbsp;FOR &nbsp;ENCRYPTION</i></h6>
+                <h6 class="my-0 fw-normal" style="color: white;"><i class="fa fa-folder-closed">&nbsp;&nbsp;ADD &nbsp;NEW &nbsp;CASE &nbsp;FOR &nbsp;ENCRYPTION</i></h6>
               </div>
               <div class="card-body">
                 <div class="container mb-2">
-                    <!-- <h5>FILE TYPES:  </h5> -->
                     <ul class="m-2">
-                      <!-- <li><h5><i class="fa fa-file-pdf"></i></h5>.pdf</li>
-                      <li><h4><i class="fa fa-file-lines"></i></h4>.txt</li>
-                      <li><h4><i class="fa fa-file-image"></i></h4>.jpg/.png/.jpeg</li> -->
-                      <h4><i class="fa fa-file-pdf"style="color: green;">&nbsp;.pdf</i></h4>
-                      <h4><i class="fa fa-file-lines"style="color: blue;">&nbsp;.txt</i></h4>
-                      <h4><i class="fa fa-file-image"style="color: grey;">&nbsp;.jpg/.png/.jpeg</i></h4>
+                      <h4><i class="fa fa-file-pdf" style="color: green;">&nbsp;.pdf</i></h4>
+                      <h4><i class="fa fa-file-lines" style="color: blue;">&nbsp;.txt</i></h4>
+                      <h4><i class="fa fa-file-image" style="color: grey;">&nbsp;.jpg/.png/.jpeg</i></h4>
                     </ul>
                     <div class="mt-5 mb-4">
-                      <!-- <h5 class="mb-3">TO ADD NEW CASE RECORD: </h5> -->
-                      <p style="font-size: 18px; font-type: bold;">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-lightbulb" style="color: orange;"></i><i class="fa fa-">&nbsp;&nbsp;Select options below to encrypt case records</i></p>
-                      <!-- <p style="font-size: 18px; font-type: bold;">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-file">&nbsp;&nbsp;Select <span style="color: blue;">'TEXT RECORD'</span> to encrypt text/typed data</i></p>
-                      <p style="font-size: 18px; font-type: bold;">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-file">&nbsp;&nbsp;Select <span style="color: grey;">'REPORT RECORD'</span> to encrypt both text & uploaded files</i></p> -->
+                      <p style="font-size: 18px; font-type: bold;">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-lightbulb" style="color: orange;"></i><i class="fa fa-">&nbsp;&nbsp;Select option to add new case for encryption</i></p>
                     </div>
 
                 </div>
                 <a href="/encrypt/upload_file">
-                    <button type="button" class="w-90 btn btn-lg btn-outline-success m-2"><i class="fas fa-file">&nbsp;&nbsp;ADD FILE RECORD</i></button>
+                    <button type="button" class="w-90 btn btn-lg btn-outline-success m-2"><i class="fas fa-file">&nbsp;&nbsp;ADD FILE CASE</i></button>
                 </a>
                 <a href="/encrypt/encrypt_case_data">
-                    <button type="button" class="w-90 btn btn-lg btn-outline-primary m-2"><i class="fas fa-file-lines">&nbsp;&nbsp;ADD TEXT RECORD</i></button>
+                    <button type="button" class="w-90 btn btn-lg btn-outline-primary m-2"><i class="fas fa-file-lines">&nbsp;&nbsp;ADD TEXT CASE</i></button>
                 </a>
                 <a href="/encrypt/encrypt_case">
-                    <button type="button" class="w-90 btn btn-lg btn-outline-secondary m-2"><i class="fas fa-folder-open">&nbsp;&nbsp;ADD REPORT RECORD</i></button>
+                    <button type="button" class="w-90 btn btn-lg btn-outline-secondary m-2"><i class="fas fa-folder-open">&nbsp;&nbsp;ADD TEXTFILE CASE</i></button>
                 </a>
               </div>
             </div>
@@ -166,7 +153,7 @@
     </div> <!-- END // container -->
     <!--  -->
     <button class="btn btn-secondary w-100 mt-4 mb-2 no-pointer">
-        <i class="fa fa-folder-tree">&nbsp;&nbsp; RECENT &nbsp;ENCRYPTED &nbsp;RECORDS</i>
+        <i class="fa fa-folder-tree">&nbsp;&nbsp; RECENT &nbsp;ENCRYPTED &nbsp;CASES</i>
     </button>
 
     <!--Table-->
@@ -188,10 +175,10 @@
                         {% for txt in text %}
                         <tr>
                             <td>{{ txt.id }}</td>
-                            <td>{{ txt.caseID }}</td>
-                            <td>{{ txt.caseName }}</td>
+                            <td>{{ txt.case_id }}</td>
+                            <td>{{ txt.case_name }}</td>
                             <td>{{ txt.user.email }}</td>
-                            <td>{{ txt.encryption_date }}</td>
+                            <td>{{ txt.case_date }}</td>
                             <td><a href="{% url 'view_file' txt.id %}">
                 <button type="button" class="w-100 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
                 </a></td>
@@ -203,9 +190,9 @@
                       <tr>
                           <td>{{ fil.id }}</td>
                           <td>{{ fil.case_id }}</td>
-                          <td>{{ fil.file }}</td>
+                          <td>{{ fil.case_file }}</td>
                           <td>{{ fil.user.email }}</td>
-                          <td>{{ fil.encryption_date }}</td>
+                          <td>{{ fil.case_date }}</td>
                           <td><a href="{% url 'view_data' fil.id %}">
               <button type="button" class="w-100 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
               </a></td>
@@ -213,14 +200,14 @@
                       {% endfor %}
                     </tbody>
                     <tbody>
-                      {% for repo in report %}
+                      {% for tf in textfile %}
                       <tr>
-                          <td>{{ repo.id }}</td>
-                          <td>{{ repo.case_id }}</td>
-                          <td>{{ repo.case_name }}</td>
-                          <td>{{ repo.user_id.email }}</td>
-                          <td>{{ repo.encryption_date }}</td>
-                          <td><a href="{% url 'view_report_encrypt' repo.id %}">
+                          <td>{{ tf.id }}</td>
+                          <td>{{ tf.case_id }}</td>
+                          <td>{{ tf.case_file }}</td>
+                          <td>{{ tf.user.email }}</td>
+                          <td>{{ tf.case_date }}</td>
+                          <td><a href="{% url 'view_report_encrypt' tf.id %}">
               <button type="button" class="w-100 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
               </a></td>
                       </tr>
@@ -230,7 +217,7 @@
             </div>
         </div>
         <a href="{% url 'view_files' %}">
-            <button class="btn btn-secondary mb-1 ml-5"><i class="fa fa-folder-plus">&nbsp;&nbsp;More &nbsp;Records</i></button>
+            <button class="btn btn-secondary mb-1 ml-5"><i class="fa fa-folder-plus">&nbsp;&nbsp;More &nbsp;Cases</i></button>
         </a>
     </div>
     <!--End Table-->

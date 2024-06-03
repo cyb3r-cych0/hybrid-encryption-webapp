@@ -4,7 +4,7 @@
 <!-- Navbar links control -->
 {% block links %}{% endblock %}
 
-<title>{% block title %} CBDET | Filter User Cases {% endblock %}</title>
+<title>{% block title %} CBDET | Filter User-Cases {% endblock %}</title>
 
 
 
@@ -97,14 +97,14 @@
                         </thead>
 
                         <tbody>
-                          {% if reports %}
-                          {% for case_r in reports %}
+                          {% if textfiles %}
+                          {% for case_r in textfiles %}
                             <tr>
                                 <td>{{ case_r.id }}</td>
                                 <td>{{ case_r.case_id }}</td>
                                 <td>{{ case_r.case_name }}</td>
-                                <td>{{ case_r.user_id.email }}</td>
-                                <td>{{ case_r.encryption_date }}</td>
+                                <td>{{ case_r.user.email }}</td>
+                                <td>{{ case_r.case_date }}</td>
                                 <td><a href="{% url 'view_report_encrypt' case_r.id %}">
                     <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
                     </a></td>
@@ -119,9 +119,9 @@
                             <tr>
                                 <td>{{ file.id }}</td>
                                 <td>{{ file.case_id }}</td>
-                                <td>{{ file.file }}</td>
+                                <td>{{ file.case_file }}</td>
                                 <td>{{ file.user.email }}</td>
-                                <td>{{ file.encryption_date }}</td>
+                                <td>{{ file.case_date }}</td>
                                 <td><a href="{% url 'view_data' file.id %}">
                     <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
                     </a></td>
@@ -135,10 +135,10 @@
                           {% for txt in texts %}
                             <tr>
                                 <td>{{ txt.id }}</td>
-                                <td>{{ txt.caseID }}</td>
-                                <td>{{ txt.caseName }} </td>
+                                <td>{{ txt.case_id }}</td>
+                                <td>{{ txt.case_name }} </td>
                                 <td>{{ txt.user.email }}</td>
-                                <td>{{ txt.encryption_date }}</td>
+                                <td>{{ txt.case_date }}</td>
                                 <td><a href="{% url 'view_file' txt.id %}">
                     <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
                     </a></td>

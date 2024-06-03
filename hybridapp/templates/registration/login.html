@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load crispy_forms_tags %}
+{% load bootstrap5 %}
 {% load static %}
 
 <!-- Block Title -->
@@ -68,7 +68,7 @@
           <!-- Form -->
           <form method="POST" autocomplete="off" novalidate>
               {% csrf_token %}
-              {{ form|crispy }}
+              {% bootstrap_form form %}
               <br>
               <button type="submit" class="w-100 btn btn-outline-success"><i class="fas fa-unlock">&nbsp;&nbsp;LOGIN</i></button>
           </form>

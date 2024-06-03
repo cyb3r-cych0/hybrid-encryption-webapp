@@ -4,7 +4,7 @@
 <!-- Navbar links control -->
 {% block links %}{% endblock %}
 
-<title>{% block title %} CBDET | Search Reports {% endblock %}</title>
+<title>{% block title %} CBDET | Search TextFile {% endblock %}</title>
 
 <!-- Block NavBar Content -->
 {% block nav-content %}
@@ -48,7 +48,7 @@
     <div class="container mt-2 mb-5 col-md-12" style="width: 95%; font-size: 14px">
 
         <button class="btn btn-danger w-100 mt-3 mb-3 no-pointer" style="color: black;">
-            <i class="fas fa-search">&nbsp;&nbsp;SEARCH &nbsp;REPORT &nbsp;RECORDS</i>
+            <i class="fas fa-search">&nbsp;&nbsp;SEARCH &nbsp;TEXTFILE &nbsp;CASES</i>
         </button>
 
         <!-- Message From BackEnd -->
@@ -71,7 +71,7 @@
             </div>
             <div class="col-lg-4 m-3">
               <form method="GET" action="{% url 'search_report_cases' %}">
-                  <input type="text" name="case_id" placeholder="report caseID...">
+                  <input type="text" name="case_id" placeholder="textfile CASE ID...">
                   &nbsp;&nbsp;&nbsp;<button class="btn btn-secondary" type="submit"><i class="fas fa-search">&nbsp;&nbsp;Search</i></button>
               </form>
             </div>
@@ -100,14 +100,14 @@
                         </thead>
 
                         <tbody>
-                          {% if case_reports %}
-                          {% for case_r in case_reports %}
+                          {% if textfiles %}
+                          {% for case_r in textfiles %}
                             <tr>
                                 <td>{{ case_r.id }}</td>
                                 <td>{{ case_r.case_id }}</td>
                                 <td>{{ case_r.case_name }}</td>
-                                <td>{{ case_r.user_id.email }}</td>
-                                <td>{{ case_r.encryption_date }}</td>
+                                <td>{{ case_r.user.email }}</td>
+                                <td>{{ case_r.case_date }}</td>
                                 <td><a href="{% url 'view_report_decrypt' case_r.id %}">
                     <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
                     </a></td>
@@ -131,7 +131,7 @@
           </div>
         </div>
             <a href="{% url 'export_report_csv' %}">
-              <button class="btn btn-outline-success mb-1 ml-5"><i class="fas fa-file-export">&nbsp;&nbsp;reports.csv</i></button>
+              <button class="btn btn-outline-success mb-1 ml-5"><i class="fas fa-file-export">&nbsp;&nbsp;textfiles.csv</i></button>
             </a>
             <!--End Table-->
         </ul>

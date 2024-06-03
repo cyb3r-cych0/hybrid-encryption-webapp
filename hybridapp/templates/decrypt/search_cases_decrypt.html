@@ -4,7 +4,7 @@
 <!-- Navbar links control -->
 {% block links %}{% endblock %}
 
-<title>{% block title %} CBDET | Search Records {% endblock %}</title>
+<title>{% block title %} CBDET | Search Case {% endblock %}</title>
 
 <!-- Block NavBar Content -->
 {% block nav-content %}
@@ -30,7 +30,7 @@
                 <div class="col-lg-4 col-md-12">
                     <div class="logo">
                         <img src="{% static 'img/icon.ico' %}" alt="Logo">
-                        <h1><span>CB</span>DET<span>S</span></h1>
+                        <h1><span>CB</span>DET<span></span></h1>
                     </div>
                 </div>
             </div>
@@ -44,7 +44,7 @@
     <br>
     <div class="container mt-2 mb-5 col-md-12" style="width: 95%; font-size: 14px">
         <button class="btn btn-danger w-100 mt-3 mb-3 no-pointer" style="color: black;">
-            <i class="fas fa-search">&nbsp;&nbsp;SEARCH &nbsp;ENCRYPTED &nbsp;RECORDS</i>
+            <i class="fas fa-search">&nbsp;&nbsp;SEARCH &nbsp;ENCRYPTED &nbsp;CASES</i>
         </button>
 
         <!-- Message From BackEnd -->
@@ -67,7 +67,7 @@
             </div>
             <div class="col-lg-4 m-3">
               <form method="GET" action="{% url 'search_cases_decrypt' %}">
-                  <input type="text" name="q" placeholder="file/text/report Case ID ...">
+                  <input type="text" name="q" placeholder="file/text/textfile CASE ID ...">
                   &nbsp;&nbsp;&nbsp;<button class="btn btn-secondary" type="submit"><i class="fas fa-search">&nbsp;&nbsp;Search</i></button>
               </form>
             </div>
@@ -101,9 +101,9 @@
                             <tr>
                                 <td>{{ file.id }}</td>
                                 <td>{{ file.case_id }}</td>
-                                <td>{{ file.file }}</td>
+                                <td>{{ file.case_file }}</td>
                                 <td>{{ file.user.email }}</td>
-                                <td>{{ file.encryption_date }}</td>
+                                <td>{{ file.case_date }}</td>
                                 <td><a href="{% url 'view_data_decrypt' file.id %}">
                                     <button type="button" class="btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
                                   </a>
@@ -121,10 +121,10 @@
                           {% for case in case_texts %}
                             <tr>
                                 <td>{{ case.id }}</td>
-                                <td>{{ case.caseID }}</td>
-                                <td>{{ case.caseName }}</td>
+                                <td>{{ case.case_id }}</td>
+                                <td>{{ case.case_name }}</td>
                                 <td>{{ case.user.email }}</td>
-                                <td>{{ case.encryption_date }}</td>
+                                <td>{{ case.case_date }}</td>
                                 <td><a href="{% url 'view_file_decrypt' case.id %}">
                     <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
                     </a></td>
@@ -137,14 +137,14 @@
                         </tbody>
 
                         <tbody>
-                          {% if case_reports %}
-                          {% for case_r in case_reports %}
+                          {% if case_textfiles %}
+                          {% for case_r in case_textfiles %}
                             <tr>
                                 <td>{{ case_r.id }}</td>
                                 <td>{{ case_r.case_id }}</td>
                                 <td>{{ case_r.case_name }}</td>
-                                <td>{{ case_r.user_id.email }}</td>
-                                <td>{{ case_r.encryption_date }}</td>
+                                <td>{{ case_r.user.email }}</td>
+                                <td>{{ case_r.case_date }}</td>
                                 <td><a href="{% url 'view_report_decrypt' case_r.id %}">
                     <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
                     </a></td>

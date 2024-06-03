@@ -4,7 +4,7 @@
 <!-- Navbar links control -->
 {% block links %}{% endblock %}
 
-<title>{% block title %} CBDET | Search Records {% endblock %}</title>
+<title>{% block title %} CBDET | Search Cases {% endblock %}</title>
 
 <!-- Block NavBar Content -->
 {% block nav-content %}
@@ -44,7 +44,7 @@
     <br>
     <div class="container mt-2 mb-5 col-md-12" style="width: 95%; font-size: 14px">
         <button class="btn btn-danger w-100 mt-3 mb-3 no-pointer" style="color: black;">
-            <i class="fas fa-search">&nbsp;&nbsp;SEARCH &nbsp;ENCRYPTED &nbsp;RECORDS</i>
+            <i class="fas fa-search">&nbsp;&nbsp;SEARCH&nbsp;CASES</i>
         </button>
 
         <!-- Message From BackEnd -->
@@ -67,7 +67,7 @@
             </div>
             <div class="col-lg-4 m-3">
               <form method="GET" action="{% url 'search_cases_encrypt' %}">
-                  <input type="text" name="q" placeholder="file/text/report Case ID ...">
+                  <input type="text" name="q" placeholder="file/text/textfile Case ID ...">
                   &nbsp;&nbsp;&nbsp;<button class="btn btn-secondary" type="submit"><i class="fas fa-search">&nbsp;&nbsp;Search</i></button>
               </form>
             </div>
@@ -100,9 +100,9 @@
                             <tr>
                                 <td>{{ file.id }}</td>
                                 <td>{{ file.case_id }}</td>
-                                <td>{{ file.file }}</td>
+                                <td>{{ file.case_file }}</td>
                                 <td>{{ file.user.email }}</td>
-                                <td>{{ file.encryption_date }}</td>
+                                <td>{{ file.case_date }}</td>
                                 <td><a href="{% url 'view_data' file.id %}">
                                     <button type="button" class="btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
                                   </a>
@@ -117,10 +117,10 @@
                           {% for case in case_texts %}
                             <tr>
                                 <td>{{ case.id }}</td>
-                                <td>{{ case.caseID }}</td>
-                                <td>{{ case.caseName }}</td>
+                                <td>{{ case.case_id }}</td>
+                                <td>{{ case.case_name }}</td>
                                 <td>{{ case.user.email }}</td>
-                                <td>{{ case.encryption_date }}</td>
+                                <td>{{ case.case_date }}</td>
                                 <td><a href="{% url 'view_file' case.id %}">
                     <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
                     </a></td>
@@ -130,14 +130,14 @@
                         </tbody>
 
                         <tbody>
-                          {% if case_reports %}
-                          {% for case_r in case_reports %}
+                          {% if case_textfiles %}
+                          {% for case_r in case_textfiles %}
                             <tr>
                                 <td>{{ case_r.id }}</td>
                                 <td>{{ case_r.case_id }}</td>
-                                <td>{{ case_r.case_name }}</td>
-                                <td>{{ case_r.user_id.email }}</td>
-                                <td>{{ case_r.encryption_date }}</td>
+                                <td>{{ case_r.case_file }}</td>
+                                <td>{{ case_r.user.email }}</td>
+                                <td>{{ case_r.case_date }}</td>
                                 <td><a href="{% url 'view_report_encrypt' case_r.id %}">
                     <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
                     </a></td>
@@ -151,7 +151,7 @@
             </div>
             </div>
             <a href="{% url 'view_files' %}">
-                <button class="btn btn-outline-success mb-1 ml-5"><i class="fas fa-folder-minus">&nbsp;&nbsp;Back To Records</i></button>
+                <button class="btn btn-outline-success mb-1 ml-5"><i class="fas fa-folder-minus">&nbsp;&nbsp;Back To Cases</i></button>
             </a>
             <!--End Table-->
         </ul>

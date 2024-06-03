@@ -4,7 +4,7 @@
 <!-- Navbar links control -->
 {% block links %}{% endblock %}
 
-<title>{% block title %} CBDET | View Records {% endblock %}</title>
+<title>{% block title %} CBDET | View Cases {% endblock %}</title>
 
 <!-- Block NavBar Content -->
 {% block nav-content %}
@@ -44,7 +44,7 @@
     <br>
     <div class="container mt-2 mb-5 col-md-12" style="width: 95%; font-size: 14px;">
       <button class="btn btn-secondary w-100 mt-3 mb-3 no-pointer">
-          <i class="fas fa-folder-tree">&nbsp;&nbsp;ENCRYPTED &nbsp;CASE &nbsp;RECORDS</i>
+          <i class="fas fa-folder-tree">&nbsp;&nbsp;ENCRYPTED &nbsp;CASES</i>
       </button>
 
         <!--Table-->
@@ -68,9 +68,9 @@
                         <tr>
                             <td>{{ file.id }}</td>
                             <td>{{ file.case_id }}</td>
-                            <td>{{ file.file }}</td>
+                            <td>{{ file.case_file }}</td>
                             <td>{{ file.user.email }}</td>
-                            <td>{{ file.encryption_date }}</td>
+                            <td>{{ file.case_date }}</td>
                             <td><a href="{% url 'view_data_decrypt' file.id %}">
                 <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
                 </a></td>
@@ -85,10 +85,10 @@
                         {% for txt in texts %}
                         <tr>
                             <td>{{ txt.id }}</td>
-                            <td>{{ txt.caseID }}</td>
-                            <td>{{ txt.caseName }}</td>
+                            <td>{{ txt.case_id }}</td>
+                            <td>{{ txt.case_name }}</td>
                             <td>{{ txt.user.email }}</td>
-                            <td>{{ txt.encryption_date }}</td>
+                            <td>{{ txt.case_date }}</td>
                             <td><a href="{% url 'view_file_decrypt' txt.id %}">
                 <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
                 </a></td>
@@ -100,13 +100,13 @@
                     </tbody>
 
                     <tbody>
-                        {% for repo in reports %}
+                        {% for repo in textfiles %}
                         <tr>
                             <td>{{ repo.id }}</td>
                             <td>{{ repo.case_id }}</td>
-                            <td>{{ repo.case_name }}</td>
-                            <td>{{ repo.user_id.email }}</td>
-                            <td>{{ repo.encryption_date }}</td>
+                            <td>{{ repo.case_file }}</td>
+                            <td>{{ repo.user.email }}</td>
+                            <td>{{ repo.case_date }}</td>
                             <td><a href="{% url 'view_report_decrypt' repo.id %}">
                 <button type="button" class="btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
                 </a></td>
