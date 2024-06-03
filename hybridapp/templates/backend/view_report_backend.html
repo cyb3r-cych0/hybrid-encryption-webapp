@@ -5,7 +5,7 @@
 {% block links %}{% endblock %}
 
 <!-- Block Title -->
-<title>{% block title %} CBDET | Report_Details {% endblock %}</title>
+<title>{% block title %} CBDET | TextFile Details {% endblock %}</title>
 
 <!-- Block NavBar Content -->
 {% block nav-content %}
@@ -43,21 +43,21 @@
 <br>
     <div class="container mt-1 mb-5 pb-2">
         <button class="btn btn-warning w-100 mt-3 mb-2 no-pointer">
-            <i class="fa-solid fa-circle-info">&nbsp;&nbsp;RECORDS &nbsp;DETAILS</i>
+            <i class="fa-solid fa-circle-info">&nbsp;&nbsp;CASE &nbsp;DETAILS</i>
         </button>
 
         <div id="pt" class="col-12">
             <div class="card p-3 mt-3 mb-4">
                 <div class="row" >
-                    <h3>ENCRYPTED FILE INFORMATION</h3>
+                    <h3>ENCRYPTED CASE INFORMATION</h3>
                     <div class="container m-3">
-                      <p> CASE ID  : {{ report.case_id }} </p>
-                      <p>FILE TITLE: {{ report.case_file }}</p>
+                      <p> CASE ID  : {{ textfile.case_id }} </p>
+                      <p>FILE TITLE: {{ textfile.case_file }}</p>
                       <p>USER ID: {{ user.email }}</p>
-                      <p>DATE ENCRYPTED: {{ user.encryption_date }}</p>
-                      <p>FILE NAME: {{ report.case_name }}</p>
-                      <p>FILE INFO: {{ report.case_info }}</p>
-                      <p>FILE DATA: {{ report.case_data }}</p>
+                      <p>DATE ENCRYPTED: {{ user.case_date }}</p>
+                      <p>FILE NAME: {{ textfile.case_name }}</p>
+                      <p>FILE INFO: {{ textfile.case_info }}</p>
+                      <p>FILE DATA: {{ textfile.case_data }}</p>
                     </div>
                 </div>
             </div>
@@ -69,10 +69,10 @@
                     <button type="button" class="btn btn-outline-danger m-1 p-2" disabled><i class="fas fa-triangle-exclamation">&nbsp;Decrypt</i></button>
                 </a>
             {% elif user.is_staff == True %}
-                <a href="/delete_case_report/{{ report.id }}">
+                <a href="/delete_case_report/{{ textfile.id }}">
                     <button type="button" class="btn btn-outline-danger m-1 p-2"><i class="fas fa-trash-can">&nbsp;Delete</i></button>
                 </a>
-                <a href="{% url 'decrypt_case' report.id %}">
+                <a href="{% url 'decrypt_case' textfile.id %}">
                   <button type="button" class="btn btn-outline-success m-1 p-2"><i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i></button>
                 </a>
               {% endif %}

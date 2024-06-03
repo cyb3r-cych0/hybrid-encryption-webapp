@@ -4,7 +4,7 @@
 <!-- Navbar links control -->
 {% block links %}{% endblock %}
 
-<title>{% block title %} CBDET | Case Records {% endblock %}</title>
+<title>{% block title %} CBDET | Cases {% endblock %}</title>
 
 <!-- Block NavBar Content -->
 {% block nav-content %}
@@ -44,7 +44,7 @@
     <br>
     <div class="container mt-2 mb-5 col-md-12" style="width: 95%; font-size: 14px">
         <button class="btn btn-secondary w-100 mt-3 mb-1 no-pointer">
-            <i class="fas fa-file">&nbsp;&nbsp;ENCRYPTED &nbsp;CASE &nbsp;RECORDS</i>
+            <i class="fas fa-file">&nbsp;&nbsp;ENCRYPTED &nbsp;CASES</i>
         </button>
 
         <!-- Message From BackEnd -->
@@ -81,10 +81,10 @@
                         {% for file in files %}
                         <tr>
                             <td>{{ file.id }}</td>
-                            <td>{{ file.caseID }}</td>
-                            <td>{{ file.caseName }}</td>
+                            <td>{{ file.case_id }}</td>
+                            <td>{{ file.case_name }}</td>
                             <td>{{ file.user.email }}</td>
-                            <td>{{ file.encryption_date }}</td>
+                            <td>{{ file.case_date }}</td>
                             <td><a href="{% url 'view_file_backend' file.id %}">
                 <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
                 </a></td>
@@ -110,9 +110,9 @@
                         <tr>
                             <td>{{ f_file.id }}</td>
                             <td>{{ f_file.case_id }}</td>
-                            <td>{{ f_file.file }}</td>
+                            <td>{{ f_file.case_file }}</td>
                             <td>{{ f_file.user.email }}</td>
-                            <td>{{ f_file.encryption_date }}</td>
+                            <td>{{ f_file.case_date }}</td>
                             <td><a href="{% url 'view_data_backend' f_file.id %}">
                 <button type="button" class="btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
                 </a></td>
@@ -131,13 +131,13 @@
                     </tbody>
 
                     <tbody>
-                        {% for report in reports %}
+                        {% for report in textfiles %}
                         <tr>
                             <td>{{ report.id }}</td>
                             <td>{{ report.case_id }}</td>
-                            <td>{{ report.case_name }}</td>
-                            <td>{{ report.user_id.email }}</td>
-                            <td>{{ report.encryption_date }}</td>
+                            <td>{{ report.case_file }}</td>
+                            <td>{{ report.user.email }}</td>
+                            <td>{{ report.case_date }}</td>
                             <td><a href="{% url 'view_report_backend' report.id %}">
                 <button type="button" class="btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
                 </a></td>

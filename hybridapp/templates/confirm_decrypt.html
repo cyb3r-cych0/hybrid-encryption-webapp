@@ -2,7 +2,7 @@
 {% load static %}
 
 <!-- Block Title -->
-<title>{% block title %} CBDET | Confirm Delete {% endblock %}</title>
+<title>{% block title %} CBDET | Confirm Decrypt {% endblock %}</title>
 
 <!-- Navbar links control -->
 {% block links %}{% endblock %}
@@ -44,18 +44,19 @@
     <div class="container mb-5 pb-5" style="width: 95%; font-size: 14px">
         <!-- links|cards -->
         <button class="btn btn-warning w-100 mb-4 mt-3 no-pointer" style="color: black;">
-            <i class="fas fa-trash-can">&nbsp;&nbsp;DELETE &nbsp;CASE</i>
+            <i class="fas fa-unlock">&nbsp;&nbsp;DECRYPT &nbsp;CASE</i>
         </button>
 
         <!-- confirm_delete.html -->
         <div class="card p-3 mt-2">
             <div class="row">
-              <h5 class="mb-5"><i class="fas fa-circle-exclamation">&nbsp;&nbsp;Are you sure you want to delete this file?</i></h5>
+              <h5 class="mb-5"><i class="fas fa-circle-exclamation">&nbsp;&nbsp;Are you sure you want to decrypt this file?</i></h5>
               <form method="post">
                   {% csrf_token %}
-                  <button type="submit" class="w-90 btn btn-lg btn-outline-danger m-2"><i class="fas fa-trash-arrow-up">&nbsp;&nbsp;Yes, Delete</i></button>
-
-                  <a href="{% url 'decrypt' %}">
+                    <a href="{% url 'decrypt' %}">
+                        <button type="submit" name="confirm" class="w-90 btn btn-lg btn-outline-success m-2"><i class="fas fa-unlock-keyhole">&nbsp;&nbsp;Yes, Decrypt</i></button>
+                    </a>
+                    <a href="{% url 'decrypt' %}">
                     <button type="button" class="w-90 btn btn-lg btn-outline-secondary m-2"><i class="fas fa-xmark">&nbsp;&nbsp;Cancel</i></button>
                   </a>
               </form>

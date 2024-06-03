@@ -1,48 +1,45 @@
 from django import forms
-from django.forms import ModelForm
-from django.core.validators import RegexValidator
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
-from .models import Case, EncryptedFile, EncryptCase
+from django.forms import ModelForm
+from .models import Text, TextFile, File
 
 
 class FileUploadForm(forms.ModelForm):
     class Meta:
-        model = EncryptedFile
-        fields = ('case_id', 'file')
+        model = File
+        fields = ('case_id', 'case_file')
 
-    case_id = forms.CharField(widget=forms.TextInput(attrs={'autocomplete': 'new-password', 'placeholder': 'enter caseID'}))
+    case_id = forms.CharField(
+        widget=forms.TextInput(attrs={'autocomplete': 'new-password', 'placeholder': 'enter ''case ID'}))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['case_id'].label = 'CASE ID'.format(self.fields['case_id'].label)
-        self.fields['file'].label = 'UPLOAD CASE FILE'.format(self.fields['file'].label)
+        self.fields['case_file'].label = 'UPLOAD CASE FILE'.format(self.fields['case_file'].label)
 
 
-class CaseForm(ModelForm):
-
+class TextForm(ModelForm):
     class Meta:
-        model = Case
-        fields = ["caseID", "caseName", "caseData"]
+        model = Text
+        fields = ["case_id", "case_name", "case_data"]
 
-    caseID = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'enter caseID'}))
-    caseName = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'enter case name/title'}))
+    case_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'enter case ID'}))
+    case_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'enter case name/title'}))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['caseID'].label = 'CASE ID'.format(self.fields['caseID'].label)
-        self.fields['caseName'].label = 'CASE NAME/TITLE'.format(self.fields['caseName'].label)
-        self.fields['caseData'].label = 'CASE INFORMATION'.format(self.fields['caseData'].label)
+        self.fields['case_id'].label = 'CASE ID'.format(self.fields['case_id'].label)
+        self.fields['case_name'].label = 'CASE NAME/TITLE'.format(self.fields['case_name'].label)
+        self.fields['case_data'].label = 'CASE INFORMATION'.format(self.fields['case_data'].label)
 
 
-class EncryptCaseForm(ModelForm):
-
+class TextFileForm(ModelForm):
     class Meta:
-        model = EncryptCase
+        model = TextFile
         fields = ["case_id", "case_name", "case_info", "case_file"]
 
-    case_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'enter caseID...'}))
+    case_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'enter case ID...'}))
     case_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'enter case name/title...'}))
 
     def __init__(self, *args, **kwargs):
@@ -53,17 +50,19 @@ class EncryptCaseForm(ModelForm):
         self.fields['case_file'].label = 'UPLOAD CASE FILE'.format(self.fields['case_file'].label)
 
 
-
 class RegisterForm(UserCreationForm):
-
     class Meta:
         model = User
         fields = ["username", "email", "password1", "password2"]
 
-    email = forms.EmailField(widget=forms.TextInput(attrs={'autocomplete': 'new-password', 'placeholder': 'example@gmail.com'}))
-    username = forms.CharField( widget=forms.TextInput(attrs={'autocomplete': 'new-password', 'placeholder': 'John/Alice etc...'}))
-    password1 = forms.CharField( widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'placeholder': 'strong password...'}))
-    password2 = forms.CharField(widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'placeholder': 'should match...'}))
+    email = forms.EmailField(
+        widget=forms.TextInput(attrs={'autocomplete': 'new-password', 'placeholder': 'example@gmail.com'}))
+    username = forms.CharField(
+        widget=forms.TextInput(attrs={'autocomplete': 'new-password', 'placeholder': 'John/Alice etc...'}))
+    password1 = forms.CharField(
+        widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'placeholder': 'strong password...'}))
+    password2 = forms.CharField(
+        widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'placeholder': 'should match...'}))
 
     email.widget.input_type = 'email'
     password1.widget.input_type = 'password'

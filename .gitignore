@@ -8,6 +8,7 @@ ENV/
 env/
 .env/
 .venv/
+.VENV/
 
 # Django stuff
 *.log
@@ -35,6 +36,3 @@ media/
 # Windows
 Thumbs.db
 ehthumbs.db
-
-
-SECRET_KEY=django-insecure-t-dnz&m1!dj!+nregs_uq76$nr_avu7vq&ivst^!7q+o)lot6h

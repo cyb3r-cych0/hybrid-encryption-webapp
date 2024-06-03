@@ -4,7 +4,7 @@
 <!-- Navbar links control -->
 {% block links %}{% endblock %}
 
-<title>{% block title %} CBDET | Search Text {% endblock %}</title>
+<title>{% block title %} CBDET | Search Case {% endblock %}</title>
 
 <!-- Block NavBar Content -->
 {% block nav-content %}
@@ -44,7 +44,7 @@
     <br>
     <div class="container mt-2 mb-5 col-md-12" style="width: 95%; font-size: 14px">
         <button class="btn btn-danger w-100 mt-3 mb-3 no-pointer" style="color: black;">
-            <i class="fas fa-search">&nbsp;&nbsp;SEARCH &nbsp;TEXT &nbsp;RECORDS</i>
+            <i class="fas fa-search">&nbsp;&nbsp;SEARCH &nbsp;TEXT &nbsp;CASE</i>
         </button>
 
         <!-- Message From BackEnd -->
@@ -67,7 +67,7 @@
             </div>
             <div class="col-lg-4 m-3">
               <form method="GET" action="{% url 'search_text_cases' %}">
-                  <input type="text" name="caseID" placeholder="text caseID...">
+                  <input type="text" name="caseID" placeholder="text CASE ID...">
                   &nbsp;&nbsp;&nbsp;<button class="btn btn-secondary" type="submit"><i class="fas fa-search">&nbsp;&nbsp;Search</i></button>
               </form>
             </div>
@@ -100,10 +100,10 @@
                           {% for case in cases %}
                             <tr>
                                 <td>{{ case.id }}</td>
-                                <td>{{ case.caseID }}</td>
-                                <td>{{ case.caseName }}</td>
+                                <td>{{ case.case_id }}</td>
+                                <td>{{ case.case_name }}</td>
                                 <td>{{ case.user.email }}</td>
-                                <td>{{ case.encryption_date }}</td>
+                                <td>{{ case.case_date }}</td>
                                 <td><a href="{% url 'view_file_decrypt' case.id %}">
                     <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
                     </a></td>

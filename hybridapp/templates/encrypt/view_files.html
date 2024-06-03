@@ -2,7 +2,7 @@
 {% load static %}
 
 <!-- Block Title -->
-<title>{% block title %} CBDET | Encrypted Records {% endblock %}</title>
+<title>{% block title %} CBDET | Encrypted Cases {% endblock %}</title>
 
 
 <!-- Navbar links control -->
@@ -49,7 +49,7 @@
     <div class="container mt-2 mb-5" style="width: 95%; font-size: 14px">
 
         <button class="btn btn-secondary w-100 mt-3 mb-1 no-pointer">
-            <i class="fas fa-folder-tree">&nbsp;&nbsp;ENCRYPTED &nbsp;RECORDS</i>
+            <i class="fas fa-folder-tree">&nbsp;&nbsp;ENCRYPTED &nbsp;CASES</i>
         </button>
 
 <!--Table-->
@@ -72,9 +72,9 @@
                     <tr>
                         <td>{{ file.id }}</td>
                         <td>{{ file.case_id }}</td>
-                        <td>{{ file.file }}</td>
+                        <td>{{ file.case_file }}</td>
                         <td>{{ file.user.email }}</td>
-                        <td>{{ file.encryption_date }}</td>
+                        <td>{{ file.case_date }}</td>
                         <td><a href="{% url 'view_data' file.id %}">
             <button type="button" class="w-100 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
             </a></td>
@@ -83,22 +83,22 @@
                     {% for txt in texts %}
                     <tr>
                         <td>{{ txt.id }}</td>
-                        <td>{{ txt.caseID }}</td>
-                        <td>{{ txt.caseName }}</td>
+                        <td>{{ txt.case_id }}</td>
+                        <td>{{ txt.case_name }}</td>
                         <td>{{ txt.user.email }}</td>
-                        <td>{{ txt.encryption_date }}</td>
+                        <td>{{ txt.case_date }}</td>
                         <td><a href="{% url 'view_file' txt.id %}">
             <button type="button" class="w-100 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
             </a></td>
                     </tr>
                     {% endfor %}
-                    {% for repo in reports %}
+                    {% for repo in textfiles %}
                     <tr>
                         <td>{{ repo.id }}</td>
                         <td>{{ repo.case_id }}</td>
                         <td>{{ repo.case_file }}</td>
-                        <td>{{ repo.user_id.email }}</td>
-                        <td>{{ repo.encryption_date }}</td>
+                        <td>{{ repo.user.email }}</td>
+                        <td>{{ repo.case_date }}</td>
                         <td><a href="{% url 'view_report_encrypt' repo.id %}">
             <button type="button" class="w-100 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
             </a></td>

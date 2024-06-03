@@ -3,7 +3,7 @@
 {% load static %}
 
 <!-- Block Title -->
-<title>{% block title %} CBDET | Encrypt File Record {% endblock %}</title>
+<title>{% block title %} CBDET | Encrypt Case {% endblock %}</title>
 
 <!-- Navbar links control -->
 {% block links %}{% endblock %}
@@ -65,7 +65,7 @@
         <form method="POST" class="card p-3 mt-2" autocomplete="off" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form|crispy }}
-            <button type="submit" class="btn btn-outline-primary mt-3"><i class="fas fa-lock">&nbsp;&nbsp;Encrypt &nbsp;Record</i></button>
+            <button type="submit" class="btn btn-outline-primary mt-3"><i class="fas fa-lock">&nbsp;&nbsp;Encrypt &nbsp;File</i></button>
         </form>
       </div>
       <div class="col-md-6 mt-2">

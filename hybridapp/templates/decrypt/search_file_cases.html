@@ -44,7 +44,7 @@
     <br>
     <div class="container mt-2 mb-5 col-md-12" style="width: 95%; font-size: 14px">
         <button class="btn btn-danger w-100 mt-3 mb-3 no-pointer" style="color: black;">
-          <i class="fas fa-search">&nbsp;&nbsp;SEARCH &nbsp;FILE &nbsp;RECORDS</i>
+          <i class="fas fa-search">&nbsp;&nbsp;SEARCH &nbsp;FILE &nbsp;CASES</i>
         </button>
 
         <!-- Message From BackEnd -->
@@ -67,7 +67,7 @@
             </div>
             <div class="col-lg-4 m-3">
               <form method="GET" action="{% url 'search_file_cases' %}">
-                  <input type="text" name="case_id" placeholder="file caseID...">
+                  <input type="text" name="case_id" placeholder="file CASE ID...">
                   &nbsp;&nbsp;&nbsp;<button class="btn btn-secondary" type="submit"><i class="fas fa-search">&nbsp;&nbsp;Search</i></button>
               </form>
             </div>
@@ -101,9 +101,9 @@
                             <tr>
                                 <td>{{ file.id }}</td>
                                 <td>{{ file.case_id }}</td>
-                                <td>{{ file.file }}</td>
+                                <td>{{ file.case_file }}</td>
                                 <td>{{ file.user.email }}</td>
-                                <td>{{ file.encryption_date }}</td>
+                                <td>{{ file.case_date }}</td>
                                 <td><a href="{% url 'view_data_decrypt' file.id %}">
                                     <button type="button" class="btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
                                   </a>

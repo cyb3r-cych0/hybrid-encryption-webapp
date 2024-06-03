@@ -3,7 +3,7 @@
 {% load static %}
 
 <!-- Block Title -->
-<title>{% block title %} CBDET | Encrypt Record {% endblock %}</title>
+<title>{% block title %} CBDET | Encrypt Case {% endblock %}</title>
 
 <!-- Navbar links control -->
 {% block links %}{% endblock %}
@@ -44,7 +44,7 @@
 <div class="container mt-2 mb-5 pb-5" style="width: 95%; font-size: 14px">
     <!-- Add Form -->
     <button class="btn btn-danger w-100 mt-3 mb-3 no-pointer" style="color: black;">
-        <i class="fas fa-folder-open">&nbsp;&nbsp;ADD &nbsp;REPORT &nbsp;DETAILS</i>
+        <i class="fas fa-folder-open">&nbsp;&nbsp;ADD &nbsp;TEXTFILE &nbsp;DETAILS</i>
     </button>
 
     <!-- Message From BackEnd -->
@@ -78,7 +78,7 @@
                             {{ form.case_file|as_crispy_field }}
                         </div>
                     </div>
-                <button type="submit" class="btn btn-outline-primary mt-3"><i class="fas fa-lock">&nbsp;&nbsp;Encrypt &nbsp;Record</i></button>
+                <button type="submit" class="btn btn-outline-primary mt-3"><i class="fas fa-lock">&nbsp;&nbsp;Encrypt &nbsp;TextFile</i></button>
             </form>
           </div>
           <div class="col-md-6 mt-5">

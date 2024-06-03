@@ -43,7 +43,7 @@
     <br>
     <div class="container mt-2 mb-5 col-md-12" style="width: 95%; font-size: 14px">
         <button class="btn btn-danger w-100 mt-3 mb-3 no-pointer" style="color: black;">
-            <i class="fas fa-filter">&nbsp;&nbsp;FILTER &nbsp;FILE &nbsp;RECORDS</i>
+            <i class="fas fa-filter">&nbsp;&nbsp;FILTER &nbsp;FILE &nbsp;CASES</i>
         </button>
 
         <!-- Message From BackEnd -->
@@ -64,7 +64,7 @@
             <div class="col-8 m-3 ">
               <form method="POST" action="{% url 'filter_files' %}">
                     {% csrf_token %}
-                    <label for=""><i class="fas fa-hand-pointer">&nbsp;&nbsp;Select Date &nbsp;&nbsp;</i></label>
+                    <label><i class="fas fa-hand-pointer">&nbsp;&nbsp;Select Date &nbsp;&nbsp;</i></label>
                     <i class="fas fa-">&nbsp;&nbsp;From: &nbsp;&nbsp;</i> <input type="date" name="from_date">
                     <i class="fas fa-">&nbsp;&nbsp;To: &nbsp;&nbsp;</i><input type="date" name="to_date">
                     &nbsp;&nbsp;&nbsp;<button class="btn btn-secondary" type="submit"><i class="fas fa-search">&nbsp;&nbsp; Search</i></button>
@@ -99,9 +99,9 @@
                             <tr>
                                 <td>{{ file.id }}</td>
                                 <td>{{ file.case_id }}</td>
-                                <td>{{ file.file }}</td>
+                                <td>{{ file.case_file }}</td>
                                 <td>{{ file.user.email }}</td>
-                                <td>{{ file.encryption_date }}</td>
+                                <td>{{ file.case_date }}</td>
                                 <td><a href="{% url 'view_data_decrypt' file.id %}">
                     <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
                     </a></td>

@@ -45,7 +45,7 @@
     <div class="container mt-1 mb-5 pb-2">
 
         <button class="btn btn-warning w-100 mt-3 mb-2 no-pointer">
-            <i class="fa-solid fa-circle-info">&nbsp;&nbsp;RECORD &nbsp;DETAILS</i>
+            <i class="fa-solid fa-circle-info">&nbsp;&nbsp;TEXT &nbsp;DETAILS</i>
         </button>
 
         <div id="pt" class="col-12">
@@ -54,11 +54,11 @@
                     <h3>ENCRYPTED TEXT INFORMATION</h3>
                     <!-- <h4>CASE ID  : {{ file.caseID }}<small class="text-body-secondary fw-light" style="font-size: 17px">&nbsp;&nbsp;&nbsp;</small></h4> -->
                     <div class="container m-3">
-                      <p> CASE ID  : {{ file.caseID }} </p>
+                      <p> CASE ID  : {{ file.case_id }} </p>
                       <p> USER ID: {{ file.user.email }}</p>
-                      <p> DATE ENCRYPTED: {{ file.encryption_date }}</p>
-                      <p> TEXT NAME: {{ file.caseName }}</p>
-                      <p> TEXT DATA: {{ file.caseData }}</p>
+                      <p> DATE ENCRYPTED: {{ file.case_date }}</p>
+                      <p> TEXT NAME: {{ file.case_name }}</p>
+                      <p> TEXT DATA: {{ file.case_data }}</p>
                     </div>
                 </div>
             </div>

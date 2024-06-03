@@ -3,7 +3,7 @@
 {% load static %}
 
 <!-- Block Title -->
-<title>{% block title %} CBDET | Update {% endblock %}</title>
+<title>{% block title %} CBDET | Update Case {% endblock %}</title>
 
 <!-- Navbar links control -->
 {% block links %}{% endblock %}
@@ -44,7 +44,7 @@
     <div class="container mt-2 mb-5 pb-2"  style="width: 95%; font-size: 14px">
         <!-- Update Form -->
         <button class="btn btn-warning w-100 mt-3 mb-3 no-pointer">
-            <i class="fa-solid fa-info-circle"></i>&nbsp;&nbsp;UPDATE ENCRYPTED FILE DETAILS
+            <i class="fa-solid fa-info-circle"></i>&nbsp;&nbsp;UPDATE ENCRYPTED CASE DETAILS
         </button>
         {% for message in messages %}
             {% if message.tags == 'error' %}

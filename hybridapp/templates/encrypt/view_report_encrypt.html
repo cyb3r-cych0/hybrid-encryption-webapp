@@ -14,7 +14,7 @@
 {% endblock %}
 
 <!-- Block Title -->
-<title>{% block title %} CBDET | Report Details {% endblock %}</title>
+<title>{% block title %} CBDET | TextFile Details {% endblock %}</title>
 
 <!-- Logout Button -->
 {% block nav-btn %}
@@ -45,21 +45,21 @@
     <div class="container mt-1 mb-5 pb-2">
 
         <button class="btn btn-warning w-100 mt-3 mb-2 no-pointer">
-            <i class="fa-solid fa-circle-info">&nbsp;RECORD &nbsp;DETAILS</i>
+            <i class="fa-solid fa-circle-info">&nbsp;TEXTFILE &nbsp;DETAILS</i>
         </button>
 
         <div id="pt" class="col-12">
             <div class="card p-3 mt-3 mb-4">
                 <div class="row" >
-                    <h3>ENCRYPTED REPORT INFORMATION</h3>
+                    <h3>ENCRYPTED TEXTFILE INFORMATION</h3>
                     <div class="container m-3">
-                      <p>CASE ID : {{ report.case_id }} </p>
-                      <p>USER ID : {{ report.user_id.email }}</p>
-                      <p>DATE ENCRYPTED : {{ report.encryption_date }}</p>
-                      <p>REPORT TITLE : {{ report.case_file }}</p>
-                      <p>REPORT NAME : {{ report.case_name }}</p>
-                      <p>REPORT INFO : {{ report.case_info }}</p>
-                      <p>REPORT DATA : {{ report.case_data }}</p>
+                      <p>CASE ID : {{ textfile.case_id }} </p>
+                      <p>USER ID : {{ textfile.user.email }}</p>
+                      <p>DATE ENCRYPTED : {{ textfile.case_date }}</p>
+                      <p>REPORT TITLE : {{ textfile.case_file }}</p>
+                      <p>REPORT NAME : {{ textfile.case_name }}</p>
+                      <p>REPORT INFO : {{ textfile.case_info }}</p>
+                      <p>REPORT DATA : {{ textfile.case_data }}</p>
                     </div>
                 </div>
             </div>
