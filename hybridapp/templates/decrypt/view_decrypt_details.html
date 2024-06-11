@@ -14,13 +14,12 @@
 {% endblock %}
 
 <!-- Block Title -->
-<title>{% block title %} CBDET | Text Details {% endblock %}</title>
+<title>{% block title %} CBDET | Decrypt File Details {% endblock %}</title>
 
 <!-- Logout Button -->
 {% block nav-btn %}
-    <a class="btn btn-custom" id="btn-nav-view" onclick="goBack()"><i class="fa fa-chevron-left">&nbsp;&nbsp; Back</i></a>
-    <a class="btn btn-custom" id="btn-nav-back" href="{% url 'backend' %}" ><i class="fa fa-sliders">&nbsp;&nbsp; Control Panel</i></a>
-    <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout"><i class="fa fa-right-from-bracket">&nbsp;&nbsp; Logout</i></a>
+    <a class="btn btn-custom" onclick="goBack()" id="btn-nav-view"><i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i></a>
+    <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout"><i class="fas fa-right-from-bracket">&nbsp;&nbsp;Logout</i></a>
 {% endblock %}
 
 {% block topbar %}
@@ -38,44 +37,47 @@
     </div>
 {% endblock %}
 
-
 <!-- Page Content -->
 {% block content %}
 <br>
     <div class="container mt-1 mb-5 pb-2">
-
         <button class="btn btn-warning w-100 mt-3 mb-2 no-pointer">
-            <i class="fa-solid fa-circle-info">&nbsp;&nbsp;TEXT &nbsp;DETAILS</i>
+          <i class="fa-solid fa-circle-info">&nbsp;&nbsp;DECRYPTED &nbsp;FILE &nbsp;DETAILS</i>
         </button>
-
         <div id="pt" class="col-12">
             <div class="card p-3 mt-3 mb-4">
                 <div class="row" >
-                    <h3>ENCRYPTED TEXT INFORMATION</h3>
-                    <!-- <h4>CASE ID  : {{ file.caseID }}<small class="text-body-secondary fw-light" style="font-size: 17px">&nbsp;&nbsp;&nbsp;</small></h4> -->
+                    <h3>DECRYPTED FILE INFORMATION</h3>
                     <div class="container m-3">
-                      <p> CASE ID  : {{ file.case_id }} </p>
-                      <p> USER ID: {{ file.user.email }}</p>
-                      <p> DATE ENCRYPTED: {{ file.case_date }}</p>
-                      <p> TEXT NAME: {{ file.case_name }}</p>
-                      <p> TEXT DATA: {{ file.case_data }}</p>
+                      <p>CASE ID  : {{ info.case_id }} </p>
+                      <p>FILE NAME: {{ info.file_name }}</p>
+                      <p>USER ID: {{ info.user.email }}</p>
+                      <p>DATE DECRYPTED: {{ info.decrypt_date }}</p>
+                        {% if info.integrity_check == True %}
+                            <p>INTEGRITY CHECK: PASSED </p>
+                        {% else %}
+                            <p>INTEGRITY CHECK: FAILED </p>
+                        {% endif %}
+                      <p>IP ADDRESS DETAILS: {{ info.ip_details }}</p>
                     </div>
                 </div>
             </div>
-              <a href="">
-                  <button onclick="myfun('pt')" type="button" class="btn btn-outline-primary m-1 p-2"><i class="fas fa-print">&nbsp;&nbsp;Print</i></button>
+        </div>
+              <a href="{% url 'delete_decrypt_info' info.id %}">
+                  <button type="button" class="btn btn-outline-danger m-1 p-2"><i class="fas fa-trash-can">&nbsp;Delete</i></button>
               </a>
-      </div>
-
+              <a href="">
+                  <button onclick="myfun('pt')" type="button" class="btn btn-outline-primary m-1 p-2"><i class="fas fa-print">&nbsp;Print</i></button>
+              </a>
 </div> <!-- END // container -->
 
 {% endblock content %}
-
-<!-- Block Footer -->
-{% block footer %} style="color: #ff7f7f;" {% endblock %}
 
 <!-- Block Encrypt -->
 {% block encrypt %} {% endblock %}
 
 <!-- Block Decrypt -->
 {% block decrypt %} {% endblock %}
+
+<!-- Block Footer -->
+{% block footer %} style="color: #d3d3d3;" {% endblock %}

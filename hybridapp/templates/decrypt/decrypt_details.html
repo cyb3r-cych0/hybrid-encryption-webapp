@@ -4,7 +4,7 @@
 <!-- Navbar links control -->
 {% block links %}{% endblock %}
 
-<title>{% block title %} CBDET | Users {% endblock %}</title>
+<title>{% block title %} CBDET | Decrypt Details {% endblock %}</title>
 
 
 <!-- Block NavBar Content -->
@@ -18,8 +18,7 @@
 
 <!-- Logout Button -->
 {% block nav-btn %}
-    <a class="btn btn-custom" id="btn-nav-back" onclick="goBack()"><i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i></a>
-    <a class="btn btn-custom" id="btn-nav-search" href="{% url 'search_users' %}"><i class="fas fa-search">&nbsp;&nbsp;Search</i></a>
+    <a class="btn btn-custom" id="btn-nav-back" href="{% url 'decrypt' %}"><i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i></a>
     <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout"><i class="fas fa-right-from-bracket">&nbsp;&nbsp;Logout</i></a>
 {% endblock %}
 
@@ -45,7 +44,7 @@
     <br>
     <div class="container mt-2 mb-5 col-md-12" style="width: 95%; font-size: 14px">
         <button class="btn btn-secondary w-100 mt-3 mb-1 no-pointer">
-            <i class="fas fa-users">&nbsp;&nbsp;USERS &nbsp;RECORDS</i>
+            <i class="fas fa-users">&nbsp;&nbsp;DECRYPTED &nbsp;CASES</i>
         </button>
 
         <!-- Message From BackEnd -->
@@ -69,31 +68,29 @@
                     <table class="table bg-white">
                         <thead class="bg-info">
                         <tr>
-                          <th scope="col"><i class="fas fa-table-list">&nbsp;&nbsp;ID</i></th>
-                          <th scope="col"><i class="fas fa-folder-closed">&nbsp;&nbsp;NAME</i></th>
-                          <th scope="col"><i class="fas fa-envelope">&nbsp;&nbsp;EMAIL</i></th>
-                          <th scope="col"><i class="fas fa-user-tag">&nbsp;&nbsp;STAFF STATUS</i></th>
-                          <th scope="col"><i class="fas fa-calendar-day">&nbsp;&nbsp;DATE JOINED</i></th>
-                          <th scope="col"><i class="fas fa-clock">&nbsp;&nbsp;LAST LOGIN</i></th>
-                          <th scope="col"><i class="fas fa-circle-info">&nbsp;&nbsp;DETAILS</i></th>
+                          <th scope="col"><i class="fas fa-table-list">&nbsp;ID</i></th>
+                          <th scope="col"><i class="fas fa-laptop-code">&nbsp;IP DETAILS</i></th>
+                          <th scope="col"><i class="fas fa-envelope">&nbsp;CASE ID</i></th>
+                          <th scope="col"><i class="fas fa-user-tag">&nbsp;USER</i></th>
+                          <th scope="col"><i class="fas fa-calendar-day">&nbsp;DATE</i></th>
+                          <th scope="col"><i class="fas fa-clock">&nbsp;INTEGRITY</i></th>
+                          <th scope="col"><i class="fas fa-circle-info">&nbsp;DETAILS</i></th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for user in users %}
+                        {% for detail in decrypt_details %}
                         <tr>
-                            <td>{{ user.id }}</td>
-                            <td>{{ user.username }}</td>
-                            <td>{{ user.email }}</td>
-                            <td>
-                              {% if user.is_staff == False %}
-                                  Investigator
-                              {% elif user.is_staff == True %}
-                                  Admin/Judge
-                              {% endif %}
-                            </td>
-                            <td>{{ user.date_joined }}</td>
-                            <td>{{ user.last_login }}</td>
-                            <td><a href="{% url 'user_details_backend' user.id %}">
+                            <td>{{ detail.id }}</td>
+                            <td>{{ detail.ip_details }}</td>
+                            <td>{{ detail.case_id }}</td>
+                            <td>{{ detail.user.email }}</td>
+                            <td>{{ detail.decrypt_date }}</td>
+                            {% if detail.integrity_check == 1 %}
+                                <td>PASSED</td>
+                            {% else %}
+                                <td>FAILED</td>
+                            {% endif %}
+                            <td><a href="{% url 'view_decrypt_details' detail.id %}">
                               <button type="button" class="btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
                             </a></td>
                         </tr>

@@ -51,20 +51,36 @@
         <div class="card p-3 mt-2">
             <div class="row">
               <h5 class="mb-5"><i class="fas fa-circle-exclamation">&nbsp;&nbsp;Are you sure you want to decrypt this file?</i></h5>
-              <form method="post">
+              <form id="myForm" method="post">
                   {% csrf_token %}
-                    <a href="{% url 'decrypt' %}">
-                        <button type="submit" name="confirm" class="w-90 btn btn-lg btn-outline-success m-2"><i class="fas fa-unlock-keyhole">&nbsp;&nbsp;Yes, Decrypt</i></button>
-                    </a>
-                    <a href="{% url 'decrypt' %}">
-                    <button type="button" class="w-90 btn btn-lg btn-outline-secondary m-2"><i class="fas fa-xmark">&nbsp;&nbsp;Cancel</i></button>
-                  </a>
+                    <button id="decryptButton" type="submit" name="confirm" class="w-90 btn btn-lg btn-outline-success m-2"><i class="fas fa-unlock-keyhole">&nbsp;&nbsp;Yes, Decrypt</i></button>
+                        <button onclick="goBack()" type="button" class="w-90 btn btn-lg btn-outline-secondary m-2"><i class="fas fa-xmark">&nbsp;&nbsp;Cancel</i></button>
               </form>
             </div>
         </div>
 
 
     </div> <!-- END // container -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+$(document).ready(function(){
+    $("#myForm").submit(function(event){
+        event.preventDefault();
+
+        window.history.back();
+
+        // Submit the form
+        this.submit();
+    });
+});
+</script>
+
+<script>
+function goBack() {
+    window.history.back();
+}
+</script>
 
 {% endblock content %}
 

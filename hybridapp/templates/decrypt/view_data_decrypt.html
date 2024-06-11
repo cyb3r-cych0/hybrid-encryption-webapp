@@ -18,7 +18,7 @@
 
 <!-- Logout Button -->
 {% block nav-btn %}
-    <a class="btn btn-custom" id="btn-nav-view" href="{% url 'decrypt' %}"><i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i></a>
+    <a class="btn btn-custom" id="btn-nav-view" onclick="goBack()"><i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i></a>
     <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout"><i class="fas fa-right-from-bracket">&nbsp;&nbsp;Logout</i></a>
 {% endblock %}
 
@@ -69,15 +69,6 @@
                   <button onclick="myfun('pt')" type="button" class="btn btn-outline-primary m-1 p-2"><i class="fas fa-print">&nbsp;Print</i></button>
               </a>
 </div> <!-- END // container -->
-
-<script type="text/javascript">
-    function myfun(pa){
-    var bk = document.body.innerHTML;
-    var dv = document.getElementById(pa).innerHTML;
-        document.body.innerHTML = dv;
-        window.print();
-    }
-</script>
 
 {% endblock content %}
 

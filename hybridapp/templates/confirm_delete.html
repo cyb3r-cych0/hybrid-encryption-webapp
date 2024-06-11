@@ -54,16 +54,21 @@
               <form method="post">
                   {% csrf_token %}
                   <button type="submit" class="w-90 btn btn-lg btn-outline-danger m-2"><i class="fas fa-trash-arrow-up">&nbsp;&nbsp;Yes, Delete</i></button>
-
-                  <a href="{% url 'decrypt' %}">
-                    <button type="button" class="w-90 btn btn-lg btn-outline-secondary m-2"><i class="fas fa-xmark">&nbsp;&nbsp;Cancel</i></button>
-                  </a>
+                    <button onclick="goBack()" type="button" class="w-90 btn btn-lg btn-outline-secondary m-2"><i class="fas fa-xmark">&nbsp;&nbsp;Cancel</i></button>
               </form>
             </div>
         </div>
 
 
     </div> <!-- END // container -->
+
+<script>
+function goBack() {
+    window.history.back();
+}
+</script>
+
+
 
 {% endblock content %}
 

@@ -43,6 +43,9 @@ urlpatterns = [
     path('decrypt/<int:id>/', views.DecryptFile.as_view(), name='decrypt_and_download'),
     path('decrypt/view_dec_file/<id>/', views.DecryptText.as_view(), name='view_dec_file'),
 
+    path('decrypt/decrypt_details', views.ViewDecryptDetails.as_view(), name='decrypt_details'),
+    path('decrypt/view_decrypt_details/<id>/', views.ViewDecryptedDetails.as_view(), name='view_decrypt_details'),
+
     path('decrypt/search_cases_decrypt/', views.SearchCasesDecrypt.as_view(), name='search_cases_decrypt'),
     path('decrypt/search_text_cases/', views.SearchTextDecrypt.as_view(), name='search_text_cases'),
     path('decrypt/search_file_cases/', views.SearchFileDecrypt.as_view(), name='search_file_cases'),
@@ -61,6 +64,7 @@ urlpatterns = [
     path('delete_case_text/<id>/', views.DeleteText.as_view(), name='delete_case_text'),
     path('delete_case_file/<id>/', views.DeleteFile.as_view(), name='delete_case_file'),
     path('delete_case_report/<id>/', views.DeleteTextFile.as_view(), name='delete_case_report'),
+    path('delete_decrypt_info/<int:id>/', views.DeleteDecryptInfo.as_view(), name='delete_decrypt_info'),
 
     # Admin
     path('login/', include('django.contrib.auth.urls')),

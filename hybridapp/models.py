@@ -62,3 +62,15 @@ class TextFile(models.Model):
 
     def __str__(self):
         return self.case_name
+
+
+class DecryptInfo(models.Model):
+    ip_details = models.TextField(blank=True)
+    case_id = models.CharField(blank=False, max_length=255)
+    file_name = models.CharField(max_length=255)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    decrypt_date = models.DateField(default=timezone.now)
+    integrity_check = models.BooleanField()
+
+    def __str__(self):
+        return self.case_id

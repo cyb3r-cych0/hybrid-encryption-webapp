@@ -17,7 +17,7 @@
 
 <!-- Logout Button -->
 {% block nav-btn %}
-    <a class="btn btn-custom" id="btn-nav-back" href="{% url 'decrypt' %}"><i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i></a>
+    <a class="btn btn-custom" id="btn-nav-back" onclick="goBack()"><i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i></a>
     <a class="btn btn-custom" id="btn-nav-filter" href="{% url 'filter_texts' %}" ><i class="fas fa-filter">&nbsp;&nbsp;Filter</i></a>
     <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout"><i class="fas fa-right-from-bracket">&nbsp;&nbsp;Logout</i></a>
 {% endblock %}
@@ -84,53 +84,54 @@
                     <div class="col-md-12">
                         <table class="table bg-white">
                             <thead class="bg-info">
-                            <tr>
-                              <th scope="col"><i class="fas fa-table-list">&nbsp;&nbsp;DB.ID</i></th>
-                              <th scope="col"><i class="fas fa-folder-closed">&nbsp;&nbsp;CASE-ID</i></th>
-                              <th scope="col"><i class="fas fa-file-lines">&nbsp;&nbsp;FILE NAME</i></th>
-                              <th scope="col"><i class="fas fa-user-tag">&nbsp;&nbsp;USER-ID</i></th>
-                              <th scope="col"><i class="fas fa-calendar-day">&nbsp;&nbsp;DATE</i></th>
-                              <th scope="col"><i class="fas fa-circle-info">&nbsp;&nbsp;DETAILS</i></th>
-                              <th scope="col"><i class="fas fa-bars-progress">&nbsp;&nbsp;ACTION</i></th>
-                            </tr>
-                        </thead>
+                                <tr>
+                                  <th scope="col"><i class="fas fa-table-list">&nbsp;&nbsp;DB.ID</i></th>
+                                  <th scope="col"><i class="fas fa-folder-closed">&nbsp;&nbsp;CASE-ID</i></th>
+                                  <th scope="col"><i class="fas fa-file-lines">&nbsp;&nbsp;FILE NAME</i></th>
+                                  <th scope="col"><i class="fas fa-user-tag">&nbsp;&nbsp;USER-ID</i></th>
+                                  <th scope="col"><i class="fas fa-calendar-day">&nbsp;&nbsp;DATE</i></th>
+                                  <th scope="col"><i class="fas fa-circle-info">&nbsp;&nbsp;DETAILS</i></th>
+                                  <th scope="col"><i class="fas fa-bars-progress">&nbsp;&nbsp;ACTION</i></th>
+                                </tr>
+                            </thead>
 
-                        <tbody>
-                          {% if cases %}
-                          {% for case in cases %}
-                            <tr>
-                                <td>{{ case.id }}</td>
-                                <td>{{ case.case_id }}</td>
-                                <td>{{ case.case_name }}</td>
-                                <td>{{ case.user.email }}</td>
-                                <td>{{ case.case_date }}</td>
-                                <td><a href="{% url 'view_file_decrypt' case.id %}">
-                    <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
-                    </a></td>
-                                <td>
-                                  {% if user.is_staff == False %}
-                                  <a href="#">
-                                    <button type="button" class="btn btn-sm btn-outline-danger" disabled><i class="fas fa-triangle-exclamation">&nbsp;Decrypt</i></button>
-                                  </a>
-                                {% elif user.is_staff == True %}
-                                  <a href="{% url 'view_dec_file' case.id %}">
-                                    <button type="button" class="btn btn-sm btn-outline-success"><i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i></button>
-                                  </a>
-                                  {% endif %}
-                                </td>
-                            </tr>
-                            {% endfor %}
-                            {% endif %}
-                        </tbody>
-                    </table>
+                            <tbody>
+                              {% if cases %}
+                              {% for case in cases %}
+                                <tr>
+                                    <td>{{ case.id }}</td>
+                                    <td>{{ case.case_id }}</td>
+                                    <td>{{ case.case_name }}</td>
+                                    <td>{{ case.user.email }}</td>
+                                    <td>{{ case.case_date }}</td>
+                                    <td>
+                                        <a href="{% url 'view_file_decrypt' case.id %}">
+                                        <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
+                                        </a></td>
+                                    <td>
+                                      {% if user.is_staff == False %}
+                                      <a href="#">
+                                        <button type="button" class="btn btn-sm btn-outline-danger" disabled><i class="fas fa-triangle-exclamation">&nbsp;Decrypt</i></button>
+                                      </a>
+                                    {% elif user.is_staff == True %}
+                                      <a href="{% url 'view_dec_file' case.id %}">
+                                        <button type="button" class="btn btn-sm btn-outline-success"><i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i></button>
+                                      </a>
+                                      {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
 
             <!--End Table-->
             <div class="">
               <a href="{% url 'export_cases_csv' %}">
-                  <button class="btn btn-outline-success mb-1 ml-5"><i class="fas fa-file-export">&nbsp;&nbsp;texts.csv</i></button>
+                  <button class="btn btn-outline-success mb-1 ml-5"><i class="fas fa-file-export">&nbsp;&nbsp;Download texts.csv</i></button>
               </a>
             </div>
         </ul>
