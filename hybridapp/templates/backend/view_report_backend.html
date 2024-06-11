@@ -18,7 +18,7 @@
 
 <!-- Logout Button -->
 {% block nav-btn %}
-    <a class="btn btn-custom" id="btn-nav-back" href="{% url 'backend' %}"><i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i></a>
+    <a class="btn btn-custom" id="btn-nav-back" onclick="goBack()"><i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i></a>
     <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout"><i class="fas fa-right-from-bracket">&nbsp;&nbsp;Logout</i></a>
 {% endblock %}
 
@@ -66,7 +66,7 @@
                     <button type="button" class="btn btn-outline-danger m-1 p-2" disabled><i class="fas fa-ban">&nbsp;Delete</i></button>
                 </a>
                 <a href="#">
-                    <button type="button" class="btn btn-outline-danger m-1 p-2" disabled><i class="fas fa-triangle-exclamation">&nbsp;Decrypt</i></button>
+                    <button type="button" class="btn btn-outline-warning m-1 p-2" disabled><i class="fas fa-triangle-exclamation">&nbsp;Decrypt</i></button>
                 </a>
             {% elif user.is_staff == True %}
                 <a href="/delete_case_report/{{ textfile.id }}">
@@ -83,15 +83,6 @@
       </div>
 
 </div> <!-- END // container -->
-
-<script type="text/javascript">
-    function myfun(pa){
-    var bk = document.body.innerHTML;
-    var dv = document.getElementById(pa).innerHTML;
-        document.body.innerHTML = dv;
-        window.print();
-    }
-</script>
 
 {% endblock content %}
 

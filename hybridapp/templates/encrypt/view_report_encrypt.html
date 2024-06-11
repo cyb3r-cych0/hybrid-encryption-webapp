@@ -18,7 +18,7 @@
 
 <!-- Logout Button -->
 {% block nav-btn %}
-    <a class="btn btn-custom" id="btn-nav-view" href="{% url 'encrypt' %}"><i class="fa fa-chevron-left">&nbsp;&nbsp; Back</i></a>
+    <a class="btn btn-custom" id="btn-nav-view" onclick="goBack()"><i class="fa fa-chevron-left">&nbsp;&nbsp; Back</i></a>
     <a class="btn btn-custom" id="btn-nav-back" href="{% url 'backend' %}" ><i class="fa fa-sliders">&nbsp;&nbsp; Control Panel</i></a>
     <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout"><i class="fa fa-right-from-bracket">&nbsp;&nbsp; Logout</i></a>
 {% endblock %}
@@ -70,15 +70,6 @@
       </div>
 
 </div> <!-- END // container -->
-
-<script type="text/javascript">
-    function myfun(pa){
-    var bk = document.body.innerHTML;
-    var dv = document.getElementById(pa).innerHTML;
-        document.body.innerHTML = dv;
-        window.print();
-    }
-</script>
 
 {% endblock content %}
 

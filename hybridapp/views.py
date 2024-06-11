@@ -1,7 +1,9 @@
 import base64
 import csv
 import io
+import time
 import zipfile
+import subprocess
 
 from Crypto.Cipher import AES, PKCS1_OAEP
 from Crypto.Hash import SHA256
@@ -20,7 +22,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import View
 
 from .forms import TextForm, FileUploadForm, RegisterForm, TextFileForm
-from .models import KeyPair, File, Text, TextFile
+from .models import KeyPair, File, Text, TextFile, DecryptInfo
 
 """ START USER INFO """
 
@@ -268,7 +270,7 @@ class EncryptText(View):
         return render(request, 'encrypt/encrypt_case_data.html', context)
 
     @staticmethod
-    def post(self, request):
+    def post(request):
         form = TextForm(request.POST, request.FILES)
         if form.is_valid():
             try:
@@ -375,6 +377,74 @@ class EncryptFile(View):
 """ START DECRYPT CASES """
 
 
+class DecryptDetails:
+    def __init__(self):
+        self.addresses = []
+
+    @staticmethod
+    def get_all_connected_network_details(text):
+        # Initialize variables
+        section_lines = []
+        inside_connected_section = False
+        connected_sections = []
+
+        # Iterate over each line in the text
+        for line in text.split('\n'):
+            # If the line contains 'adapter', we're starting a new section
+            if 'adapter' in line:
+                # If we were inside a connected section, add it to the list
+                if inside_connected_section:
+                    connected_sections.append('\n'.join(section_lines))
+
+                # Start a new section
+                section_lines = [line]
+                inside_connected_section = True
+            elif 'Media disconnected' in line:
+                # If the line contains 'Media disconnected', mark the section as disconnected
+                inside_connected_section = False
+            else:
+                # Otherwise, add the line to the current section
+                section_lines.append(line)
+
+        # If the last section was connected, add it to the list
+        if inside_connected_section:
+            connected_sections.append('\n'.join(section_lines))
+
+        # If no connected section was found, return a message
+        if not connected_sections:
+            return "No connected network service found."
+
+        return connected_sections
+
+    def get_physical_and_ipv4_address(self, connected_sections):
+        for section in connected_sections:
+            lines = section.split('\n')
+            physical_address = "Not available"
+            ipv4_address = "Not available"
+            for line in lines:
+                if 'Physical Address' in line:
+                    physical_address = line.split(': ')[-1]
+                elif 'IPv4 Address' in line:
+                    ipv4_address = line.split(': ')[-1].split('(Preferred)')[0]
+            self.addresses.append((f'MAC: {physical_address.strip()}', f'IP: {ipv4_address.strip()}'))
+        return self.addresses
+
+    def save_decrypt_details(self, addresses, user, case_id, file_name, integrity_check):
+        # Run the command and capture the output
+        network_config_text = subprocess.check_output("ipconfig /all", shell=True).decode()
+        connected_network_details = self.get_all_connected_network_details(network_config_text)
+        addresses = self.get_physical_and_ipv4_address(connected_network_details)
+
+        # Save the network details to the database
+        DecryptInfo.objects.create(
+            ip_details=addresses,
+            user=user,
+            case_id=case_id,
+            file_name=file_name,
+            integrity_check=integrity_check
+        )
+
+
 @method_decorator(login_required(login_url='login'), name='dispatch')
 @method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
 class DecryptTextFile(View):
@@ -428,12 +498,7 @@ class DecryptTextFile(View):
         decrypted_text_data = text_cipher_aes.decrypt_and_verify(text_ciphertext, text_tag)
         return decrypted_text_data, text_original_hash
 
-    @staticmethod
-    def get(request, id):
-        # Render a confirmation page
-        return render(request, 'confirm_decrypt.html', {'id': id})
-
-    def post(self, request, id):
+    def get(self, request, id):
         # Ensure the user requesting decryption is superuser
         is_superuser = request.user.is_superuser
         user = request.user
@@ -441,65 +506,75 @@ class DecryptTextFile(View):
             messages.error(request, f'Unauthorized User! {str(user)}')
             return HttpResponse('Unauthorized access.', status=403)
 
-        # Check if the user confirmed the decryption
-        if 'confirm' in request.POST:
-            # Proceed with the decryption
-            try:
-                encrypted_file = get_object_or_404(TextFile, id=id)  # encrypted_file = TextFile.objects.get(id=id)
-                text_data, text_hash = self.get_text(id)
-                file_data, file_hash = self.get_file(id)
+        try:
+            encrypted_file = get_object_or_404(TextFile, id=id)  # encrypted_file = TextFile.objects.get(id=id)
+            text_data, text_hash = self.get_text(id)
+            file_data, file_hash = self.get_file(id)
 
-                error_message = None  # Initialize an error message variable
-                response = None  # Initialize the response variable
+            error_message = None  # Initialize an error message variable
+            response = None  # Initialize the response variable
 
-                if not file_data and not text_data:
-                    error_message = 'FAILED! No data found for decryption.'
+            if not file_data and not text_data:
+                error_message = 'FAILED! No data found for decryption.'
 
-                else:
-                    # Verify hash for file data if it exists
-                    if file_data:
-                        file_hash_calculated = SHA256.new(file_data).digest()
-                        if file_hash_calculated != file_hash:
-                            error_message = 'FAILED! Integrity check failed for file. File tampered.'
+            else:
+                # Verify hash for file data if it exists
+                if file_data:
+                    file_hash_calculated = SHA256.new(file_data).digest()
+                    if file_hash_calculated != file_hash:
+                        error_message = 'FAILED! Integrity check failed for file. File tampered.'
 
-                    # Verify hash for text data if it exists
-                    if text_data:
-                        text_hash_calculated = SHA256.new(text_data).digest()
-                        if text_hash_calculated != text_hash:
-                            error_message = 'FAILED! Integrity check failed for text data. File tampered.'
+                # Verify hash for text data if it exists
+                if text_data:
+                    text_hash_calculated = SHA256.new(text_data).digest()
+                    if text_hash_calculated != text_hash:
+                        error_message = 'FAILED! Integrity check failed for text data. File tampered.'
 
-                    # If no integrity check errors, prepare the ZIP archive
-                    if not error_message:
-                        zip_buffer = io.BytesIO()
-                        with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
-                            if file_data:
-                                zip_file.writestr(
-                                    f'CASE-ID[{encrypted_file.case_id}] <> FILE-NAME-{encrypted_file.case_file}',
-                                    file_data)
-                            if text_data:
-                                zip_file.writestr(
-                                    f'CASE-ID[{encrypted_file.case_id}] <> TEXT-NAME-{encrypted_file.case_name}.txt',
-                                    text_data)
+                # If no integrity check errors, prepare the ZIP archive
+                if not error_message:
+                    integrity_check = True
+                    zip_buffer = io.BytesIO()
+                    with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
+                        if file_data:
+                            zip_file.writestr(f'CASE-ID[{encrypted_file.case_id}] <> FILE-NAME-{encrypted_file.case_file}',
+                                              file_data)
+                        if text_data:
+                            zip_file.writestr(
+                                f'CASE-ID[{encrypted_file.case_id}] <> TEXT-NAME-{encrypted_file.case_name}.txt', text_data)
 
-                        # Set the appropriate response headers for a ZIP file
-                        response = HttpResponse(zip_buffer.getvalue(), content_type='application/zip')
-                        response[
-                            'Content-Disposition'] = f'attachment; filename="CASE-ID:{encrypted_file.case_id} <> DECRYPTED-DATA.zip"'
+                    # Set the appropriate response headers for a ZIP file
+                    response = HttpResponse(zip_buffer.getvalue(), content_type='application/zip')
+                    response[
+                        'Content-Disposition'] = f'attachment; filename="CASE-ID:{encrypted_file.case_id} <> DECRYPTED-DATA.zip"'
+                    messages.success(request, 'SUCCESS! Decryption successful, check downloads')
 
-                if error_message:
-                    messages.error(request, error_message)
-                    return HttpResponseRedirect(reverse('decrypt'))
+                    # Run the class method to capture output
+                    decrypt_details_obj = DecryptDetails()
+                    ip_details = decrypt_details_obj.addresses
+                    user = request.user
+                    case_id = encrypted_file.case_id
+                    file_name = encrypted_file.case_name
+                    decrypt_details_obj.save_decrypt_details(ip_details, user, case_id, file_name, integrity_check)
 
-                if response:
-                    messages.success(request, 'SUCCESS! Integrity Check Passed __ File Decrypted And Downloaded __')
-                    return response  # Return the response if decryption was successful
+            if error_message:
+                integrity_check = False
+                messages.error(request, error_message)
 
-            except Exception as e:
-                messages.error(request, f'FAILED! Error decrypting data: {str(e)}.')
-                return HttpResponse(f'Error decrypting data: {str(e)}', status=500)
-        else:
-            # If the user did not confirm, redirect back to the confirmation page
-            return HttpResponseRedirect(reverse('decrypt'))
+                # Run the class method to capture output
+                decrypt_details_obj = DecryptDetails()
+                ip_details = decrypt_details_obj.addresses
+                user = request.user
+                case_id = encrypted_file.case_id
+                file_name = encrypted_file.case_name
+                decrypt_details_obj.save_decrypt_details(ip_details, user, case_id, file_name, integrity_check)
+
+                return HttpResponseRedirect(reverse('decrypt'))
+
+            if response:
+                return response  # Return the response if decryption was successful
+        except Exception as e:
+            messages.error(request, f'FAILED! Error decrypting data: {str(e)}.')
+            return HttpResponse(f'Error decrypting data: {str(e)}', status=500)
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
@@ -507,86 +582,101 @@ class DecryptTextFile(View):
 class DecryptText(View):
     @staticmethod
     def get(request, id):
-        # Render a confirmation page
-        return render(request, 'confirm_decrypt.html', {'id': id})
-
-    @staticmethod
-    def post(request, id):
         # Ensure the user requesting decryption is superuser
         is_superuser = request.user.is_superuser
         if not is_superuser:
             messages.error(request, f'Unauthorized User! {str(request.user)}')
             return HttpResponse('Unauthorized access.', status=403)
 
-        # Check if the user confirmed the decryption
-        if 'confirm' in request.POST:
-            try:
-                # Fetch the encrypted case data from the database
-                encrypted_file = get_object_or_404(Text, id=id)  # encrypted_file = TextFile.objects.get(id=id)
-                encrypted_data = base64.b64decode(encrypted_file.case_data)  # ensure this is decoding correctly
+        # Proceed with the decryption
+        try:
+            # Fetch the encrypted case data from the database
+            encrypted_file = get_object_or_404(Text, id=id)  # encrypted_file = TextFile.objects.get(id=id)
+            encrypted_data = base64.b64decode(encrypted_file.case_data)  # ensure this is decoding correctly
 
-                # Fetch user's private key
-                key_pair = KeyPair.objects.get(user=encrypted_file.user)
-                private_key = RSA.import_key(key_pair.private_key)
+            # Fetch user's private key
+            key_pair = KeyPair.objects.get(user=encrypted_file.user)
+            private_key = RSA.import_key(key_pair.private_key)
 
-                # Decrypt the data with RSA private key
-                cipher_rsa = PKCS1_OAEP.new(private_key)
+            # Decrypt the data with RSA private key
+            cipher_rsa = PKCS1_OAEP.new(private_key)
 
-                # Extract components from the decrypted data with correct lengths for slicing
-                key_len = private_key.size_in_bytes()
-                enc_session_key = encrypted_data[:key_len]
-                nonce = encrypted_data[key_len:key_len + 16]
-                tag = encrypted_data[key_len + 16:key_len + 32]
-                ciphertext = encrypted_data[key_len + 32:-32]
-                original_hash = encrypted_data[-32:]
+            # Extract components from the decrypted data with correct lengths for slicing
+            key_len = private_key.size_in_bytes()
+            enc_session_key = encrypted_data[:key_len]
+            nonce = encrypted_data[key_len:key_len + 16]
+            tag = encrypted_data[key_len + 16:key_len + 32]
+            ciphertext = encrypted_data[key_len + 32:-32]
+            original_hash = encrypted_data[-32:]
 
-                # Decrypt the AES session key with RSA private key
-                session_key = cipher_rsa.decrypt(enc_session_key)
+            # Decrypt the AES session key with RSA private key
+            session_key = cipher_rsa.decrypt(enc_session_key)
 
-                # Decrypt the ciphertext using AES
-                cipher_aes = AES.new(session_key, AES.MODE_EAX, nonce=nonce)
-                decrypted_data = cipher_aes.decrypt_and_verify(ciphertext, tag)
+            # Decrypt the ciphertext using AES
+            cipher_aes = AES.new(session_key, AES.MODE_EAX, nonce=nonce)
+            decrypted_data = cipher_aes.decrypt_and_verify(ciphertext, tag)
 
-                # Verify the integrity of the decrypted data
-                hash_object = SHA256.new()
-                hash_object.update(decrypted_data)
-                calculated_hash = hash_object.digest()
+            # Verify the integrity of the decrypted data
+            hash_object = SHA256.new()
+            hash_object.update(decrypted_data)
+            calculated_hash = hash_object.digest()
 
-                if calculated_hash != original_hash:
-                    messages.error(request, 'FAILED! Integrity Check Failed __ File tampered __')
-                    return redirect('decrypt')
+            if calculated_hash != original_hash:
+                messages.error(request, 'FAILED! Integrity Check Status: __ File tampered __')
+                integrity_check = False
+                # Return the decrypted data
+                response = HttpResponse(decrypted_data, content_type='application/octet-stream')
+                response['Content-Disposition'] = (f'attachment; filename="CASE-ID:'
+                                                   f'{encrypted_file.case_id} <> FILE-NAME:'
+                                                   f'{encrypted_file.case_name}.txt"')
+                # Run the class method to capture output
+                decrypt_details_obj = DecryptDetails()
+                ip_details = decrypt_details_obj.addresses
+                user = request.user
+                case_id = encrypted_file.case_id
+                file_name = encrypted_file.case_name
+                decrypt_details_obj.save_decrypt_details(ip_details, user, case_id, file_name, integrity_check)
+                time.sleep(.5)
+            else:
+                integrity_check = True
+                messages.success(request, 'SUCCESS! Integrity Check Passed __ File Decrypted And Downloaded __')
 
                 # Return the decrypted data
                 response = HttpResponse(decrypted_data, content_type='application/octet-stream')
-                response[
-                    'Content-Disposition'] = f'attachment; filename="CASE-ID:{encrypted_file.case_id} <> FILE-NAME:{encrypted_file.case_name}.txt"'
-                messages.success(request, 'SUCCESS! Integrity Check Passed __ File Decrypted And Downloaded __')
-                return response
+                response['Content-Disposition'] = (f'attachment; filename="CASE-ID:'
+                                                   f'{encrypted_file.case_id} <> FILE-NAME:'
+                                                   f'{encrypted_file.case_name}.txt"')
+                # Run the class method to capture output
+                decrypt_details_obj = DecryptDetails()
+                ip_details = decrypt_details_obj.addresses
+                user = request.user
+                case_id = encrypted_file.case_id
+                file_name = encrypted_file.case_name
+                decrypt_details_obj.save_decrypt_details(ip_details, user, case_id, file_name, integrity_check)
+                time.sleep(.5)
+            return response
+        except Exception as e:
+            messages.error(request, f'FAILED! Error decrypting data: {str(e)}.')
+            return HttpResponse(f'Error decrypting data: {str(e)}', status=500)
 
-                # context = {
-                #     'encrypted_file': encrypted_file,
-                #     'encrypted_data': encrypted_data,
-                #     'private_key': private_key,
-                #     'cipher_rsa': cipher_rsa,
-                #     'key_len': key_len,
-                #     'tag': tag,
-                #     'nonce': nonce,
-                #     'enc_session_key': enc_session_key,
-                #     'session_key': session_key,
-                #     'cipher_aes': cipher_aes,
-                #     'ciphertext': ciphertext,
-                #     'decrypted_data': decrypted_data,
-                #     'original_hash': original_hash,
-                #     'calculated_hash': calculated_hash
-                # }
-                # return render(request, 'decrypt/view_dec_file.html', context)
-
-            except Exception as e:
-                messages.error(request, f'FAILED! Error decrypting data __ Error: {str(e)} __')
-                return redirect('decrypt')
-        else:
-            # If the user did not confirm, redirect back to the confirmation page
-            return HttpResponseRedirect(reverse('decrypt'))
+            # return HttpResponse(f'Error decrypting data: {str(e)}', status=500)
+            # context = {
+            #     'encrypted_file': encrypted_file,
+            #     'encrypted_data': encrypted_data,
+            #     'private_key': private_key,
+            #     'cipher_rsa': cipher_rsa,
+            #     'key_len': key_len,
+            #     'tag': tag,
+            #     'nonce': nonce,
+            #     'enc_session_key': enc_session_key,
+            #     'session_key': session_key,
+            #     'cipher_aes': cipher_aes,
+            #     'ciphertext': ciphertext,
+            #     'decrypted_data': decrypted_data,
+            #     'original_hash': original_hash,
+            #     'calculated_hash': calculated_hash
+            # }
+            # return render(request, 'decrypt/view_dec_file.html', context)
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
@@ -594,81 +684,78 @@ class DecryptText(View):
 class DecryptFile(View):
     @staticmethod
     def get(request, id):
-        # Render a confirmation page
-        return render(request, 'confirm_decrypt.html', {'id': id})
-
-    @staticmethod
-    def post(request, id):
         # Ensure the user requesting decryption is superuser
         is_superuser = request.user.is_superuser
         if not is_superuser:
             messages.error(request, f'Unauthorized User! {str(request.user)}')
-            return HttpResponse('Unauthorized access.', status=403)
+            return HttpResponse(f'Unauthorized Access. {str(request.user)} Forbidden.', status=403)
 
-        # Check if the user confirmed the decryption
-        if 'confirm' in request.POST:
-            try:
-                # get encrypted data RSA private key for decryption
-                encrypted_file = get_object_or_404(File, id=id)  # encrypted_file = TextFile.objects.get(id=id)
-                private_key = RSA.import_key(KeyPair.objects.get(user=encrypted_file.user).private_key)
+        # File decryption
+        try:
+            # get encrypted data RSA private key for decryption
+            encrypted_file = get_object_or_404(File, id=id)  # encrypted_file = TextFile.objects.get(id=id)
+            private_key = RSA.import_key(KeyPair.objects.get(user=encrypted_file.user).private_key)
 
-                # Extract components from the decrypted data with correct lengths for slicing
-                encrypted_data = encrypted_file.case_data
-                key_len = private_key.size_in_bytes()
-                enc_session_key = encrypted_data[:key_len]
-                nonce = encrypted_data[key_len:key_len + 16]
-                tag = encrypted_data[key_len + 16:key_len + 32]
-                ciphertext = encrypted_data[key_len + 32:-32]
-                original_hash = encrypted_data[-32:]
+            # Extract components from the decrypted data with correct lengths for slicing
+            encrypted_data = encrypted_file.case_data
+            key_len = private_key.size_in_bytes()
+            enc_session_key = encrypted_data[:key_len]
+            nonce = encrypted_data[key_len:key_len + 16]
+            tag = encrypted_data[key_len + 16:key_len + 32]
+            ciphertext = encrypted_data[key_len + 32:-32]
+            original_hash = encrypted_data[-32:]
 
-                # Decrypt file data
-                cipher_rsa = PKCS1_OAEP.new(private_key)
-                session_key = cipher_rsa.decrypt(enc_session_key)
-                cipher_aes = AES.new(session_key, AES.MODE_EAX, nonce=nonce)
-                decrypted_data = cipher_aes.decrypt_and_verify(ciphertext, tag)
+            # Decrypt file data
+            cipher_rsa = PKCS1_OAEP.new(private_key)
+            session_key = cipher_rsa.decrypt(enc_session_key)
+            cipher_aes = AES.new(session_key, AES.MODE_EAX, nonce=nonce)
+            decrypted_data = cipher_aes.decrypt_and_verify(ciphertext, tag)
 
-                # Verify the integrity of the decrypted data
-                hash_object = SHA256.new()
-                hash_object.update(decrypted_data)
-                calculated_hash = hash_object.digest()
+            # Verify the integrity of the decrypted data
+            hash_object = SHA256.new()
+            hash_object.update(decrypted_data)
+            calculated_hash = hash_object.digest()
 
-                if calculated_hash != original_hash:
-                    messages.error(request, 'FAILED! Integrity check failed __ File tampered __')
-                    return redirect('decrypt')
-                else:
-                    messages.success(request,
-                                     f'SUCCESS! Integrity Check Passed __ {encrypted_file.case_id} File Decrypted And Downloaded __')
-                    # Prepare response to download decrypted file
-                    response = HttpResponse(decrypted_data, content_type='application/octet-stream')
-                    response[
-                        'Content-Disposition'] = f'attachment; filename="CASE-ID:{encrypted_file.case_id} <> FILE-NAME:{encrypted_file.case_file.name}"'
-                    return response
+            if calculated_hash != original_hash:
+                integrity_check = False
+                # Prepare response to download decrypted file
+                response = HttpResponse(decrypted_data, content_type='application/octet-stream')
+                response['Content-Disposition'] = (f'attachment; filename="CASE-ID:'
+                                                   f'{encrypted_file.case_id} <> FILE-NAME:'
+                                                   f'{encrypted_file.case_file.name}"')
+                # Run the command and capture the output
+                decrypt_details_obj = DecryptDetails()
+                ip_details = decrypt_details_obj.addresses
+                user = request.user
+                case_id = encrypted_file.case_id
+                file_name = encrypted_file.case_file.name
+                decrypt_details_obj.save_decrypt_details(ip_details, user, case_id, file_name, integrity_check)
+                time.sleep(.5)
 
-                    # context = {
-                    #     'encrypted_file': encrypted_file,
-                    #     'encrypted_data': encrypted_data,
-                    #     'private_key': private_key,
-                    #     'cipher_rsa': cipher_rsa,
-                    #     'key_len': key_len,
-                    #     'tag': tag,
-                    #     'nonce': nonce,
-                    #     'enc_session_key': enc_session_key,
-                    #     'session_key': session_key,
-                    #     'cipher_aes': cipher_aes,
-                    #     'ciphertext': ciphertext,
-                    #     'decrypted_data': decrypted_data,
-                    #     'original_hash': original_hash,
-                    #     'calculated_hash': calculated_hash
-                    # }
-                    # return render(request, 'decrypt/view_dec_file.html', context)
+                e = messages.error(request, 'FAILED! Integrity check failed __ File tampered __')
+                return HttpResponse(f'Error decrypting data: {str(e)}', status=500)
+            else:
+                integrity_check = True
+                messages.success(request, f'SUCCESS! Integrity Check Passed __ '
+                                          f'{encrypted_file.case_id} File Decrypted And Downloaded __')
+                # Prepare response to download decrypted file
+                response = HttpResponse(decrypted_data, content_type='application/octet-stream')
+                response['Content-Disposition'] = (f'attachment; filename="CASE-ID:'
+                                                   f'{encrypted_file.case_id} <> FILE-NAME:'
+                                                   f'{encrypted_file.case_file.name}"')
+                # Run the command and capture the output
+                # Run the class method to capture output
+                decrypt_details_obj = DecryptDetails()
+                ip_details = decrypt_details_obj.addresses
+                user = request.user
+                case_id = encrypted_file.case_id
+                file_name = encrypted_file.case_file.name
+                decrypt_details_obj.save_decrypt_details(ip_details, user, case_id, file_name, integrity_check)
+                time.sleep(.5)
 
-            except Exception as e:
-                messages.error(request, f'FAILED! Error Decrypting File __ Error: {str(e)}. Tampered File __')
-                return redirect('decrypt')
-
-        else:
-            # If the user did not confirm, redirect back to the confirmation page
-            return HttpResponseRedirect(reverse('decrypt_and_download_file', args=[id]))
+                return response
+        except Exception as e:
+            return HttpResponse(f'Error decrypting data: {str(e)}', status=500)
 
 
 """ END DECRYPT CASES """
@@ -1101,10 +1188,10 @@ class DecryptDashboard(View):
         text = Text.objects.all().order_by('-id')[:1]
         file = File.objects.all().order_by('-id')[:1]
         textfile = TextFile.objects.all().order_by('-id')[:1]
-
         texts = Text.objects.all().count()
         files = File.objects.all().count()
         textfiles = TextFile.objects.all().count()
+        decrypt_details = DecryptInfo.objects.all().count()
         case_files = files + texts + textfiles
 
         context = {
@@ -1112,7 +1199,8 @@ class DecryptDashboard(View):
             'case_files': case_files,
             'text': text,
             'file': file,
-            'textfile': textfile
+            'textfile': textfile,
+            'decrypt_details': decrypt_details
         }
         return render(request, 'backend/decrypt.html', context)
 
@@ -1190,6 +1278,11 @@ class BackEnd(View):
 class DeleteFile(View):
     @staticmethod
     def get(request, id):
+        listing_case_file = get_object_or_404(File, id=id)
+        return render(request, 'confirm_delete.html', {'object': listing_case_file})
+
+    @staticmethod
+    def post(request, id):
         is_superuser = request.user.is_superuser
         listing_case_file = get_object_or_404(File, id=id)
         if request.method == 'POST':
@@ -1213,6 +1306,11 @@ class DeleteFile(View):
 class DeleteText(View):
     @staticmethod
     def get(request, id):
+        listing_case_text = get_object_or_404(Text, id=id)
+        return render(request, 'confirm_delete.html', {'object': listing_case_text})
+
+    @staticmethod
+    def post(request, id):
         is_superuser = request.user.is_superuser
         listing_case_text = get_object_or_404(Text, id=id)
         if request.method == 'POST':
@@ -1236,6 +1334,11 @@ class DeleteText(View):
 class DeleteTextFile(View):
     @staticmethod
     def get(request, id):
+        listing_case_textfile = get_object_or_404(TextFile, id=id)
+        return render(request, 'confirm_delete.html', {'object': listing_case_textfile})
+
+    @staticmethod
+    def post(request, id):
         is_superuser = request.user.is_superuser
         listing_case_textfile = get_object_or_404(TextFile, id=id)
         if request.method == 'POST':
@@ -1633,3 +1736,66 @@ def update(request, id):
 
 
 """ REDUNDANT CODE END """
+
+
+@method_decorator(login_required(login_url='login'), name='dispatch')
+@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
+class ViewDecryptDetails(View):
+    @staticmethod
+    def get(request):
+        is_superuser = request.user.is_superuser
+        if is_superuser:
+            try:
+                decrypt_details = DecryptInfo.objects.all().order_by('-id')[:10]
+                context = {
+                    'decrypt_details': decrypt_details,
+                }
+                return render(request, 'decrypt/decrypt_details.html', context)
+            except Exception as e:
+                messages.error(request, f'Error: {str(e)}')
+                return render(request, 'decrypt/decrypt_details.html')
+        else:
+            messages.error(request, f'Error: Unauthorized User {request.user}')
+            return redirect('decrypt_details')
+
+
+@method_decorator(login_required(login_url='login'), name='dispatch')
+@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
+class ViewDecryptedDetails(View):
+    @staticmethod
+    def get(request, id):
+        user = request.user
+        try:
+            info = get_object_or_404(DecryptInfo, id=id)
+        except Exception as e:
+            raise Http404(f'File Details Not Found! Error: {str(e)}')
+        context = {
+            'info': info,
+            'user': user
+        }
+        return render(request, 'decrypt/view_decrypt_details.html', context)
+
+
+@method_decorator(login_required(login_url='login'), name='dispatch')
+@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
+class DeleteDecryptInfo(View):
+    @staticmethod
+    def get(request, id):
+        listing_decrypt_info = get_object_or_404(DecryptInfo, id=id)
+        return render(request, 'confirm_delete.html', {'object': listing_decrypt_info})
+
+    @staticmethod
+    def post(request, id):
+        is_superuser = request.user.is_superuser
+        listing_decrypt_info = get_object_or_404(DecryptInfo, id=id)
+        try:
+            if is_superuser:
+                listing_decrypt_info.delete()
+                messages.success(request, 'SUCCESS! Decrypt Information Deleted.')
+                return redirect('decrypt_details')
+            else:
+                messages.error(request, f'FAILED! Unauthorized User: {request.user} Forbidden.')
+                return redirect('decrypt_details')
+        except Exception as e:
+            messages.error(request, f'FAILED! Something Went Wrong. Error: {str(e)}')
+            return redirect('decrypt_details')
