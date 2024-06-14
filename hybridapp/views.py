@@ -431,7 +431,15 @@ class DecryptDetails:
 
     def save_decrypt_details(self, addresses, user, case_id, file_name, integrity_check):
         # Run the command and capture the output
-        network_config_text = subprocess.check_output("ipconfig /all", shell=True).decode()
+        try:
+            network_config_text = subprocess.check_output("ipconfig /all", shell=True).decode()
+        except subprocess.CalledProcessError:
+            # If 'ipconfig' fails (not on Windows), try 'ip a' for Linux
+            try:
+                network_config_text = subprocess.check_output("ip a", shell=True).decode()
+            except subprocess.CalledProcessError:
+                return "Unable to retrieve network details."
+
         connected_network_details = self.get_all_connected_network_details(network_config_text)
         addresses = self.get_physical_and_ipv4_address(connected_network_details)
 
@@ -1162,15 +1170,13 @@ class RegisterUser(View):
 
     @staticmethod
     def post(request):
-        try:
-            form = RegisterForm(request.POST)
-            if form.is_valid():
-                form.save()
-                messages.success(request, 'SUCCESS! User Registered __ Encryption Keys Generated __ ')
-                return redirect('login')
-        except Exception as e:
-            messages.error(request, f'FAILED! Registration Unsuccessful __ Error: {str(e)} __')
-            form = RegisterForm()
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'SUCCESS! User Registered __ Encryption Keys Generated __ ')
+            return redirect('login')
+        else:
+            messages.error(request, 'FAILED! Registration Unsuccessful __ Error: Form is not valid __')
             context = {
                 'form': form
             }
