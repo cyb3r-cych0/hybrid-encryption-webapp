@@ -69,11 +69,10 @@
                         <thead class="bg-info">
                         <tr>
                           <th scope="col"><i class="fas fa-table-list">&nbsp;ID</i></th>
-                          <th scope="col"><i class="fas fa-laptop-code">&nbsp;IP DETAILS</i></th>
                           <th scope="col"><i class="fas fa-envelope">&nbsp;CASE ID</i></th>
                           <th scope="col"><i class="fas fa-user-tag">&nbsp;USER</i></th>
                           <th scope="col"><i class="fas fa-calendar-day">&nbsp;DATE</i></th>
-                          <th scope="col"><i class="fas fa-clock">&nbsp;INTEGRITY</i></th>
+                          <th scope="col"><i class="fas fa-clock">&nbsp;INTEGRITY CHECK</i></th>
                           <th scope="col"><i class="fas fa-circle-info">&nbsp;DETAILS</i></th>
                         </tr>
                     </thead>
@@ -81,7 +80,6 @@
                         {% for detail in decrypt_details %}
                         <tr>
                             <td>{{ detail.id }}</td>
-                            <td>{{ detail.ip_details }}</td>
                             <td>{{ detail.case_id }}</td>
                             <td>{{ detail.user.email }}</td>
                             <td>{{ detail.decrypt_date }}</td>

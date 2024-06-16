@@ -378,74 +378,10 @@ class EncryptFile(View):
 
 
 class DecryptDetails:
-    def __init__(self):
-        self.addresses = []
-
     @staticmethod
-    def get_all_connected_network_details(text):
-        # Initialize variables
-        section_lines = []
-        inside_connected_section = False
-        connected_sections = []
-
-        # Iterate over each line in the text
-        for line in text.split('\n'):
-            # If the line contains 'adapter', we're starting a new section
-            if 'adapter' in line:
-                # If we were inside a connected section, add it to the list
-                if inside_connected_section:
-                    connected_sections.append('\n'.join(section_lines))
-
-                # Start a new section
-                section_lines = [line]
-                inside_connected_section = True
-            elif 'Media disconnected' in line:
-                # If the line contains 'Media disconnected', mark the section as disconnected
-                inside_connected_section = False
-            else:
-                # Otherwise, add the line to the current section
-                section_lines.append(line)
-
-        # If the last section was connected, add it to the list
-        if inside_connected_section:
-            connected_sections.append('\n'.join(section_lines))
-
-        # If no connected section was found, return a message
-        if not connected_sections:
-            return "No connected network service found."
-
-        return connected_sections
-
-    def get_physical_and_ipv4_address(self, connected_sections):
-        for section in connected_sections:
-            lines = section.split('\n')
-            physical_address = "Not available"
-            ipv4_address = "Not available"
-            for line in lines:
-                if 'Physical Address' in line:
-                    physical_address = line.split(': ')[-1]
-                elif 'IPv4 Address' in line:
-                    ipv4_address = line.split(': ')[-1].split('(Preferred)')[0]
-            self.addresses.append((f'MAC: {physical_address.strip()}', f'IP: {ipv4_address.strip()}'))
-        return self.addresses
-
-    def save_decrypt_details(self, addresses, user, case_id, file_name, integrity_check):
-        # Run the command and capture the output
-        try:
-            network_config_text = subprocess.check_output("ipconfig /all", shell=True).decode()
-        except subprocess.CalledProcessError:
-            # If 'ipconfig' fails (not on Windows), try 'ip a' for Linux
-            try:
-                network_config_text = subprocess.check_output("ip a", shell=True).decode()
-            except subprocess.CalledProcessError:
-                return "Unable to retrieve network details."
-
-        connected_network_details = self.get_all_connected_network_details(network_config_text)
-        addresses = self.get_physical_and_ipv4_address(connected_network_details)
-
-        # Save the network details to the database
+    def save_decrypt_details(user, case_id, file_name, integrity_check):
+        # Save the decrypt details to the database
         DecryptInfo.objects.create(
-            ip_details=addresses,
             user=user,
             case_id=case_id,
             file_name=file_name,
@@ -558,11 +494,10 @@ class DecryptTextFile(View):
 
                     # Run the class method to capture output
                     decrypt_details_obj = DecryptDetails()
-                    ip_details = decrypt_details_obj.addresses
                     user = request.user
                     case_id = encrypted_file.case_id
                     file_name = encrypted_file.case_name
-                    decrypt_details_obj.save_decrypt_details(ip_details, user, case_id, file_name, integrity_check)
+                    decrypt_details_obj.save_decrypt_details(user, case_id, file_name, integrity_check)
 
             if error_message:
                 integrity_check = False
@@ -570,11 +505,10 @@ class DecryptTextFile(View):
 
                 # Run the class method to capture output
                 decrypt_details_obj = DecryptDetails()
-                ip_details = decrypt_details_obj.addresses
                 user = request.user
                 case_id = encrypted_file.case_id
                 file_name = encrypted_file.case_name
-                decrypt_details_obj.save_decrypt_details(ip_details, user, case_id, file_name, integrity_check)
+                decrypt_details_obj.save_decrypt_details(user, case_id, file_name, integrity_check)
 
                 return HttpResponseRedirect(reverse('decrypt'))
 
@@ -639,12 +573,12 @@ class DecryptText(View):
                                                    f'{encrypted_file.case_name}.txt"')
                 # Run the class method to capture output
                 decrypt_details_obj = DecryptDetails()
-                ip_details = decrypt_details_obj.addresses
                 user = request.user
                 case_id = encrypted_file.case_id
                 file_name = encrypted_file.case_name
-                decrypt_details_obj.save_decrypt_details(ip_details, user, case_id, file_name, integrity_check)
+                decrypt_details_obj.save_decrypt_details(user, case_id, file_name, integrity_check)
                 time.sleep(.5)
+                return redirect('decrypt')
             else:
                 integrity_check = True
                 messages.success(request, 'SUCCESS! Integrity Check Passed __ File Decrypted And Downloaded __')
@@ -656,11 +590,10 @@ class DecryptText(View):
                                                    f'{encrypted_file.case_name}.txt"')
                 # Run the class method to capture output
                 decrypt_details_obj = DecryptDetails()
-                ip_details = decrypt_details_obj.addresses
                 user = request.user
                 case_id = encrypted_file.case_id
                 file_name = encrypted_file.case_name
-                decrypt_details_obj.save_decrypt_details(ip_details, user, case_id, file_name, integrity_check)
+                decrypt_details_obj.save_decrypt_details(user, case_id, file_name, integrity_check)
                 time.sleep(.5)
             return response
         except Exception as e:
@@ -733,11 +666,10 @@ class DecryptFile(View):
                                                    f'{encrypted_file.case_file.name}"')
                 # Run the command and capture the output
                 decrypt_details_obj = DecryptDetails()
-                ip_details = decrypt_details_obj.addresses
                 user = request.user
                 case_id = encrypted_file.case_id
                 file_name = encrypted_file.case_file.name
-                decrypt_details_obj.save_decrypt_details(ip_details, user, case_id, file_name, integrity_check)
+                decrypt_details_obj.save_decrypt_details(user, case_id, file_name, integrity_check)
                 time.sleep(.5)
 
                 e = messages.error(request, 'FAILED! Integrity check failed __ File tampered __')
@@ -754,11 +686,10 @@ class DecryptFile(View):
                 # Run the command and capture the output
                 # Run the class method to capture output
                 decrypt_details_obj = DecryptDetails()
-                ip_details = decrypt_details_obj.addresses
                 user = request.user
                 case_id = encrypted_file.case_id
                 file_name = encrypted_file.case_file.name
-                decrypt_details_obj.save_decrypt_details(ip_details, user, case_id, file_name, integrity_check)
+                decrypt_details_obj.save_decrypt_details(user, case_id, file_name, integrity_check)
                 time.sleep(.5)
 
                 return response
@@ -1243,21 +1174,20 @@ class ViewCasesBackend(View):
     def get(request):
         user = request.user
         try:
-            files = Text.objects.all().order_by('-id')[:10]
-            f_files = File.objects.all().order_by('-id')[:10]
-            textfiles = TextFile.objects.all().order_by('-id')[:10]
+            files = Text.objects.all().order_by('-id')[:10] or []
+            f_files = File.objects.all().order_by('-id')[:10] or []
+            textfiles = TextFile.objects.all().order_by('-id')[:10] or []
 
-            if files or f_files or textfiles:
-                context = {
-                    'files': files,
-                    'f_files': f_files,
-                    'textfiles': textfiles,
-                    'user': user
-                }
-                return render(request, 'backend/view_all_backend.html', context)
+            context = {
+                'files': files,
+                'f_files': f_files,
+                'textfiles': textfiles,
+                'user': user
+            }
+            return render(request, 'backend/view_all_backend.html', context)
         except Exception as e:
             messages.error(request, f'No Files Found! __ Error: {str(e)}')
-            return render(request, 'backend/view_all_backend.html')
+            return render(request, 'backend/view_all_backend.html', {'user': user})
 
 
 # Frontend

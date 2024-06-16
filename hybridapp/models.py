@@ -65,7 +65,6 @@ class TextFile(models.Model):
 
 
 class DecryptInfo(models.Model):
-    ip_details = models.TextField(blank=True)
     case_id = models.CharField(blank=False, max_length=255)
     file_name = models.CharField(max_length=255)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
