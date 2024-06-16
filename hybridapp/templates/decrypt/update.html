@@ -3,14 +3,18 @@
 {% load static %}
 
 <!-- Block Title -->
-<title>{% block title %} CBDET | Update Case {% endblock %}</title>
+<title>{% block title %} CBDET | Update Text Case {% endblock %}</title>
 
 <!-- Navbar links control -->
 {% block links %}{% endblock %}
 
 <!-- Block NavBar Content -->
 {% block nav-content %}
-    <i class="fa-solid fa-unlock-keyhole ml-2 mb-3" style="color: #fff; font-size: 20px"></i>   &nbsp;&nbsp; <h2 style="color: #fff; font-size: 20px">Administration</h2>
+  {% if user.is_staff == False %}
+    <i class="fa-solid fa-user-check mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Investigator &nbsp;{{ user }}</i>
+  {% elif user.is_staff == True %}
+    <i class="fa-solid fa-user mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Admin/Judge &nbsp;{{ user  }}</i>
+  {% endif %}
 {% endblock %}
 
 {% block topbar %}
@@ -30,13 +34,11 @@
 
 <!-- Logout Button -->
 {% block nav-btn %}
-    <a class="btn btn-custom" id="btn-nav-view" href="{% url 'decrypt' %}">Back</a>
-    <a class="btn btn-custom" id="btn-nav-back" href="{% url 'backend' %}" >Control Panel</a>
-    <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout">Logout</a>
+    <a class="btn btn-custom" id="btn-nav-back" onclick="goBack()"><i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i></a>
+    <a class="btn btn-custom" id="btn-nav-filter" href="{% url 'backend' %}" ><i class="fas fa-sliders">&nbsp;&nbsp;Control Panel</i></a>
+    <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout"><i class="fas fa-right-from-bracket">&nbsp;&nbsp;Logout</i></a>
 {% endblock %}
 
-<!-- Block Footer -->
-{% block footer %} style="color: #ff7f7f;" {% endblock %}
 
 <!-- Page Content -->
 {% block content %}
@@ -64,11 +66,11 @@
     </div> <!-- END // container -->
 {% endblock content %}
 
-<!-- Car wash Block -->
-{% block carwash %} {% endblock %}
+<!-- Block Encrypt -->
+{% block encrypt %} {% endblock %}
 
-<!-- Restaurant Block -->
-{% block restaurant %} {% endblock %}
+<!-- Block Decrypt -->
+{% block decrypt %} {% endblock %}
 
-<!-- Grocery Block -->
-{% block grocery %} {% endblock %}
+<!-- Block Footer -->
+{% block footer %} style="color: #d3d3d3;" {% endblock %}
