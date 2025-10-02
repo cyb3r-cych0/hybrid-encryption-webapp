@@ -9,9 +9,9 @@
 <!-- Block NavBar Content -->
 {% block nav-content %}
   {% if user.is_staff == False %}
-    <i class="fa-solid fa-user-check mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Investigator &nbsp;{{ user }}</i>
+    <i class="fa-solid fa-user-check mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Standard-User &nbsp;{{ user }}</i>
   {% elif user.is_staff == True %}
-    <i class="fa-solid fa-user-tie mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Admin/Judge &nbsp;{{ user  }}</i>
+    <i class="fa-solid fa-user-tie mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Admin-User &nbsp;{{ user  }}</i>
   {% endif %}
 {% endblock %}
 
@@ -44,7 +44,7 @@
     <br>
     <div class="container mt-2 mb-5 col-md-12" style="width: 95%; font-size: 14px">
         <button class="btn btn-secondary w-100 mt-3 mb-1 no-pointer">
-            <i class="fas fa-file">&nbsp;&nbsp;ENCRYPTED &nbsp;CASES</i>
+            <i class="fas fa-file">&nbsp;&nbsp;ENCRYPTED &nbsp;RECORDS</i>
         </button>
 
         <!-- Message From BackEnd -->
@@ -69,8 +69,8 @@
                         <thead class="bg-info">
                         <tr>
                           <th scope="col"><i class="fas fa-table-list">&nbsp;&nbsp;DB.ID</i></th>
-                          <th scope="col"><i class="fas fa-folder-closed">&nbsp;&nbsp;CASE-ID</i></th>
-                          <th scope="col"><i class="fas fa-file-lines">&nbsp;&nbsp;FILE NAME</i></th>
+                          <th scope="col"><i class="fas fa-folder-closed">&nbsp;&nbsp;RECORD-ID</i></th>
+                          <th scope="col"><i class="fas fa-file-lines">&nbsp;&nbsp;RECORD NAME</i></th>
                           <th scope="col"><i class="fas fa-user-tag">&nbsp;&nbsp;USER-ID</i></th>
                           <th scope="col"><i class="fas fa-calendar-day">&nbsp;&nbsp;DATE</i></th>
                           <th scope="col"><i class="fas fa-circle-info">&nbsp;&nbsp;DETAILS</i></th>
