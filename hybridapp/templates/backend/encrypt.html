@@ -17,9 +17,9 @@
 
 {% block nav-content %}
   {% if user.is_staff == False %}
-    <i class="fa-solid fa-user-check mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Investigator &nbsp;{{ user }}</i>
+    <i class="fa-solid fa-user-check mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Standard-User &nbsp;{{ user }}</i>
   {% elif user.is_staff == True %}
-    <i class="fa-solid fa-user mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Admin/Judge &nbsp;{{ user  }}</i>
+    <i class="fa-solid fa-user-tie mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Admin-User &nbsp;{{ user  }}</i>
   {% endif %}
 {% endblock %}
 
@@ -64,7 +64,7 @@
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-header bg-info text-dark">
-                        <i class="fa fa-user" >&nbsp;&nbsp;USER</i>
+                        <i class="fa fa-user" >&nbsp;&nbsp;LOGGED USER</i>
                     </div>
                     <div class="card-body">
                         <marquee behavior="" direction="">
@@ -76,7 +76,7 @@
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header bg-info text-dark">
-                       <i class="fa fa-circle-info">&nbsp;&nbsp;INFORMATION</i>
+                       <i class="fa fa-circle-info">&nbsp;&nbsp;USER INFORMATION</i>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -86,9 +86,9 @@
                                         <h5 class="border" style="color: black;">User Type</h5>
                                         <h6><i class="fa fa-user-large">&nbsp;&nbsp;
                                           {% if user.is_staff == False %}
-                                            <h5> Investigator</h5>
+                                            <h5> Standard</h5>
                                           {% elif user.is_staff == True %}
-                                            <h5> Admin/Judge</h5>
+                                            <h5> Admin</h5>
                                           {% endif %}
                                         </i></h6>
                                     </div>
@@ -97,7 +97,7 @@
                             <div class="col-md-4">
                                 <a class="text-decoration-none text-dark" href="{% url 'view_files'%}">
                                     <div class="card my-card shadow text-center p-3" style="color: green;">
-                                        <h5 class="border" style="color: black;">Encrypted Cases</h5>
+                                        <h5 class="border" style="color: black;">Enc. Records</h5>
                                         <h1><i class="fa fa-folder-plus" >&nbsp;&nbsp;{{ total_files }}</i></h1>
                                     </div>
                                 </a>
@@ -123,7 +123,7 @@
         <div class="col">
             <div class="card mb-5 rounded-3 shadow-lg border-secondary ">
               <div class="card-header py-3 text-bg-secondary border-secondary">
-                <h6 class="my-0 fw-normal" style="color: white;"><i class="fa fa-folder-closed">&nbsp;&nbsp;ADD &nbsp;NEW &nbsp;CASE &nbsp;FOR &nbsp;ENCRYPTION</i></h6>
+                <h6 class="my-0 fw-normal" style="color: white;"><i class="fa fa-folder-closed">&nbsp;&nbsp;ADD &nbsp;NEW &nbsp;RECORD &nbsp;FOR &nbsp;ENCRYPTION</i></h6>
               </div>
               <div class="card-body">
                 <div class="container mb-2">
@@ -133,18 +133,18 @@
                       <h4><i class="fa fa-file-image" style="color: grey;">&nbsp;.jpg/.png/.jpeg</i></h4>
                     </ul>
                     <div class="mt-5 mb-4">
-                      <p style="font-size: 18px; font-type: bold;">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-lightbulb" style="color: orange;"></i><i class="fa fa-">&nbsp;&nbsp;Select option to add new case for encryption</i></p>
+                      <p style="font-size: 18px; font-type: bold;">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-lightbulb" style="color: orange;"></i><i class="fa fa-">&nbsp;&nbsp;Select option to add new records for encryption</i></p>
                     </div>
 
                 </div>
                 <a href="/encrypt/upload_file">
-                    <button type="button" class="w-90 btn btn-lg btn-outline-success m-2"><i class="fas fa-file">&nbsp;&nbsp;ADD FILE CASE</i></button>
+                    <button type="button" class="w-90 btn btn-lg btn-outline-success m-2"><i class="fas fa-file">&nbsp;&nbsp;ADD FILE</i></button>
                 </a>
                 <a href="/encrypt/encrypt_case_data">
-                    <button type="button" class="w-90 btn btn-lg btn-outline-primary m-2"><i class="fas fa-file-lines">&nbsp;&nbsp;ADD TEXT CASE</i></button>
+                    <button type="button" class="w-90 btn btn-lg btn-outline-primary m-2"><i class="fas fa-file-lines">&nbsp;&nbsp;ADD TEXT</i></button>
                 </a>
                 <a href="/encrypt/encrypt_case">
-                    <button type="button" class="w-90 btn btn-lg btn-outline-secondary m-2"><i class="fas fa-folder-open">&nbsp;&nbsp;ADD TEXTFILE CASE</i></button>
+                    <button type="button" class="w-90 btn btn-lg btn-outline-secondary m-2"><i class="fas fa-folder-open">&nbsp;&nbsp;ADD TEXT + FILE</i></button>
                 </a>
               </div>
             </div>
@@ -153,7 +153,7 @@
     </div> <!-- END // container -->
     <!--  -->
     <button class="btn btn-secondary w-100 mt-4 mb-2 no-pointer">
-        <i class="fa fa-folder-tree">&nbsp;&nbsp; RECENT &nbsp;ENCRYPTED &nbsp;CASES</i>
+        <i class="fa fa-folder-tree">&nbsp;&nbsp; RECENT &nbsp;ENCRYPTED &nbsp;RECORDS</i>
     </button>
 
     <!--Table-->
@@ -163,9 +163,9 @@
                 <table class="table bg-white">
                     <thead class="bg-info">
                         <tr>
-                          <th scope="col"><i class="fa fa-table-list">&nbsp;&nbsp; Db.id</i></th>
-                          <th scope="col"><i class="fa fa-folder-closed">&nbsp;&nbsp; CASE ID</i></th>
-                          <th scope="col"><i class="fa fa-file-lines">&nbsp;&nbsp; FILE NAME</i></th>
+                          <th scope="col"><i class="fa fa-table-list">&nbsp;&nbsp; DB.ID</i></th>
+                          <th scope="col"><i class="fa fa-folder-closed">&nbsp;&nbsp; RECORD ID</i></th>
+                          <th scope="col"><i class="fa fa-file-lines">&nbsp;&nbsp; RECORD NAME</i></th>
                           <th scope="col"><i class="fa fa-user-tag">&nbsp;&nbsp; USER ID</i></th>
                           <th scope="col"><i class="fa fa-calendar-day">&nbsp;&nbsp; DATE ENCRYPTED</i></th>
                           <th scope="col"><i class="fa fa-circle-info">&nbsp;&nbsp; DETAILS</i></th>
@@ -217,7 +217,7 @@
             </div>
         </div>
         <a href="{% url 'view_files' %}">
-            <button class="btn btn-secondary mb-1 ml-5"><i class="fa fa-folder-plus">&nbsp;&nbsp;More &nbsp;Cases</i></button>
+            <button class="btn btn-secondary mb-1 ml-5"><i class="fa fa-folder-plus">&nbsp;&nbsp;More &nbsp;Records</i></button>
         </a>
     </div>
     <!--End Table-->
