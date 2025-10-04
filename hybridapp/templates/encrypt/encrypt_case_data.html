@@ -3,7 +3,7 @@
 {% load static %}
 
 <!-- Block Title -->
-<title>{% block title %} CBDET | Encrypt Case {% endblock %}</title>
+<title>{% block title %} CBDET | Encrypt Record {% endblock %}</title>
 
 <!-- Navbar links control -->
 {% block links %}{% endblock %}
@@ -11,9 +11,9 @@
 <!-- Block NavBar Content -->
 {% block nav-content %}
   {% if user.is_staff == False %}
-    <i class="fa-solid fa-user-check mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Investigator &nbsp;{{ user }}</i>
+    <i class="fa-solid fa-user-check mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Standard-User &nbsp;{{ user }}</i>
   {% elif user.is_staff == True %}
-    <i class="fa-solid fa-user mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Admin/Judge &nbsp;{{ user  }}</i>
+    <i class="fa-solid fa-user mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Admin-User &nbsp;{{ user  }}</i>
   {% endif %}
 {% endblock %}
 
@@ -42,9 +42,8 @@
 {% block content %}
 <br>
 <div class="container mt-2 mb-5 pb-5" style="width: 95%; font-size: 14px">
-
     <button class="btn btn-danger w-100 mt-3 mb-4 no-pointer" style="color: black;">
-        <i class="fas fa-file-lines">&nbsp;&nbsp;ADD &nbsp;TEXT &nbsp;DETAILS</i>
+        <i class="fas fa-file-lines">&nbsp;&nbsp;ADD &nbsp;TEXT-RECORD &nbsp;DETAILS</i>
     </button>
 
     <!-- Message From BackEnd -->
@@ -60,32 +59,30 @@
         {% endif %}
     {% endfor%}
 
+    <!-- Encrypt Form -->
     <div class="row">
       <div class="col-md-6">
-        <!-- Encrypt Form -->
-        <form method="POST" class="card p-3 mt-2" autocomplete="off" enctype="multipart/form-data">
-            {% csrf_token %}
-            <div class="row">
-                    <div class="col-6">
-                        {{ form.case_id|as_crispy_field }}
+            <form method="POST" class="card p-3 mt-2" autocomplete="off" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row">
+                        <div class="col-6">
+                            {{ form.case_id|as_crispy_field }}
+                        </div>
+                        <div class="col-6">
+                            {{ form.case_name|as_crispy_field }}
+                        </div>
+                        <div class="col-12">
+                            {{ form.case_data|as_crispy_field }}
+                        </div>
                     </div>
-                    <div class="col-6">
-                        {{ form.case_name|as_crispy_field }}
-                    </div>
-                    <div class="col-12">
-                        {{ form.case_data|as_crispy_field }}
-                    </div>
-                </div>
-            <button type="submit" class="btn btn-outline-primary mt-3"><i class="fas fa-lock">&nbsp;&nbsp;Encrypt &nbsp;Text</i></button>
-        </form>
+                <button type="submit" class="btn btn-outline-primary mt-3"><i class="fas fa-lock">&nbsp;&nbsp;Encrypt &nbsp;Text</i></button>
+            </form>
       </div>
       <div class="col-md-6 mt-4">
           <img src="{% static 'img/encd.jpg' %}" alt="Image" style="width: 539px; height: 420px; padding: 1.5rem" >
       </div>
     </div>
-
 </div> <!-- END // container -->
-
 {% endblock content %}
 
 <!-- Block Encrypt -->

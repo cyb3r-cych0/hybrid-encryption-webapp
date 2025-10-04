@@ -7,14 +7,14 @@
 <!-- Block NavBar Content -->
 {% block nav-content %}
   {% if user.is_staff == False %}
-    <i class="fa-solid fa-user-check mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Investigator &nbsp;{{ user }}</i>
+    <i class="fa-solid fa-user-check mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Standard-User &nbsp;{{ user }}</i>
   {% elif user.is_staff == True %}
-    <i class="fa-solid fa-user mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Admin/Judge &nbsp;{{ user  }}</i>
+    <i class="fa-solid fa-user mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Admin-User &nbsp;{{ user  }}</i>
   {% endif %}
 {% endblock %}
 
 <!-- Block Title -->
-<title>{% block title %} CBDET | TextFile Details {% endblock %}</title>
+<title>{% block title %} CBDET | Text+File Details {% endblock %}</title>
 
 <!-- Logout Button -->
 {% block nav-btn %}
@@ -38,41 +38,35 @@
     </div>
 {% endblock %}
 
-
 <!-- Page Content -->
 {% block content %}
 <br>
-    <div class="container mt-1 mb-5 pb-2">
+<div class="container mt-1 mb-5 pb-2">
+    <button class="btn btn-warning w-100 mt-3 mb-2 no-pointer">
+        <i class="fa-solid fa-circle-info">&nbsp;TEXT+FILE-RECORD &nbsp;DETAILS</i>
+    </button>
 
-        <button class="btn btn-warning w-100 mt-3 mb-2 no-pointer">
-            <i class="fa-solid fa-circle-info">&nbsp;TEXTFILE &nbsp;DETAILS</i>
-        </button>
-
-        <div id="pt" class="col-12">
-            <div class="card p-3 mt-3 mb-4">
-                <div class="row" >
-                    <h3>ENCRYPTED TEXTFILE INFORMATION</h3>
-                    <div class="container m-3">
-                      <p>CASE ID : {{ textfile.case_id }} </p>
-                      <p>USER ID : {{ textfile.user.email }}</p>
-                      <p>DATE ENCRYPTED : {{ textfile.case_date }}</p>
-                      <p>REPORT TITLE : {{ textfile.case_file }}</p>
-                      <p>REPORT NAME : {{ textfile.case_name }}</p>
-                      <p>REPORT INFO : {{ textfile.case_info }}</p>
-                      <p>REPORT DATA : {{ textfile.case_data }}</p>
-                    </div>
+    <div id="pt" class="col-12">
+        <div class="card p-3 mt-3 mb-4">
+            <div class="row" >
+                <h3>TEXT+FILE CIPHER INFORMATION</h3>
+                <div class="container m-3">
+                    <p>RECORD ID : {{ textfile.case_id }} </p>
+                    <p>USER ID : NAME: {{ textfile.user.username }} | EMAIL: {{ textfile.user.email }}</p>
+                    <p>DATE ENCRYPTED : {{ textfile.case_date }}</p>
+                    <p>TEXT NAME : {{ textfile.case_file }}</p>
+                    <p>FILE NAME : {{ textfile.case_name }}</p>
+                    <p>TEXT CIPHER : {{ textfile.case_info }}</p>
+                    <p>FILE CIPHER : {{ textfile.case_data }}</p>
                 </div>
             </div>
-
-            <a href="">
-                <button onclick="myfun('pt')" type="button" class="btn btn-outline-primary m-1 p-2"><i class="fa-solid fa-print">&nbsp;Print</i></button>
-            </a>
-      </div>
-
+        </div>
+        <a href="">
+            <button onclick="myfun('pt')" type="button" class="btn btn-outline-primary m-1 p-2"><i class="fa-solid fa-print">&nbsp;Print</i></button>
+        </a>
+    </div>
 </div> <!-- END // container -->
-
 {% endblock content %}
-
 
 <!-- Block Encrypt -->
 {% block encrypt %} {% endblock %}
