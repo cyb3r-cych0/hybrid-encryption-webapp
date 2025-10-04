@@ -35,63 +35,57 @@
     </div>
 {% endblock %}
 
-
 <!-- Page Content -->
 {% block content %}
 <div class="container mt-4 mb-5" style="width: 95%; font-size: 14px">
+    <button class="btn btn-danger w-100 mt-3 mb-2 no-pointer" style="color: black;">
+        <i class="fa-solid fa-circle-info">&nbsp;REGISTER &nbsp;USER &nbsp;DETAILS</i>
+    </button>
 
-  <button class="btn btn-danger w-100 mt-3 mb-2 no-pointer" style="color: black;">
-      <i class="fa-solid fa-circle-info">&nbsp;REGISTER &nbsp;USER &nbsp;DETAILS</i>
-  </button>
+    <!-- Message From BackEnd -->
+    {% for message in messages %}
+        {% if message.tags == 'success' %}
+            <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
+                <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
+            </div>
+        {% elif message.tags == 'error' %}
+            <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
+                <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
+            </div>
+        {% endif %}
+    {% endfor%}
 
-  <!-- Message From BackEnd -->
-  {% for message in messages %}
-      {% if message.tags == 'success' %}
-          <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
-              <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
-          </div>
-      {% elif message.tags == 'error' %}
-          <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
-              <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
-          </div>
-      {% endif %}
-  {% endfor%}
-
-  <div class="row mt-5">
-    <div class="col-md-6">
-      <div class="container card p-3 border-dark mt-1 mb-5" style="width: 95%;">
-          <!-- Title -->
-          <div class="text-center border-bottom mb-3 mt-1"><h5><i class="fa-solid fa-user-pen">&nbsp;NEW &nbsp;USER &nbsp;DETAILS</i></h5></div>
-          <!-- Form -->
-              <form method="POST" autocomplete="off" novalidate>
-                  {% csrf_token %}
-                  <!-- {{ form|crispy }} -->
-                  <div class="row">
-                    <div class="col-12 mt-2">
-                      {{ form.username|as_crispy_field }}
-                    </div>
-                    <div class="col-12 mt-2">
-                        {{ form.email|as_crispy_field }}
-                    </div>
-                    <div class="col-6 mt-2">
-                        {{ form.password1|as_crispy_field }}
-                    </div>
-                    <div class="col-6 mt-2">
-                        {{ form.password2|as_crispy_field }}
-                    </div>
-                  </div>
-                  <button type="submit" class="w-100 btn btn-outline-primary mt-2"><i class="fa-solid fa-user-plus">&nbsp;&nbsp;REGISTER</i></button>
-              </form>
-          </div>
-      </div>
-
+    <!-- Register Form -->
+    <div class="row mt-5">
         <div class="col-md-6">
-          <img src="{% static 'img/reg.webp' %}" alt="Image" style="width: 550px; height: 400px; padding: 1rem;" >
+            <div class="container card p-3 border-dark mt-1 mb-5" style="width: 95%;">
+                <div class="text-center border-bottom mb-3 mt-1"><h5><i class="fa-solid fa-user-pen">&nbsp;NEW &nbsp;USER &nbsp;DETAILS</i></h5></div>
+                    <form method="POST" autocomplete="off" novalidate>
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-12 mt-2">
+                                {{ form.username|as_crispy_field }}
+                            </div>
+                            <div class="col-12 mt-2">
+                                {{ form.email|as_crispy_field }}
+                            </div>
+                            <div class="col-6 mt-2">
+                                {{ form.password1|as_crispy_field }}
+                            </div>
+                            <div class="col-6 mt-2">
+                                {{ form.password2|as_crispy_field }}
+                            </div>
+                        </div>
+                        <button type="submit" class="w-100 btn btn-outline-primary mt-2"><i class="fa-solid fa-user-plus">&nbsp;&nbsp;REGISTER</i></button>
+                    </form>
+                </div>
+            </div>
+        <div class="col-md-6">
+            <img src="{% static 'img/reg.webp' %}" alt="Image" style="width: 550px; height: 400px; padding: 1rem;" >
         </div>
     </div>
-  </div>
+</div>
 {% endblock content %}
-
 
 <!-- Block Footer -->
 {% block footer %} style="color: #d3d3d3;" {% endblock %}
