@@ -35,57 +35,46 @@
     </div>
 {% endblock %}
 
-
-
 <!-- Page Contentt -->
 {% block content %}
-
 <div class="container mt-4 mb-5" style="width: 95%; font-size: 14px">
+    <button class="btn btn-danger w-100 mt-3 mb-2 no-pointer" style="color: black;">
+        <i class="fa-solid fa-circle-info">&nbsp;LOGIN &nbsp;USER &nbsp;DETAILS</i>
+    </button>
 
-  <button class="btn btn-danger w-100 mt-3 mb-2 no-pointer" style="color: black;">
-      <i class="fa-solid fa-circle-info">&nbsp;LOGIN &nbsp;USER &nbsp;DETAILS</i>
-  </button>
+    <!-- Message From BackEnd -->
+    {% for message in messages %}
+        {% if message.tags == 'success' %}
+            <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
+                <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
+            </div>
+        {% elif message.tags == 'error' %}
+            <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
+                <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
+            </div>
+        {% endif %}
+    {% endfor%}
 
-  <!-- Message From BackEnd -->
-  {% for message in messages %}
-      {% if message.tags == 'success' %}
-          <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
-              <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
-          </div>
-      {% elif message.tags == 'error' %}
-          <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
-              <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
-          </div>
-      {% endif %}
-  {% endfor%}
-
-  <div class="row">
+    <!-- Login Form -->
+    <div class="row">
     <div class="col-md-6 mt-5">
-      <div class="container card p-3 border-dark shadow-lg mt-1 mb-5" style="width: 90%;">
-
-          <!-- Title -->
-          <div class="text-center border-bottom mb-3 mt-1"><h5><i class="fas fa-user-lock">&nbsp;&nbsp;WELCOME &nbsp;BACK</i></h5></div>
-          <!-- Form -->
-          <form method="POST" autocomplete="off" novalidate>
-              {% csrf_token %}
-              {% bootstrap_form form %}
-              <br>
-              <button type="submit" class="w-100 btn btn-outline-success"><i class="fas fa-unlock">&nbsp;&nbsp;LOGIN</i></button>
-          </form>
-          <div class="mb-4"></div>
-      </div>
+        <div class="container card p-3 border-dark shadow-lg mt-1 mb-5" style="width: 90%;">
+            <div class="text-center border-bottom mb-3 mt-1"><h5><i class="fas fa-user-lock">&nbsp;&nbsp;WELCOME &nbsp;BACK</i></h5></div>
+            <form method="POST" autocomplete="off" novalidate>
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                <br>
+                <button type="submit" class="w-100 btn btn-outline-success"><i class="fas fa-unlock">&nbsp;&nbsp;LOGIN</i></button>
+            </form>
+            <div class="mb-4"></div>
+        </div>
     </div>
-
     <div class="col-md-6 mt-5">
       <img src="{% static 'img/login.png' %}" alt="Image" style="width: 550px; height: 350px; padding: 1rem" >
     </div>
-
   </div>
-
-
 </div>
 {% endblock content %}
-
 
 <!-- Block Footer -->
 {% block footer %} style="color: #d3d3d3;" {% endblock %}
