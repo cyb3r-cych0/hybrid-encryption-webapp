@@ -9,9 +9,9 @@
 <!-- Block NavBar Content -->
 {% block nav-content %}
   {% if user.is_staff == False %}
-    <i class="fa-solid fa-user-check mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Investigator &nbsp;{{ user }}</i>
+    <i class="fa-solid fa-user-check mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Standard-User &nbsp;{{ user }}</i>
   {% elif user.is_staff == True %}
-    <i class="fa-solid fa-user mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Admin/Judge &nbsp;{{ user  }}</i>
+    <i class="fa-solid fa-user mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Admin-User &nbsp;{{ user  }}</i>
   {% endif %}
 {% endblock %}
 
@@ -44,7 +44,7 @@
     <br>
     <div class="container mt-2 mb-5 col-md-12" style="width: 95%; font-size: 14px">
         <button class="btn btn-danger w-100 mt-3 mb-3 no-pointer" style="color: black;">
-          <i class="fas fa-search">&nbsp;&nbsp;SEARCH &nbsp;FILE &nbsp;CASES</i>
+          <i class="fas fa-search">&nbsp;&nbsp;SEARCH &nbsp;FILE &nbsp;RECORD</i>
         </button>
 
         <!-- Message From BackEnd -->
@@ -63,11 +63,11 @@
       <div class="container m-2" style="width: 100%; font-size: 14px">
         <div class="row align-items-center">
             <div class="row col-lg-4">
-              <i class="fas fa-keyboard">&nbsp;&nbsp;Enter CASE-ID To Search</i>
+              <i class="fas fa-keyboard">&nbsp;&nbsp;Enter RECORD-ID To Search</i>
             </div>
             <div class="col-lg-4 m-3">
               <form method="GET" action="{% url 'search_file_cases' %}">
-                  <input type="text" name="case_id" placeholder="file CASE ID...">
+                  <input type="text" name="case_id" placeholder="file RECORD-ID...">
                   &nbsp;&nbsp;&nbsp;<button class="btn btn-secondary" type="submit"><i class="fas fa-search">&nbsp;&nbsp;Search</i></button>
               </form>
             </div>
@@ -86,7 +86,7 @@
                             <thead class="bg-info">
                             <tr>
                               <th scope="col"><i class="fas fa-table-list">&nbsp;&nbsp;DB.ID</i></th>
-                              <th scope="col"><i class="fas fa-folder-closed">&nbsp;&nbsp;CASE-ID</i></th>
+                              <th scope="col"><i class="fas fa-folder-closed">&nbsp;&nbsp;RECORD-ID</i></th>
                               <th scope="col"><i class="fas fa-file-lines">&nbsp;&nbsp;FILE NAME</i></th>
                               <th scope="col"><i class="fas fa-user-tag">&nbsp;&nbsp;USER-ID</i></th>
                               <th scope="col"><i class="fas fa-calendar-day">&nbsp;&nbsp;DATE</i></th>

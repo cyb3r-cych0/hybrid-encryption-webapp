@@ -4,14 +4,14 @@
 <!-- Navbar links control -->
 {% block links %}{% endblock %}
 
-<title>{% block title %} CBDET | View Cases {% endblock %}</title>
+<title>{% block title %} CBDET | View Records {% endblock %}</title>
 
 <!-- Block NavBar Content -->
 {% block nav-content %}
   {% if user.is_staff == False %}
-    <i class="fa-solid fa-user-check mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Investigator &nbsp;{{ user }}</i>
+    <i class="fa-solid fa-user-check mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Standard-User &nbsp;{{ user }}</i>
   {% elif user.is_staff == True %}
-    <i class="fa-solid fa-user-tie mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Admin/Judge &nbsp;{{ user  }}</i>
+    <i class="fa-solid fa-user-tie mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Admin-User &nbsp;{{ user  }}</i>
   {% endif %}
 {% endblock %}
 
@@ -44,7 +44,7 @@
     <br>
     <div class="container mt-2 mb-5 col-md-12" style="width: 95%; font-size: 14px;">
       <button class="btn btn-secondary w-100 mt-3 mb-3 no-pointer">
-          <i class="fas fa-folder-tree">&nbsp;&nbsp;ENCRYPTED &nbsp;CASES</i>
+          <i class="fas fa-folder-tree">&nbsp;&nbsp;ENCRYPTED &nbsp;RECORDS</i>
       </button>
 
         <!--Table-->
@@ -55,9 +55,10 @@
                         <thead class="bg-info">
                         <tr>
                           <th scope="col"><i class="fas fa-table-list">&nbsp;&nbsp;DB.ID</i></th>
-                          <th scope="col"><i class="fas fa-folder-closed">&nbsp;&nbsp;CASE-ID</i></th>
-                          <th scope="col"><i class="fas fa-file-lines">&nbsp;&nbsp;FILE NAME</i></th>
-                          <th scope="col"><i class="fas fa-user-tag">&nbsp;&nbsp;USER-ID</i></th>
+                          <th scope="col"><i class="fas fa-folder-closed">&nbsp;&nbsp;RECORD-ID</i></th>
+                          <th scope="col"><i class="fas fa-file-lines">&nbsp;&nbsp;RECORD NAME</i></th>
+                          <th scope="col"><i class="fas fa-user-tag">&nbsp;&nbsp;USER NAME</i></th>
+                          <th scope="col"><i class="fas fa-user-tag">&nbsp;&nbsp;USER EMAIL</i></th>
                           <th scope="col"><i class="fas fa-calendar-day">&nbsp;&nbsp;DATE</i></th>
                           <th scope="col"><i class="fas fa-circle-info">&nbsp;&nbsp;DETAILS</i></th>
                           <th scope="col"><i class="fas fa-bars-progress">&nbsp;&nbsp;ACTION</i></th>
@@ -69,6 +70,7 @@
                             <td>{{ file.id }}</td>
                             <td>{{ file.case_id }}</td>
                             <td>{{ file.case_file }}</td>
+                            <td>{{ file.user }}</td>
                             <td>{{ file.user.email }}</td>
                             <td>{{ file.case_date }}</td>
                             <td><a href="{% url 'view_data_decrypt' file.id %}">
@@ -87,6 +89,7 @@
                             <td>{{ txt.id }}</td>
                             <td>{{ txt.case_id }}</td>
                             <td>{{ txt.case_name }}</td>
+                            <td>{{ txt.user }}</td>
                             <td>{{ txt.user.email }}</td>
                             <td>{{ txt.case_date }}</td>
                             <td><a href="{% url 'view_file_decrypt' txt.id %}">
@@ -105,6 +108,7 @@
                             <td>{{ repo.id }}</td>
                             <td>{{ repo.case_id }}</td>
                             <td>{{ repo.case_file }}</td>
+                            <td>{{ repo.user }}</td>
                             <td>{{ repo.user.email }}</td>
                             <td>{{ repo.case_date }}</td>
                             <td><a href="{% url 'view_report_decrypt' repo.id %}">
