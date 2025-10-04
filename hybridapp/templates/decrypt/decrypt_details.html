@@ -10,9 +10,9 @@
 <!-- Block NavBar Content -->
 {% block nav-content %}
   {% if user.is_staff == False %}
-    <i class="fa-solid fa-user-check mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Investigator &nbsp;{{ user }}</i>
+    <i class="fa-solid fa-user-check mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Standard-User &nbsp;{{ user }}</i>
   {% elif user.is_staff == True %}
-    <i class="fa-solid fa-user-tie mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Admin/Judge &nbsp;{{ user  }}</i>
+    <i class="fa-solid fa-user-tie mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Admin-User &nbsp;{{ user  }}</i>
   {% endif %}
 {% endblock %}
 
@@ -41,65 +41,67 @@
 
 <!-- Page Content -->
 {% block content %}
-    <br>
-    <div class="container mt-2 mb-5 col-md-12" style="width: 95%; font-size: 14px">
-        <button class="btn btn-secondary w-100 mt-3 mb-1 no-pointer">
-            <i class="fas fa-users">&nbsp;&nbsp;DECRYPTED &nbsp;CASES</i>
-        </button>
+<br>
+<div class="container mt-2 mb-5 col-md-12" style="width: 95%; font-size: 14px">
+    <button class="btn btn-secondary w-100 mt-3 mb-1 no-pointer">
+        <i class="fas fa-users">&nbsp;&nbsp;DECRYPTED &nbsp;RECORDS</i>
+    </button>
 
-        <!-- Message From BackEnd -->
-        {% for message in messages %}
-            {% if message.tags == 'success' %}
-                <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
-                    <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
-                </div>
-            {% elif message.tags == 'error' %}
-                <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
-                    <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
-                </div>
-            {% endif %}
-        {% endfor%}
+    <!-- Message From BackEnd -->
+    {% for message in messages %}
+        {% if message.tags == 'success' %}
+            <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
+                <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
+            </div>
+        {% elif message.tags == 'error' %}
+            <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
+                <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
+            </div>
+        {% endif %}
+    {% endfor%}
 
 
-        <!--Table-->
-        <div class="container">
-            <div class="row my-4">
-                <div class="col-md-12">
-                    <table class="table bg-white">
-                        <thead class="bg-info">
-                        <tr>
-                          <th scope="col"><i class="fas fa-table-list">&nbsp;ID</i></th>
-                          <th scope="col"><i class="fas fa-envelope">&nbsp;CASE ID</i></th>
-                          <th scope="col"><i class="fas fa-user-tag">&nbsp;USER</i></th>
-                          <th scope="col"><i class="fas fa-calendar-day">&nbsp;DATE</i></th>
-                          <th scope="col"><i class="fas fa-clock">&nbsp;INTEGRITY CHECK</i></th>
-                          <th scope="col"><i class="fas fa-circle-info">&nbsp;DETAILS</i></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for detail in decrypt_details %}
-                        <tr>
-                            <td>{{ detail.id }}</td>
-                            <td>{{ detail.case_id }}</td>
-                            <td>{{ detail.user.email }}</td>
-                            <td>{{ detail.decrypt_date }}</td>
-                            {% if detail.integrity_check == 1 %}
-                                <td>PASSED</td>
-                            {% else %}
-                                <td>FAILED</td>
-                            {% endif %}
-                            <td><a href="{% url 'view_decrypt_details' detail.id %}">
-                              <button type="button" class="btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
-                            </a></td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-              </div>
+    <!--Table-->
+    <div class="container">
+        <div class="row my-4">
+            <div class="col-md-12">
+                <table class="table bg-white">
+                    <thead class="bg-info">
+                    <tr>
+                        <th scope="col"><i class="fas fa-table-list">&nbsp;ID</i></th>
+                        <th scope="col"><i class="fas fa-envelope">&nbsp;RECORD ID</i></th>
+                        <th scope="col"><i class="fas fa-user-tag">&nbsp;USER NAME</i></th>
+                        <th scope="col"><i class="fas fa-user-tag">&nbsp;USER EMAIL</i></th>
+                        <th scope="col"><i class="fas fa-calendar-day">&nbsp;DATE</i></th>
+                        <th scope="col"><i class="fas fa-clock">&nbsp;INTEGRITY CHECK</i></th>
+                        <th scope="col"><i class="fas fa-circle-info">&nbsp;DETAILS</i></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for detail in decrypt_details %}
+                    <tr>
+                        <td>{{ detail.id }}</td>
+                        <td>{{ detail.case_id }}</td>
+                        <td>{{ detail.user }}</td>
+                        <td>{{ detail.user.email }}</td>
+                        <td>{{ detail.decrypt_date }}</td>
+                        {% if detail.integrity_check == 1 %}
+                            <td>PASSED</td>
+                        {% else %}
+                            <td>FAILED</td>
+                        {% endif %}
+                        <td><a href="{% url 'view_decrypt_details' detail.id %}">
+                            <button type="button" class="btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
+                        </a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
             </div>
         </div>
-        <!--End Table-->
     </div>
+    <!--End Table-->
+</div>
 
 {% endblock content %}
 

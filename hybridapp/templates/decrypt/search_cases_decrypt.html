@@ -4,14 +4,14 @@
 <!-- Navbar links control -->
 {% block links %}{% endblock %}
 
-<title>{% block title %} CBDET | Search Case {% endblock %}</title>
+<title>{% block title %} CBDET | Search Record {% endblock %}</title>
 
 <!-- Block NavBar Content -->
 {% block nav-content %}
   {% if user.is_staff == False %}
-    <i class="fa-solid fa-user-check mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Investigator &nbsp;{{ user }}</i>
+    <i class="fa-solid fa-user-check mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Standard-User &nbsp;{{ user }}</i>
   {% elif user.is_staff == True %}
-    <i class="fa-solid fa-user mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Admin/Judge &nbsp;{{ user  }}</i>
+    <i class="fa-solid fa-user mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Admin-User &nbsp;{{ user  }}</i>
   {% endif %}
 {% endblock %}
 
@@ -41,81 +41,81 @@
 
 <!-- Page Content -->
 {% block content %}
-    <br>
-    <div class="container mt-2 mb-5 col-md-12" style="width: 95%; font-size: 14px">
-        <button class="btn btn-danger w-100 mt-3 mb-3 no-pointer" style="color: black;">
-            <i class="fas fa-search">&nbsp;&nbsp;SEARCH &nbsp;ENCRYPTED &nbsp;CASES</i>
-        </button>
+<br>
+<div class="container mt-2 mb-5 col-md-12" style="width: 95%; font-size: 14px">
+    <button class="btn btn-danger w-100 mt-3 mb-3 no-pointer" style="color: black;">
+        <i class="fas fa-search">&nbsp;&nbsp;SEARCH &nbsp;ENCRYPTED &nbsp;RECORDS</i>
+    </button>
 
-        <!-- Message From BackEnd -->
-        {% for message in messages %}
-            {% if message.tags == 'success' %}
-                <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
-                    <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
-                </div>
-            {% elif message.tags == 'error' %}
-                <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
-                    <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
-                </div>
-            {% endif %}
-        {% endfor%}
+    <!-- Message From BackEnd -->
+    {% for message in messages %}
+        {% if message.tags == 'success' %}
+            <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
+                <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
+            </div>
+        {% elif message.tags == 'error' %}
+            <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
+                <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
+            </div>
+        {% endif %}
+    {% endfor%}
 
-      <div class="container m-2" style="width: 100%; font-size: 14px">
-        <div class="row align-items-center">
-            <div class="row col-lg-4">
-              <i class="fas fa-keyboard">&nbsp;&nbsp;Enter CASE-ID To Search</i>
-            </div>
-            <div class="col-lg-4 m-3">
-              <form method="GET" action="{% url 'search_cases_decrypt' %}">
-                  <input type="text" name="q" placeholder="file/text/textfile CASE ID ...">
-                  &nbsp;&nbsp;&nbsp;<button class="btn btn-secondary" type="submit"><i class="fas fa-search">&nbsp;&nbsp;Search</i></button>
-              </form>
-            </div>
-            <div class="row col-lg-4 ml-2">
-              <i class="fas fa-list-ol">&nbsp;&nbsp;Match Found: {{ count }} !</i>
-            </div>
-        </div>
+    <div class="container m-2" style="width: 100%; font-size: 14px">
+      <div class="row align-items-center">
+          <div class="row col-lg-4">
+            <i class="fas fa-keyboard">&nbsp;&nbsp;Enter RECORD-ID To Search</i>
+          </div>
+          <div class="col-lg-4 m-3">
+            <form method="GET" action="{% url 'search_cases_decrypt' %}">
+                <input type="text" name="q" placeholder="file/text/text+file RECORD ID ...">
+                &nbsp;&nbsp;&nbsp;<button class="btn btn-secondary" type="submit"><i class="fas fa-search">&nbsp;&nbsp;Search</i></button>
+            </form>
+          </div>
+          <div class="row col-lg-4 ml-2">
+            <i class="fas fa-list-ol">&nbsp;&nbsp;Match Found: {{ count }} !</i>
+          </div>
       </div>
+    </div>
 
-        <ul>
-            <!--Table-->
-            <div class="container">
-                <div class="row my-4">
-                    <div class="col-md-12">
-                        <table class="table bg-white">
-                            <thead class="bg-info">
-                            <tr>
-                                <th scope="col"><i class="fas fa-table-list">&nbsp;&nbsp;DB.ID</i></th>
-                                <th scope="col"><i class="fas fa-folder-closed">&nbsp;&nbsp;CASE-ID</i></th>
-                                <th scope="col"><i class="fas fa-file-lines">&nbsp;&nbsp;FILE NAME</i></th>
-                                <th scope="col"><i class="fas fa-user-tag">&nbsp;&nbsp;USER-ID</i></th>
-                                <th scope="col"><i class="fas fa-calendar-day">&nbsp;&nbsp;DATE</i></th>
-                                <th scope="col"><i class="fas fa-circle-info">&nbsp;&nbsp;DETAILS</i></th>
-                                <th scope="col"><i class="fas fa-bars-progress">&nbsp;&nbsp;ACTION</i></th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                          {% if case_files %}
-                          {% for file in case_files %}
-                            <tr>
-                                <td>{{ file.id }}</td>
-                                <td>{{ file.case_id }}</td>
-                                <td>{{ file.case_file }}</td>
-                                <td>{{ file.user.email }}</td>
-                                <td>{{ file.case_date }}</td>
-                                <td><a href="{% url 'view_data_decrypt' file.id %}">
-                                    <button type="button" class="btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
-                                  </a>
-                                </td>
-                                <td><a href="{% url 'decrypt_and_download' file.id %}">
-                                  <button type="button" class="btn btn-sm btn-outline-success"><i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i></button>
-                                </a></td>
-                            </tr>
-                            {% endfor %}
-                            {% endif %}
+    <ul>
+      <!--Table-->
+      <div class="container">
+          <div class="row my-4">
+              <div class="col-md-12">
+                  <table class="table bg-white">
+                      <thead class="bg-info">
+                        <tr>
+                            <th scope="col"><i class="fas fa-table-list">&nbsp;&nbsp;DB.ID</i></th>
+                            <th scope="col"><i class="fas fa-folder-closed">&nbsp;&nbsp;RECORD-ID</i></th>
+                            <th scope="col"><i class="fas fa-file-lines">&nbsp;&nbsp;RECORD NAME</i></th>
+                            <th scope="col"><i class="fas fa-user-tag">&nbsp;&nbsp;USER NAME</i></th>
+                            <th scope="col"><i class="fas fa-user-tag">&nbsp;&nbsp;USER EMAIL</i></th>
+                            <th scope="col"><i class="fas fa-calendar-day">&nbsp;&nbsp;DATE</i></th>
+                            <th scope="col"><i class="fas fa-circle-info">&nbsp;&nbsp;DETAILS</i></th>
+                            <th scope="col"><i class="fas fa-bars-progress">&nbsp;&nbsp;ACTION</i></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% if case_files %}
+                        {% for file in case_files %}
+                          <tr>
+                              <td>{{ file.id }}</td>
+                              <td>{{ file.case_id }}</td>
+                              <td>{{ file.case_file }}</td>
+                              <td>{{ file.user }}</td>
+                              <td>{{ file.user.email }}</td>
+                              <td>{{ file.case_date }}</td>
+                              <td><a href="{% url 'view_data_decrypt' file.id %}">
+                                  <button type="button" class="btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
+                                </a>
+                              </td>
+                              <td><a href="{% url 'decrypt_and_download' file.id %}">
+                                <button type="button" class="btn btn-sm btn-outline-success"><i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i></button>
+                              </a></td>
+                          </tr>
+                          {% endfor %}
+                          {% endif %}
                         </tbody>
-
                         <tbody>
                           {% if case_texts %}
                           {% for case in case_texts %}
@@ -123,19 +123,23 @@
                                 <td>{{ case.id }}</td>
                                 <td>{{ case.case_id }}</td>
                                 <td>{{ case.case_name }}</td>
+                                <td>{{ case.user }}</td>
                                 <td>{{ case.user.email }}</td>
                                 <td>{{ case.case_date }}</td>
-                                <td><a href="{% url 'view_file_decrypt' case.id %}">
-                    <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
-                    </a></td>
-                                <td><a href="{% url 'view_dec_file' case.id %}">
-                    <button type="button" class="w-90 btn btn-sm btn-outline-success"><i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i></button>
-                    </a></td>
+                                <td>
+                                  <a href="{% url 'view_file_decrypt' case.id %}">
+                                    <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
+                                  </a>
+                                </td>
+                                <td>
+                                  <a href="{% url 'view_dec_file' case.id %}">
+                                    <button type="button" class="w-90 btn btn-sm btn-outline-success"><i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i></button>
+                                  </a>
+                                </td>
                             </tr>
-                            {% endfor %}
-                            {% endif %}
+                          {% endfor %}
+                          {% endif %}
                         </tbody>
-
                         <tbody>
                           {% if case_textfiles %}
                           {% for case_r in case_textfiles %}
@@ -143,29 +147,33 @@
                                 <td>{{ case_r.id }}</td>
                                 <td>{{ case_r.case_id }}</td>
                                 <td>{{ case_r.case_name }}</td>
+                                <td>{{ case_r.user }}</td>
                                 <td>{{ case_r.user.email }}</td>
                                 <td>{{ case_r.case_date }}</td>
-                                <td><a href="{% url 'view_report_decrypt' case_r.id %}">
-                    <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
-                    </a></td>
-                                <td><a href="{% url 'decrypt_case' case_r.id %}">
-                    <button type="button" class="w-90 btn btn-sm btn-outline-success"><i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i></button>
-                    </a></td>
+                                <td>
+                                  <a href="{% url 'view_report_decrypt' case_r.id %}">
+                                    <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
+                                  </a>
+                                </td>
+                                <td>
+                                  <a href="{% url 'decrypt_case' case_r.id %}">
+                                    <button type="button" class="w-90 btn btn-sm btn-outline-success"><i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i></button>
+                                  </a>
+                                </td>
                             </tr>
                             {% endfor %}
                             {% endif %}
                         </tbody>
-
                     </table>
+                </div>
             </div>
-            </div>
-            </div>
-            <a href="{% url 'view_all' %}">
-                <button class="btn btn-secondary mb-1 ml-5"><i class="fas fa-folder-minus">&nbsp;&nbsp;Case Records</i></button>
-            </a>
-            <!--End Table-->
-        </ul>
-    </div>
+        </div>
+        <!--End Table-->
+    </ul>
+    <a href="{% url 'view_all' %}">
+      <button class="btn btn-outline-secondary mb-1 ml-5"><i class="fas fa-folder-plus">&nbsp;&nbsp;More Records</i></button>
+  </a>
+</div>
 
 {% endblock content %}
 
