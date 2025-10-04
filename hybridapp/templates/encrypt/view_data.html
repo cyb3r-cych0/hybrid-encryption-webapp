@@ -7,14 +7,14 @@
 <!-- Block NavBar Content -->
 {% block nav-content %}
   {% if user.is_staff == False %}
-    <i class="fa-solid fa-user-check mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Investigator &nbsp;{{ user }}</i>
+    <i class="fa-solid fa-user-check mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Standard-User &nbsp;{{ user }}</i>
   {% elif user.is_staff == True %}
-    <i class="fa-solid fa-user mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Admin/Judge &nbsp;{{ user  }}</i>
+    <i class="fa-solid fa-user mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Admin-User &nbsp;{{ user  }}</i>
   {% endif %}
 {% endblock %}
 
 <!-- Block Title -->
-<title>{% block title %} CBDET | File Details {% endblock %}</title>
+<title>{% block title %} CBDET | File-Record Details {% endblock %}</title>
 
 <!-- Logout Button -->
 {% block nav-btn %}
@@ -38,41 +38,35 @@
     </div>
 {% endblock %}
 
-
 <!-- Page Content -->
 {% block content %}
 <br>
-    <div class="container mt-1 mb-5 pb-2">
+<div class="container mt-1 mb-5 pb-2">
+    <button class="btn btn-warning w-100 mt-3 mb-2 no-pointer">
+        <i class="fa-solid fa-circle-info">&nbsp;&nbsp;FILE-RECORD &nbsp;DETAILS</i>
+    </button>
 
-        <button class="btn btn-warning w-100 mt-3 mb-2 no-pointer">
-            <i class="fa-solid fa-circle-info">&nbsp;&nbsp;FILE &nbsp;DETAILS</i>
-        </button>
-
-        <div id="pt" class="col-12">
-            <div class="card p-3 mt-3 mb-4">
-                <div class="row" >
-                    <h3>ENCRYPTED FILE INFORMATION</h3>
-                    <div class="container m-3">
-                      <p>CASE ID  : {{ file.case_id }} </p>
-                      <p>USER ID: {{ file.user.email }}</p>
-                      <p>DATE ENCRYPTED: {{ file.case_date }}</p>
-                      <p>FILE NAME: {{ file.case_file }}</p>
-                      <p>FILE DATA: {{ file.case_data }}</p>
-                    </div>
+    <div id="pt" class="col-12">
+        <div class="card p-3 mt-3 mb-4">
+            <div class="row" >
+                <h3>FILE-RECORD CIPHER INFORMATION</h3>
+                <div class="container m-3">
+                    <p>RECORD ID  : {{ file.case_id }} </p>
+                    <p>USER ID: NAME: {{ file.user }} &nbsp;|&nbsp; EMAIL: {{ file.user.email }}</p>
+                    <p>DATE ENCRYPTED: {{ file.case_date }}</p>
+                    <p>FILE NAME: {{ file.case_file }}</p>
+                    <p>FILE CIPHER: {{ file.case_data }}</p>
                 </div>
             </div>
         </div>
-
-        <div class="col-6">
-            <a href="">
-                <button onclick="myfun('pt')" type="button" class="btn btn-outline-primary m-1 p-2"><i class="fas fa-print">&nbsp;&nbsp;Print</i></button>
-            </a>
-        </div>
-
+    </div>
+    <div class="col-6">
+        <a href="">
+            <button onclick="myfun('pt')" type="button" class="btn btn-outline-primary m-1 p-2"><i class="fas fa-print">&nbsp;&nbsp;Print</i></button>
+        </a>
+    </div>
 </div> <!-- END // container -->
-
 {% endblock content %}
-
 
 <!-- Block Footer -->
 {% block footer %} style="color: #ff7f7f;" {% endblock %}

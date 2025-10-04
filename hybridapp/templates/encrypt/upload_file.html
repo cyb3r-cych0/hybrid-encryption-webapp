@@ -3,7 +3,7 @@
 {% load static %}
 
 <!-- Block Title -->
-<title>{% block title %} CBDET | Encrypt Case {% endblock %}</title>
+<title>{% block title %} CBDET | Encrypt Record {% endblock %}</title>
 
 <!-- Navbar links control -->
 {% block links %}{% endblock %}
@@ -11,9 +11,9 @@
 <!-- Block NavBar Content -->
 {% block nav-content %}
   {% if user.is_staff == False %}
-    <i class="fa-solid fa-user-check mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Investigator &nbsp;{{ user }}</i>
+    <i class="fa-solid fa-user-check mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Standard-User &nbsp;{{ user }}</i>
   {% elif user.is_staff == True %}
-    <i class="fa-solid fa-user mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Admin/Judge &nbsp;{{ user  }}</i>
+    <i class="fa-solid fa-user mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Admin-User &nbsp;{{ user  }}</i>
   {% endif %}
 {% endblock %}
 
@@ -44,7 +44,7 @@
 <div class="container mt-2 mb-5 pb-5" style="width: 95%; font-size: 14px">
     <!-- Add Form -->
     <button class="btn btn-danger w-100 mt-3 mb-5 no-pointer" style="color: black;">
-        <i class="fas fa-file">&nbsp;&nbsp;ADD &nbsp;FILE &nbsp;DETAILS</i>
+        <i class="fas fa-file">&nbsp;&nbsp;ADD &nbsp;FILE-RECORD &nbsp;DETAILS</i>
     </button>
 
     <!-- Message From BackEnd -->
@@ -60,6 +60,7 @@
         {% endif %}
     {% endfor%}
 
+    <!-- Encrypt Form -->
     <div class="row">
       <div class="col-md-6">
         <form method="POST" class="card p-3 mt-2" autocomplete="off" enctype="multipart/form-data">
@@ -72,11 +73,8 @@
             <img src="{% static 'img/red.avif' %}" alt="Image" style="width: 540px; height: 255px; padding-right: 10px;" >
       </div>
   </div>
-
 </div> <!-- END // container -->
-
 {% endblock content %}
-
 
 <!-- Block Encrypt -->
 {% block encrypt %} {% endblock %}
