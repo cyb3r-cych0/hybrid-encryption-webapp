@@ -38,92 +38,87 @@
     </div>
 {% endblock %}
 
-
 <!-- Page Content -->
 {% block content %}
-    <br>
-    <div class="container mt-2 mb-5 col-md-12" style="width: 95%; font-size: 14px">
-        <button class="btn btn-danger w-100 mt-3 mb-3 no-pointer" style="color: black;">
-            <i class="fas fa-search">&nbsp;&nbsp;SEARCH &nbsp;USERS</i>
-        </button>
+<br>
+<div class="container mt-2 mb-4 pb-5" style="width: 95%; font-size: 14px">
+    <button class="btn btn-danger w-100 mt-3 mb-3 no-pointer" style="color: black;">
+        <i class="fas fa-search">&nbsp;&nbsp;SEARCH &nbsp;USERS</i>
+    </button>
 
-        <!-- Message From BackEnd -->
-        {% for message in messages %}
-            {% if message.tags == 'success' %}
-                <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
-                    <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
-                </div>
-            {% elif message.tags == 'error' %}
-                <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
-                    <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
-                </div>
-            {% endif %}
-        {% endfor%}
-
-      <div class="container m-2" style="width: 100%; font-size: 14px">
-        <div class="row align-items-center">
-            <div class="row col-lg-4">
-              <i class="fas fa-keyboard">&nbsp;&nbsp;Enter Username To Search</i>
+    <!-- Message From BackEnd -->
+    {% for message in messages %}
+        {% if message.tags == 'success' %}
+            <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
+                <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
             </div>
-            <div class="col-lg-4 m-3">
-              <form method="GET" action="{% url 'search_users' %}">
-                  <input type="text" name="q" placeholder="username...">
-                  &nbsp;&nbsp;&nbsp;<button class="btn btn-secondary" type="submit"><i class="fas fa-search">&nbsp;&nbsp;Search</i></button>
-              </form>
+        {% elif message.tags == 'error' %}
+            <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
+                <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
             </div>
-            <div class="row col-lg-4 ml-2">
-              <i class="fas fa-list-ol">&nbsp;&nbsp;Match Found: {{ count }} !</i>
-            </div>
-        </div>
-      </div>
+        {% endif %}
+    {% endfor%}
 
-        <ul>
-
-          <!--Table-->
-          <div class="container">
-              <div class="row my-4">
-                  <div class="col-md-12">
-                      <table class="table bg-white">
-                          <thead class="bg-info">
-                          <tr>
-                            <th scope="col"><i class="fas fa-table-list">&nbsp;&nbsp;ID</i></th>
-                            <th scope="col"><i class="fas fa-folder-closed">&nbsp;&nbsp;NAME</i></th>
-                            <th scope="col"><i class="fas fa-envelope">&nbsp;&nbsp;EMAIL</i></th>
-                            <th scope="col"><i class="fas fa-user-tag">&nbsp;&nbsp;STAFF STATUS</i></th>
-                            <th scope="col"><i class="fas fa-calendar-day">&nbsp;&nbsp;DATE JOINED</i></th>
-                            <th scope="col"><i class="fas fa-clock">&nbsp;&nbsp;LAST LOGIN</i></th>
-                            <th scope="col"><i class="fas fa-circle-info">&nbsp;&nbsp;DETAILS</i></th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                          {% for user in users %}
-                          <tr>
-                              <td>{{ user.id }}</td>
-                              <td>{{ user.username }}</td>
-                              <td>{{ user.email }}</td>
-                              <td>
-                                {% if user.is_staff == False %}
-                                    Standard-User
-                                {% elif user.is_staff == True %}
-                                    Admin-User
-                                {% endif %}
-                              </td>
-                              <td>{{ user.date_joined }}</td>
-                              <td>{{ user.last_login }}</td>
-                              <td><a href="{% url 'user_details_backend' user.id %}">
-                                <button type="button" class="btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
-                              </a></td>
-                          </tr>
-                          {% endfor %}
-                      </tbody>
-                  </table>
-                </div>
-              </div>
+    <div class="container m-2" style="width: 100%; font-size: 14px">
+      <div class="row align-items-center">
+          <div class="row col-lg-4">
+            <i class="fas fa-keyboard">&nbsp;&nbsp;Enter Username To Search</i>
           </div>
-          <!--End Table-->
-        </ul>
+          <div class="col-lg-4 m-3">
+            <form method="GET" action="{% url 'search_users' %}">
+                <input type="text" name="q" placeholder="username...">
+                &nbsp;&nbsp;&nbsp;<button class="btn btn-secondary" type="submit"><i class="fas fa-search">&nbsp;&nbsp;Search</i></button>
+            </form>
+          </div>
+          <div class="row col-lg-4 ml-2">
+            <i class="fas fa-list-ol">&nbsp;&nbsp;Match Found: {{ count }} !</i>
+          </div>
+      </div>
     </div>
 
+    <!--Table-->
+    <div class="container">
+        <div class="row my-4">
+            <div class="col-md-12">
+                <table class="table bg-white">
+                    <thead class="bg-info">
+                    <tr>
+                      <th scope="col"><i class="fas fa-table-list">&nbsp;&nbsp;ID</i></th>
+                      <th scope="col"><i class="fas fa-folder-closed">&nbsp;&nbsp;NAME</i></th>
+                      <th scope="col"><i class="fas fa-envelope">&nbsp;&nbsp;EMAIL</i></th>
+                      <th scope="col"><i class="fas fa-user-tag">&nbsp;&nbsp;STAFF STATUS</i></th>
+                      <th scope="col"><i class="fas fa-calendar-day">&nbsp;&nbsp;DATE JOINED</i></th>
+                      <th scope="col"><i class="fas fa-clock">&nbsp;&nbsp;LAST LOGIN</i></th>
+                      <th scope="col"><i class="fas fa-circle-info">&nbsp;&nbsp;DETAILS</i></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                          {% if user.is_staff == False %}
+                              Standard-User
+                          {% elif user.is_staff == True %}
+                              Admin-User
+                          {% endif %}
+                        </td>
+                        <td>{{ user.date_joined }}</td>
+                        <td>{{ user.last_login }}</td>
+                        <td><a href="{% url 'user_details_backend' user.id %}">
+                          <button type="button" class="btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
+                        </a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+          </div>
+        </div>
+    </div>
+    <!--End Table-->
+</div>
 {% endblock content %}
 
 <!-- Block Encrypt -->
@@ -131,6 +126,9 @@
 
 <!-- Block Decrypt -->
 {% block decrypt %} {% endblock %}
+
+<!-- Block Footer-Position -->
+{% block footer-position %} class="fixed-bottom bg-dark text-center text-lg-start text-light" {% endblock %}
 
 <!-- Block Footer -->
 {% block footer %} style="color: #ff7f7f;" {% endblock %}

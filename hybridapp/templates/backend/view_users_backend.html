@@ -6,7 +6,6 @@
 
 <title>{% block title %} CBDET | Users {% endblock %}</title>
 
-
 <!-- Block NavBar Content -->
 {% block nav-content %}
   {% if user.is_staff == False %}
@@ -16,7 +15,7 @@
   {% endif %}
 {% endblock %}
 
-<!-- Logout Button -->
+<!-- NavBar Button -->
 {% block nav-btn %}
     <a class="btn btn-custom" id="btn-nav-back" onclick="goBack()"><i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i></a>
     <a class="btn btn-custom" id="btn-nav-search" href="{% url 'search_users' %}"><i class="fas fa-search">&nbsp;&nbsp;Search</i></a>
@@ -39,11 +38,10 @@
     </div>
 {% endblock %}
 
-
 <!-- Page Content -->
 {% block content %}
-    <br>
-    <div class="container mt-2 mb-5 col-md-12" style="width: 95%; font-size: 14px">
+<br>
+<div class="container mt-2 mb-4 pb-5" style="width: 95%; font-size: 14px">
         <button class="btn btn-secondary w-100 mt-3 mb-1 no-pointer">
             <i class="fas fa-users">&nbsp;&nbsp;USERS &nbsp;RECORDS</i>
         </button>
@@ -60,7 +58,6 @@
                 </div>
             {% endif %}
         {% endfor%}
-
 
         <!--Table-->
         <div class="container">
@@ -105,7 +102,6 @@
         </div>
         <!--End Table-->
     </div>
-
 {% endblock content %}
 
 <!-- Block Encrypt -->
@@ -114,5 +110,8 @@
 <!-- Block Decrypt -->
 {% block decrypt %} {% endblock %}
 
+<!-- Block Footer-Position -->
+{% block footer-position %} class="fixed-bottom bg-dark text-center text-lg-start text-light" {% endblock %}
+
 <!-- Block Footer -->
-{% block footer %} style="color: #ff7f7f;" {% endblock %}
+{% block footer %} style="color: #d3d3d3;" {% endblock %}

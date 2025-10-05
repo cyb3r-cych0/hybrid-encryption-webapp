@@ -16,7 +16,7 @@
   {% endif %}
 {% endblock %}
 
-<!-- Logout Button -->
+<!-- NavBar Button -->
 {% block nav-btn %}
     <a class="btn btn-custom" id="btn-nav-back" onclick="goBack()"><i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i></a>
     <a class="btn btn-custom" id="btn-nav-filter" href="{% url 'filter_cases' %}" ><i class="fas fa-filter">&nbsp;&nbsp;Filter</i></a>
@@ -41,9 +41,8 @@
 
 <!-- Page Content -->
 {% block content %}
-
-<!-- <div class="container mt-5 mb-5" style="width: 95%; font-size: 14px"> -->
-<div class="container mt-5 mb-5 col-md-12" style="width: 95%; font-size: 14px;">
+<br>
+<div class="container mt-2 mb-4 pb-5" style="width: 95%; font-size: 14px">
   <button class="btn btn-danger w-100 mt-3 mb-3 no-pointer" style="color: black;">
       <i class="fas fa-search">&nbsp;&nbsp;SEARCH &nbsp;RECORDS</i>
   </button>
@@ -61,6 +60,7 @@
       {% endif %}
   {% endfor%}
 
+  <!-- Search Form -->
   <div class="container m-2" style="width: 100%; font-size: 14px">
     <div class="row align-items-center">
       <div class="row col-lg-4">
@@ -94,7 +94,6 @@
               <th scope="col"><i class="fas fa-bars-progress">&nbsp;&nbsp;ACTION</i></th>
             </tr>
           </thead>
-
           <tbody>
             {% if case_files %}
             {% for file in case_files %}
@@ -124,7 +123,6 @@
               {% endfor %}
               {% endif %}
           </tbody>
-
           <tbody>
             {% if case_texts %}
             {% for case in case_texts %}
@@ -152,7 +150,6 @@
               {% endfor %}
               {% endif %}
           </tbody>
-
           <tbody>
             {% if case_textfiles %}
             {% for case_r in case_textfiles %}
@@ -188,7 +185,7 @@
   </div>
   <!--End Table-->
   <a href="{% url 'view_all_backend' %}">
-      <button class="btn btn-secondary mb-1 ml-5"><i class="fas fa-folder-plus">&nbsp;&nbsp;More Records</i></button>
+      <button class="btn btn-outline-secondary mb-1 ml-5"><i class="fas fa-folder-plus">&nbsp;&nbsp;More Records</i></button>
   </a>
 </div>
 {% endblock content %}
@@ -198,6 +195,9 @@
 
 <!-- Block Decrypt -->
 {% block decrypt %} {% endblock %}
+
+<!-- Block Footer-Position -->
+{% block footer-position %} class="fixed-bottom bg-dark text-center text-lg-start text-light" {% endblock %}
 
 <!-- Block Footer -->
 {% block footer %} style="color: #ff7f7f;" {% endblock %}

@@ -1,7 +1,6 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
     {% load static %}
-
     <head>
         <meta charset="UTF-8">
         <meta name="viewport"
@@ -23,22 +22,21 @@
 
         <title>{% block title %} CMS - Home {% endblock %}</title>
     </head>
-
     <body>
         <!-- Top Bar Start -->
         {% block topbar%}
-        <div class="top-bar m-5 pt-5 pb-3">
-            <div class="container mt-5">
-                <div class="row align-items-center">
-                    <div class="col-lg-12 col-md-12">
-                        <div class="logo">
-                            <img src="{% static 'img/icon.png' %}" alt="Logo">
-                            <h1><span>CB</span>DET</h1>
+            <div class="top-bar m-5 pt-5 pb-3">
+                <div class="container mt-5">
+                    <div class="row align-items-center">
+                        <div class="col-lg-12 col-md-12">
+                            <div class="logo">
+                                <img src="{% static 'img/icon.png' %}" alt="Logo">
+                                <h1><span>CB</span>DET</h1>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
         {% endblock %}
         <!-- Top Bar End -->
 
@@ -48,32 +46,32 @@
                 <nav class="fixed-top navbar navbar-expand-lg navbar-dark bg-dark p-2">
                     <!-- FontAwesome + Title (Left Side) -->
                     {% block nav-content %}
-                    <div class="col-sm">
-                        <a href="#" class="navbar-brand flex-grow-1 text-center text-light">
-                            <i class="fa-solid fa-car mb-3" style="color: #fff; font-size: 20px"></i>   &nbsp;&nbsp; <h2 style="color: #fff; font-size: 20px">CBDET</h2>
-                        </a>
-                    </div>
+                        <div class="col-sm">
+                            <a href="#" class="navbar-brand flex-grow-1 text-center text-light">
+                                <i class="fa-solid fa-car mb-3" style="color: #fff; font-size: 20px"></i>   &nbsp;&nbsp; <h2 style="color: #fff; font-size: 20px">CBDET</h2>
+                            </a>
+                        </div>
                      {% endblock %}
 
                     <!-- section (Middle) -->
                     <div>
                         {% block links %}
-                        <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
-                            <div class="navbar-nav mr-5">
-                                <a href="{% url 'frontend' %}" class="nav-item nav-link">Home</a>
-                                <a href="{% url 'encrypt' %}" class="nav-item nav-link">Encryption</a>
-                                <a href="{% url 'decrypt' %}" class="nav-item nav-link">Decryption</a>
-                                <a href="{% url 'frontend' %}" class="nav-item nav-link">System-Info</a>
+                            <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
+                                <div class="navbar-nav mr-5">
+                                    <a href="{% url 'frontend' %}" class="nav-item nav-link">Home</a>
+                                    <a href="{% url 'encrypt' %}" class="nav-item nav-link">Encryption</a>
+                                    <a href="{% url 'decrypt' %}" class="nav-item nav-link">Decryption</a>
+                                    <a href="{% url 'frontend' %}" class="nav-item nav-link">System-Info</a>
+                                </div>
                             </div>
-                        </div>
                         {% endblock %}
                     </div>
 
                     <!-- Button (Right Side) -->
                     <div class="ml-auto m-2">
                         {% block nav-btn %}
-                        <a href="{% url 'backend' %}" class="btn btn-custom" id="btn-nav-login"><i class="fas fa-right-to-bracket">&nbsp;&nbsp;Login</i></a>
-                        <a href="{% url 'register_user' %}" class="btn btn-custom" id="btn-nav-register"><i class="fas fa-arrow-right-to-bracket">&nbsp;&nbsp;Register</i></a>
+                            <a href="{% url 'backend' %}" class="btn btn-custom" id="btn-nav-login"><i class="fas fa-right-to-bracket">&nbsp;&nbsp;Login</i></a>
+                            <a href="{% url 'register_user' %}" class="btn btn-custom" id="btn-nav-register"><i class="fas fa-arrow-right-to-bracket">&nbsp;&nbsp;Register</i></a>
                         {% endblock %}
                     </div>
                 </nav>
@@ -87,7 +85,7 @@
         {% include 'components/modals/logout.html' %}
 
         <!-- Encryption Start -->
-            {% block encrypt %}
+        {% block encrypt %}
             <div class="about">
                 <div class="container">
                     <div class="row align-items-center">
@@ -99,12 +97,10 @@
                         <div class="col-lg-6">
                             <div class="section-header text-left">
                                 <p>Encryption</p>
-                                <h2>Encrypt Case Records</h2>
+                                <h2>Encrypt Records</h2>
                             </div>
                             <div class="about-content">
-                                <p>
-                                  Type of file-record extentions:
-                                </p>
+                                <p>Type of record extentions:</p>
                                 <ul>
                                     <li><i class="far fa-check-circle"></i>.txt</li>
                                     <li><i class="far fa-check-circle"></i>.jpg</li>
@@ -117,11 +113,11 @@
                     </div>
                 </div>
             </div>
-            {% endblock %}
+        {% endblock %}
         <!-- Encryption End -->
 
         <!-- Decryption Start -->
-            {% block decrypt %}
+        {% block decrypt %}
             <div class="about">
                 <div class="container">
                     <div class="row align-items-center">
@@ -129,11 +125,11 @@
                         <div class="col-lg-6">
                             <div class="section-header text-left">
                                 <p>Decryption</p>
-                                <h2>Decrypt Case Records</h2>
+                                <h2>Decrypt Records</h2>
                             </div>
                             <div class="about-content">
                                 <p>
-                                    Type of file-record extentions:
+                                    Type of record extentions:
                                 </p>
                                 <ul>
                                     <li><i class="far fa-check-circle"></i>.bin</li>
@@ -152,12 +148,11 @@
                     </div>
                 </div>
             </div>
-            {% endblock %}
+        {% endblock %}
         <!-- Decrypt End -->
 
-
         <!-- Footer -->
-            <footer class="bg-dark text-center text-lg-start text-light" id="footer">
+            <footer {% block footer-position %} class="bg-dark text-center text-lg-start text-light" {% endblock %} id="footer" >
                 <div class="text-center p-3 m-1" style="background-color: rgba(0, 0, 0, 0.2);">
                     &copy; {% now "Y" %}
                     <a class="text-light" href="#" style="text-decoration: none;">
@@ -180,8 +175,6 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script src="{% static 'js/node_modules/chartjs/dist/chart.umd.js' %}"></script>
-
-
 
         <!-- Static JS -->
         <script src="{% static 'js/script.js' %}"></script>
