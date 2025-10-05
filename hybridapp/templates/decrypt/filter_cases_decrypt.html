@@ -18,6 +18,7 @@
 <!-- Logout Button -->
 {% block nav-btn %}
     <a class="btn btn-custom" id="btn-nav-view" onclick="goBack()"><i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i></a>
+    <a class="btn btn-custom" id="btn-nav-back" href="{% url 'decrypt' %}" ><i class="fas fa-table-columns">&nbsp;&nbsp;Dashboard</i></a>
     <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout"><i class="fas fa-right-from-bracket">&nbsp;&nbsp;Logout</i></a>
 {% endblock %}
 
@@ -37,11 +38,10 @@
     </div>
 {% endblock %}
 
-
 <!-- Page Content -->
 {% block content %}
 <br>
-<div class="container mt-2 mb-5 col-md-12" style="width: 95%; font-size: 14px">
+<div class="container mt-2 mb-4 pb-5" style="width: 95%; font-size: 14px">
     <button class="btn btn-danger w-100 mt-3 mb-3 no-pointer" style="color: black">
       <i class="fas fa-filter">&nbsp;&nbsp;FILTER &nbsp;RECORDS</i>
     </button>
@@ -59,25 +59,26 @@
         {% endif %}
     {% endfor%}
 
-  <div class="container m-2" style="width: 90%; font-size: 14px">
-    <div class=" row align-items-center">
-        <div class="col-8 m-3">
-          <form method="POST" action="{% url 'filter_cases_decrypt' %}">
-                {% csrf_token %}
-                <label><i class="fas fa-hand-pointer">&nbsp;&nbsp;Select Date &nbsp;&nbsp;</i></label>
-                <i class="fas fa-">&nbsp;&nbsp;From: &nbsp;&nbsp;</i> <input type="date" name="from_date">
-                <i class="fas fa-">&nbsp;&nbsp;To: &nbsp;&nbsp;</i><input type="date" name="to_date">
-                &nbsp;&nbsp;&nbsp;<button class="btn btn-secondary" type="submit"><i class="fas fa-search">&nbsp;&nbsp; Search</i></button>
-            </form>
-        </div>
-        <div class="col-4 m-4">
-          <th scope="col"><i class="fas fa-square-poll-horizontal">&nbsp;&nbsp;Search Results For: &nbsp; {{ date }}</i></th>
-        </div>
+    <!-- Filter Form -->
+    <div class="container">
+      <div class=" row align-items-center">
+          <div class="col-8 m-3">
+            <form method="POST" action="{% url 'filter_cases_decrypt' %}">
+                  {% csrf_token %}
+                  <label><i class="fas fa-hand-pointer">&nbsp;&nbsp;Select Date &nbsp;&nbsp;</i></label>
+                  <i class="fas fa-">&nbsp;&nbsp;From: &nbsp;&nbsp;</i> <input type="date" name="from_date">
+                  <i class="fas fa-">&nbsp;&nbsp;To: &nbsp;&nbsp;</i><input type="date" name="to_date">
+                  &nbsp;&nbsp;&nbsp;<button class="btn btn-secondary" type="submit"><i class="fas fa-search">&nbsp;&nbsp; Search</i></button>
+              </form>
+          </div>
+          <div class="col-4 m-4">
+            <th scope="col"><i class="fas fa-square-poll-horizontal">&nbsp;&nbsp;Search Results For: &nbsp; {{ date }}</i></th>
+          </div>
+      </div>
     </div>
-  </div>
+    <!--End Filter Form-->
 
-  <!--Table-->
-  <div class="container">
+    <!--Table-->
       <div class="row my-4">
           <div class="col-md-12">
               <table class="table bg-white">
@@ -188,9 +189,8 @@
     </div>
     <!--End Table-->
   </div>
-</div>
-<a href="{% url 'view_all' %}">
-            <button class="btn btn-secondary mb-1 ml-5"><i class="fas fa-folder-minus">&nbsp;More Records</i></button>
+  <a href="{% url 'view_all' %}">
+            <button class="btn btn-outline-secondary mb-1 ml-5"><i class="fas fa-folder-plus">&nbsp;More Records</i></button>
         </a>
 </div>
 {% endblock content %}
@@ -201,5 +201,8 @@
 <!-- Block Decrypt -->
 {% block decrypt %} {% endblock %}
 
+<!-- Block Footer-Position -->
+{% block footer-position %} class="fixed-bottom bg-dark text-center text-lg-start text-light" {% endblock %}
+
 <!-- Block Footer -->
-{% block footer %} style="color: #ff7f7f;" {% endblock %}
+{% block footer %} style="color: red;" {% endblock %}

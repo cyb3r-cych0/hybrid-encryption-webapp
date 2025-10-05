@@ -16,9 +16,10 @@
   {% endif %}
 {% endblock %}
 
-<!-- Logout Button -->
+<!-- NavBar Button -->
 {% block nav-btn %}
     <a class="btn btn-custom" id="btn-nav-back" onclick="goBack()"><i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i></a>
+    <a class="btn btn-custom" id="btn-nav-back" href="{% url 'backend' %}" ><i class="fa fa-sliders">&nbsp;&nbsp; Control Panel</i></a>
     <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout"><i class="fas fa-right-from-bracket">&nbsp;&nbsp;Logout</i></a>
 {% endblock %}
 
@@ -37,145 +38,146 @@
     </div>
 {% endblock %}
 
-
 <!-- Page Content -->
 {% block content %}
 <br>
-    <div class="container mt-1 mb-5 pb-2">
-        <button class="btn btn-warning w-100 mt-3 mb-2 no-pointer">
-            <i class="fa-solid fa-circle-info">&nbsp;&nbsp;USER &nbsp;DETAILS</i>
-        </button>
-        <div id="pt" class="col-12">
-            <div class="card p-3 mt-3 mb-4">
-                <div class="row" >
-                    <h3 class="mb-4 border-bottom">USER INFORMATION</h3>
-                    <h5> &nbsp;&nbsp; STAFF STATUS &nbsp;&nbsp;<small class="text-body-secondary fw-light" style="font-size: 17px">
-                      {% if user_details.is_staff == False %}
-                        <i class="fas fa-user-tag">&nbsp;Standard-User</i>
-                      {% elif user_details.is_staff == True %}
-                        <i class="fas fa-user-tag">&nbsp;Admin-User</i>
-                      {% endif %}</small></h5>
-
-                    <div class="container m-3">
-                      <p>USER ID : {{ user_details.id }} </p>
-                      <p>USER NAME : {{ user_details.username }} </p>
-                      <p>USER EMAIL: {{ user_details.email }}</p>
-                      <p>DATE JOINED: {{ user_details.date_joined }}</p>
-                      <p>LAST LOGIN: {{ user_details.last_login }}</p>
-                      <p>RECORDS ENCRYPTED : {{ total_files }}</p>
-                    </div>
+<div class="container mt-1 mb-5 pb-2">
+    <button class="btn btn-warning w-100 mt-3 mb-2 no-pointer">
+        <i class="fa-solid fa-circle-info">&nbsp;&nbsp;USER &nbsp;DETAILS</i>
+    </button>
+    <div id="pt" class="col-12">
+        <div class="card p-3 mt-3 mb-4">
+            <div class="row" >
+                <h3 class="mb-4 border-bottom">USER INFORMATION</h3>
+                <h5> &nbsp;&nbsp; STAFF STATUS &nbsp;&nbsp;<small class="text-body-secondary fw-light" style="font-size: 17px">
+                  {% if user_details.is_staff == False %}
+                    <i class="fas fa-user-tag">&nbsp;Standard-User</i>
+                  {% elif user_details.is_staff == True %}
+                    <i class="fas fa-user-tag">&nbsp;Admin-User</i>
+                  {% endif %}</small></h5>
+                <div class="container m-3">
+                  <p>USER ID : {{ user_details.id }} </p>
+                  <p>USER NAME : {{ user_details.username }} </p>
+                  <p>USER EMAIL: {{ user_details.email }}</p>
+                  <p>DATE JOINED: {{ user_details.date_joined }}</p>
+                  <p>LAST LOGIN: {{ user_details.last_login }}</p>
+                  <p>RECORDS ENCRYPTED : {{ total_files }}</p>
                 </div>
             </div>
         </div>
+    </div>
 
-        <button class="btn btn-secondary w-100 mt-3 mb-2 no-pointer">
-            <i class="fa-solid fa-folder-tree">&nbsp;&nbsp;USER &nbsp;RECORDS</i>
-        </button>
+    <!-- Divider -->
+    <button class="btn btn-secondary w-100 mt-3 mb-2 no-pointer">
+        <i class="fa-solid fa-folder-tree">&nbsp;&nbsp;USER &nbsp;RECORDS</i>
+    </button>
 
-        <!--Table-->
-        <div class="container">
-            <div class="row my-4">
-                <div class="col-md-12">
-                    <table class="table bg-white">
-                        <thead class="bg-info">
-                        <tr>
-                          <th scope="col"><i class="fas fa-table-list">&nbsp;&nbsp;DB.ID</i></th>
-                          <th scope="col"><i class="fas fa-folder-closed">&nbsp;&nbsp;RECORD-ID</i></th>
-                          <th scope="col"><i class="fas fa-file-lines">&nbsp;&nbsp;RECORD NAME</i></th>
-                          <th scope="col"><i class="fas fa-user-tag">&nbsp;&nbsp;USER-ID</i></th>
-                          <th scope="col"><i class="fas fa-calendar-day">&nbsp;&nbsp;DATE</i></th>
-                          <th scope="col"><i class="fas fa-circle-info">&nbsp;&nbsp;DETAILS</i></th>
-                          <th scope="col"><i class="fas fa-bars-progress">&nbsp;&nbsp;ACTION</i></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for txt in text %}
-                        <tr>
-                            <td>{{ txt.id }}</td>
-                            <td>{{ txt.case_id }}</td>
-                            <td>{{ txt.case_name }}</td>
-                            <td>{{ txt.user.email }}</td>
-                            <td>{{ txt.case_date }}</td>
-                            <td><a href="{% url 'view_file_backend' txt.id %}">
-                <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
-                </a></td>
-
-                  <td>
-                      {% if user.is_staff == False %}
-                        <a href="#">
-                          <button type="button" class="btn btn-sm btn-outline-danger" disabled><i class="fas fa-triangle-exclamation">&nbsp;Decrypt</i></button>
-                        </a>
-                      {% elif user.is_staff == True %}
-                        <a href="{% url 'view_dec_file' txt.id %}">
-                          <button type="button" class="btn btn-sm btn-outline-success"><i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i></button>
-                        </a>
-                        {% endif %}
-
-                    </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-
-                    <tbody>
-                        {% for f in file %}
-                        <tr>
-                            <td>{{ f.id }}</td>
-                            <td>{{ f.case_id }}</td>
-                            <td>{{ f.case_file }}</td>
-                            <td>{{ f.user.email }}</td>
-                            <td>{{ f.case_date }}</td>
-                            <td><a href="{% url 'view_data_backend' f.id %}">
-                <button type="button" class="btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
-                </a></td>
-                            <td>{% if user.is_staff == False %}
+    <!--Table-->
+    <div class="container">
+        <div class="row my-4">
+            <div class="col-md-12">
+                <table class="table bg-white">
+                    <thead class="bg-info">
+                    <tr>
+                      <th scope="col"><i class="fas fa-table-list">&nbsp;&nbsp;DB.ID</i></th>
+                      <th scope="col"><i class="fas fa-folder-closed">&nbsp;&nbsp;RECORD-ID</i></th>
+                      <th scope="col"><i class="fas fa-file-lines">&nbsp;&nbsp;RECORD NAME</i></th>
+                      <th scope="col"><i class="fas fa-user-tag">&nbsp;&nbsp;USER-ID</i></th>
+                      <th scope="col"><i class="fas fa-calendar-day">&nbsp;&nbsp;DATE</i></th>
+                      <th scope="col"><i class="fas fa-circle-info">&nbsp;&nbsp;DETAILS</i></th>
+                      <th scope="col"><i class="fas fa-bars-progress">&nbsp;&nbsp;ACTION</i></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for txt in text %}
+                    <tr>
+                        <td>{{ txt.id }}</td>
+                        <td>{{ txt.case_id }}</td>
+                        <td>{{ txt.case_name }}</td>
+                        <td>{{ txt.user.email }}</td>
+                        <td>{{ txt.case_date }}</td>
+                        <td>
+                          <a href="{% url 'view_file_backend' txt.id %}">
+                            <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
+                          </a>
+                        </td>
+                        <td>
+                            {% if user.is_staff == False %}
                               <a href="#">
                                 <button type="button" class="btn btn-sm btn-outline-danger" disabled><i class="fas fa-triangle-exclamation">&nbsp;Decrypt</i></button>
                               </a>
                             {% elif user.is_staff == True %}
-                              <a href="{% url 'decrypt_and_download' f.id %}">
+                              <a href="{% url 'view_dec_file' txt.id %}">
                                 <button type="button" class="btn btn-sm btn-outline-success"><i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i></button>
                               </a>
-                              {% endif %}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-
-                    <tbody>
-                        {% for repo in textfile %}
-                        <tr>
-                            <td>{{ repo.id }}</td>
-                            <td>{{ repo.case_id }}</td>
-                            <td>{{ repo.case_name }}</td>
-                            <td>{{ repo.user.email }}</td>
-                            <td>{{ repo.case_date }}</td>
-                            <td><a href="{% url 'view_report_backend' repo.id %}">
-                <button type="button" class="btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
-                </a></td>
-                            <td>{% if user.is_staff == False %}
-                              <a href="#">
-                                <button type="button" class="btn btn-sm btn-outline-danger" disabled><i class="fas fa-triangle-exclamation">&nbsp;Decrypt</i></button>
-                              </a>
-                            {% elif user.is_staff == True %}
-                              <a href="{% url 'decrypt_case' repo.id %}">
-                                <button type="button" class="btn btn-sm btn-outline-success"><i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i></button>
-                              </a>
-                              {% endif %}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-              </div>
-            </div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tbody>
+                    {% for f in file %}
+                    <tr>
+                        <td>{{ f.id }}</td>
+                        <td>{{ f.case_id }}</td>
+                        <td>{{ f.case_file }}</td>
+                        <td>{{ f.user.email }}</td>
+                        <td>{{ f.case_date }}</td>
+                        <td>
+                          <a href="{% url 'view_data_backend' f.id %}">
+                            <button type="button" class="btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
+                          </a>
+                          </td>
+                        <td>{% if user.is_staff == False %}
+                          <a href="#">
+                            <button type="button" class="btn btn-sm btn-outline-danger" disabled><i class="fas fa-triangle-exclamation">&nbsp;Decrypt</i></button>
+                          </a>
+                        {% elif user.is_staff == True %}
+                          <a href="{% url 'decrypt_and_download' f.id %}">
+                            <button type="button" class="btn btn-sm btn-outline-success"><i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i></button>
+                          </a>
+                          {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tbody>
+                    {% for repo in textfile %}
+                    <tr>
+                        <td>{{ repo.id }}</td>
+                        <td>{{ repo.case_id }}</td>
+                        <td>{{ repo.case_name }}</td>
+                        <td>{{ repo.user.email }}</td>
+                        <td>{{ repo.case_date }}</td>
+                        <td>
+                          <a href="{% url 'view_report_backend' repo.id %}">
+                            <button type="button" class="btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
+                          </a>
+                          </td>
+                        <td>{% if user.is_staff == False %}
+                          <a href="#">
+                            <button type="button" class="btn btn-sm btn-outline-danger" disabled><i class="fas fa-triangle-exclamation">&nbsp;Decrypt</i></button>
+                          </a>
+                        {% elif user.is_staff == True %}
+                          <a href="{% url 'decrypt_case' repo.id %}">
+                            <button type="button" class="btn btn-sm btn-outline-success"><i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i></button>
+                          </a>
+                          {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+          </div>
         </div>
-        <!--End Table-->
+    </div>
+    <!--End Table-->
 
-        <div class="col-6">
-            <a href="{% url 'user_cases_backend' user_details.id %}">
-                <button type="button" class="btn btn-outline-secondary m-1 p-2"><i class="fas fa-folder-plus">&nbsp;View More</i></button>
-            </a>
-        </div>
+    <div class="col-6">
+        <a href="{% url 'user_cases_backend' user_details.id %}">
+            <button type="button" class="btn btn-outline-secondary m-1 p-2"><i class="fas fa-folder-plus">&nbsp;View More</i></button>
+        </a>
+    </div>
 </div> <!-- END // container -->
 
 {% endblock content %}

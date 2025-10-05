@@ -7,8 +7,7 @@
 <!-- Block Title -->
 <title>{% block title %} CBDET | Encrypt Dashboard {% endblock %}</title>
 
-
-<!-- Logout Button -->
+<!-- NavBar Button -->
 {% block nav-btn %}
     <a class="btn btn-custom" id="btn-nav-search" href="{% url 'search_cases_encrypt' %}" ><i class="fa fa-search">&nbsp;&nbsp; Search</i></a>
     <a class="btn btn-custom" id="btn-nav-back" href="{% url 'backend' %}" ><i class="fa fa-sliders">&nbsp;&nbsp; Control Panel</i></a>
@@ -22,7 +21,6 @@
     <i class="fa-solid fa-user-tie mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Admin-User &nbsp;{{ user  }}</i>
   {% endif %}
 {% endblock %}
-
 
 <!-- Block TopBar -->
 {% block topbar %}
@@ -42,8 +40,6 @@
 
 <!-- Page Content -->
 {% block content %}
-
-<br>
 <div class="container mt-5 mb-5" style="width: 95%; font-size: 14px">
     <!-- Message From BackEnd -->
     {% for message in messages %}
@@ -135,7 +131,6 @@
                     <div class="mt-5 mb-4">
                       <p style="font-size: 18px; font-type: bold;">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-lightbulb" style="color: orange;"></i><i class="fa fa-">&nbsp;&nbsp;Select option to add new records for encryption</i></p>
                     </div>
-
                 </div>
                 <a href="/encrypt/upload_file">
                     <button type="button" class="w-90 btn btn-lg btn-outline-success m-2"><i class="fas fa-file">&nbsp;&nbsp;ADD FILE</i></button>
@@ -149,9 +144,9 @@
               </div>
             </div>
         </div>
-
     </div> <!-- END // container -->
-    <!--  -->
+
+    <!-- Divider -->
     <button class="btn btn-secondary w-100 mt-4 mb-2 no-pointer">
         <i class="fa fa-folder-tree">&nbsp;&nbsp; RECENT &nbsp;ENCRYPTED &nbsp;RECORDS</i>
     </button>
@@ -179,9 +174,11 @@
                             <td>{{ txt.case_name }}</td>
                             <td>{{ txt.user.email }}</td>
                             <td>{{ txt.case_date }}</td>
-                            <td><a href="{% url 'view_file' txt.id %}">
-                <button type="button" class="w-100 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
-                </a></td>
+                            <td>
+                                <a href="{% url 'view_file' txt.id %}">
+                                    <button type="button" class="w-100 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
+                                </a>
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -193,9 +190,11 @@
                           <td>{{ fil.case_file }}</td>
                           <td>{{ fil.user.email }}</td>
                           <td>{{ fil.case_date }}</td>
-                          <td><a href="{% url 'view_data' fil.id %}">
-              <button type="button" class="w-100 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
-              </a></td>
+                          <td>
+                            <a href="{% url 'view_data' fil.id %}">
+                                <button type="button" class="w-100 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
+                            </a>
+                        </td>
                       </tr>
                       {% endfor %}
                     </tbody>
@@ -207,9 +206,11 @@
                           <td>{{ tf.case_file }}</td>
                           <td>{{ tf.user.email }}</td>
                           <td>{{ tf.case_date }}</td>
-                          <td><a href="{% url 'view_report_encrypt' tf.id %}">
-              <button type="button" class="w-100 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
-              </a></td>
+                          <td>
+                            <a href="{% url 'view_report_encrypt' tf.id %}">
+                                <button type="button" class="w-100 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
+                            </a>
+                        </td>
                       </tr>
                       {% endfor %}
                     </tbody>

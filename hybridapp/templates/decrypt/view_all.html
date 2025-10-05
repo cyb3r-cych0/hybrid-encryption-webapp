@@ -41,92 +41,102 @@
 
 <!-- Page Content -->
 {% block content %}
-    <br>
-    <div class="container mt-2 mb-5 col-md-12" style="width: 95%; font-size: 14px;">
-      <button class="btn btn-secondary w-100 mt-3 mb-3 no-pointer">
-          <i class="fas fa-folder-tree">&nbsp;&nbsp;ENCRYPTED &nbsp;RECORDS</i>
-      </button>
+<br>
+<div class="container mt-2 mb-4 pb-5" style="width: 95%; font-size: 14px">
+    <button class="btn btn-secondary w-100 mt-3 mb-3 no-pointer">
+        <i class="fas fa-folder-tree">&nbsp;&nbsp;ENCRYPTED &nbsp;RECORDS</i>
+    </button>
 
-        <!--Table-->
-        <div class="container">
-            <div class="row my-4">
-                <div class="col-md-12">
-                    <table class="table bg-white">
-                        <thead class="bg-info">
-                        <tr>
-                          <th scope="col"><i class="fas fa-table-list">&nbsp;&nbsp;DB.ID</i></th>
-                          <th scope="col"><i class="fas fa-folder-closed">&nbsp;&nbsp;RECORD-ID</i></th>
-                          <th scope="col"><i class="fas fa-file-lines">&nbsp;&nbsp;RECORD NAME</i></th>
-                          <th scope="col"><i class="fas fa-user-tag">&nbsp;&nbsp;USER NAME</i></th>
-                          <th scope="col"><i class="fas fa-user-tag">&nbsp;&nbsp;USER EMAIL</i></th>
-                          <th scope="col"><i class="fas fa-calendar-day">&nbsp;&nbsp;DATE</i></th>
-                          <th scope="col"><i class="fas fa-circle-info">&nbsp;&nbsp;DETAILS</i></th>
-                          <th scope="col"><i class="fas fa-bars-progress">&nbsp;&nbsp;ACTION</i></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for file in files %}
-                        <tr>
-                            <td>{{ file.id }}</td>
-                            <td>{{ file.case_id }}</td>
-                            <td>{{ file.case_file }}</td>
-                            <td>{{ file.user }}</td>
-                            <td>{{ file.user.email }}</td>
-                            <td>{{ file.case_date }}</td>
-                            <td><a href="{% url 'view_data_decrypt' file.id %}">
-                <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
-                </a></td>
-                            <td><a href="{% url 'decrypt_and_download' file.id %}">
-                <button type="button" class="w-90 btn btn-sm btn-outline-success"><i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i></button>
-                </a></td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
+    <!--Table-->
+    <div class="container">
+        <div class="row my-4">
+            <div class="col-md-12">
+                <table class="table bg-white">
+                    <thead class="bg-info">
+                    <tr>
+                        <th scope="col"><i class="fas fa-table-list">&nbsp;&nbsp;DB.ID</i></th>
+                        <th scope="col"><i class="fas fa-folder-closed">&nbsp;&nbsp;RECORD-ID</i></th>
+                        <th scope="col"><i class="fas fa-file-lines">&nbsp;&nbsp;RECORD NAME</i></th>
+                        <th scope="col"><i class="fas fa-user-tag">&nbsp;&nbsp;USER NAME</i></th>
+                        <th scope="col"><i class="fas fa-user-tag">&nbsp;&nbsp;USER EMAIL</i></th>
+                        <th scope="col"><i class="fas fa-calendar-day">&nbsp;&nbsp;DATE</i></th>
+                        <th scope="col"><i class="fas fa-circle-info">&nbsp;&nbsp;DETAILS</i></th>
+                        <th scope="col"><i class="fas fa-bars-progress">&nbsp;&nbsp;ACTION</i></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for file in files %}
+                    <tr>
+                        <td>{{ file.id }}</td>
+                        <td>{{ file.case_id }}</td>
+                        <td>{{ file.case_file }}</td>
+                        <td>{{ file.user }}</td>
+                        <td>{{ file.user.email }}</td>
+                        <td>{{ file.case_date }}</td>
+                        <td>
+                            <a href="{% url 'view_data_decrypt' file.id %}">
+                                <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{% url 'decrypt_and_download' file.id %}">
+                                <button type="button" class="w-90 btn btn-sm btn-outline-success"><i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i></button>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tbody>
+                    {% for txt in texts %}
+                    <tr>
+                        <td>{{ txt.id }}</td>
+                        <td>{{ txt.case_id }}</td>
+                        <td>{{ txt.case_name }}</td>
+                        <td>{{ txt.user }}</td>
+                        <td>{{ txt.user.email }}</td>
+                        <td>{{ txt.case_date }}</td>
+                        <td>
+                            <a href="{% url 'view_file_decrypt' txt.id %}">
+                                <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{% url 'view_dec_file' txt.id %}">
+                                <button type="button" class="w-90 btn btn-sm btn-outline-success"><i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i></button>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
 
-                    <tbody>
-                        {% for txt in texts %}
-                        <tr>
-                            <td>{{ txt.id }}</td>
-                            <td>{{ txt.case_id }}</td>
-                            <td>{{ txt.case_name }}</td>
-                            <td>{{ txt.user }}</td>
-                            <td>{{ txt.user.email }}</td>
-                            <td>{{ txt.case_date }}</td>
-                            <td><a href="{% url 'view_file_decrypt' txt.id %}">
-                <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
-                </a></td>
-                            <td><a href="{% url 'view_dec_file' txt.id %}">
-                <button type="button" class="w-90 btn btn-sm btn-outline-success"><i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i></button>
-                </a></td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-
-                    <tbody>
-                        {% for repo in textfiles %}
-                        <tr>
-                            <td>{{ repo.id }}</td>
-                            <td>{{ repo.case_id }}</td>
-                            <td>{{ repo.case_file }}</td>
-                            <td>{{ repo.user }}</td>
-                            <td>{{ repo.user.email }}</td>
-                            <td>{{ repo.case_date }}</td>
-                            <td><a href="{% url 'view_report_decrypt' repo.id %}">
-                <button type="button" class="btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
-                </a></td>
-                            <td><a href="{% url 'decrypt_case' repo.id %}">
-                <button type="button" class="btn btn-sm btn-outline-success"><i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i></button>
-                </a></td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-              </div>
+                <tbody>
+                    {% for repo in textfiles %}
+                    <tr>
+                        <td>{{ repo.id }}</td>
+                        <td>{{ repo.case_id }}</td>
+                        <td>{{ repo.case_file }}</td>
+                        <td>{{ repo.user }}</td>
+                        <td>{{ repo.user.email }}</td>
+                        <td>{{ repo.case_date }}</td>
+                        <td>
+                            <a href="{% url 'view_report_decrypt' repo.id %}">
+                                <button type="button" class="btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{% url 'decrypt_case' repo.id %}">
+                                <button type="button" class="btn btn-sm btn-outline-success"><i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i></button>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
             </div>
         </div>
-        <!--End Table-->
     </div>
-
+    <!--End Table-->
+</div>
 {% endblock content %}
 
 <!-- Block Encrypt -->
@@ -134,6 +144,9 @@
 
 <!-- Block Decrypt -->
 {% block decrypt %} {% endblock %}
+
+<!-- Block Footer-Position -->
+{% block footer-position %} class="fixed-bottom bg-dark text-center text-lg-start text-light" {% endblock %}
 
 <!-- Block Footer -->
 {% block footer %} style="color: #d3d3d3;" {% endblock %}

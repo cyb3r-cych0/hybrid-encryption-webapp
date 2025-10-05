@@ -19,7 +19,7 @@
 <!-- Logout Button -->
 {% block nav-btn %}
     <a class="btn btn-custom" id="btn-nav-view" onclick="goBack()"><i class="fa fa-chevron-left">&nbsp;&nbsp; Back</i></a>
-    <a class="btn btn-custom" id="btn-nav-back" href="{% url 'backend' %}" ><i class="fa fa-sliders">&nbsp;&nbsp; Control Panel</i></a>
+    <a class="btn btn-custom" id="btn-nav-back" href="{% url 'encrypt' %}" ><i class="fas fa-table-columns">&nbsp;&nbsp;Dashboard</i></a>
     <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout"><i class="fa fa-right-from-bracket">&nbsp;&nbsp; Logout</i></a>
 {% endblock %}
 
@@ -68,11 +68,11 @@
 </div> <!-- END // container -->
 {% endblock content %}
 
-<!-- Block Footer -->
-{% block footer %} style="color: #ff7f7f;" {% endblock %}
-
 <!-- Block Encrypt -->
 {% block encrypt %} {% endblock %}
 
 <!-- Block Decrypt -->
 {% block decrypt %} {% endblock %}
+
+<!-- Block Footer -->
+{% block footer %} style="color: gold;" {% endblock %}

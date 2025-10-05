@@ -16,7 +16,7 @@
   {% endif %}
 {% endblock %}
 
-<!-- Logout Button -->
+<!-- NavBar Buttons -->
 {% block nav-btn %}
     <a class="btn btn-custom" id="btn-nav-search" href="{% url 'search_cases_decrypt' %}" ><i class="fa fa-search">&nbsp;&nbsp; Search</i></a>
     <a class="btn btn-custom" id="btn-nav-back" href="{% url 'backend' %}" ><i class="fa fa-sliders">&nbsp;&nbsp; Control Panel</i></a>
@@ -41,7 +41,6 @@
 
 <!-- Page Content -->
 {% block content %}
-
 <div class="container mt-5 mb-5" style="width: 95%; font-size: 14px">
     <!-- Restricted Page - Check User -->
     {% if is_superuser %}
@@ -122,7 +121,7 @@
     </div>
     <!--End Topside-->
 
-    <!-- Add  Details -->
+    <!-- Get  Records -->
     <div class="container py-3 mt-3">
         <div class="col">
             <div class="card mb-5 rounded-3 shadow-lg border-secondary">
@@ -153,13 +152,12 @@
               </div>
             </div>
         </div>
-
     </div> <!-- END // container -->
 
-
-        <button class="btn btn-secondary w-100 mt-3 mb-2 no-pointer">
-          <i class="fa fa-folder-tree">&nbsp;&nbsp; RECENT &nbsp;ENCRYPTED &nbsp;RECORDS</i>
-        </button>
+    <!-- Divider -->
+    <button class="btn btn-secondary w-100 mt-3 mb-2 no-pointer">
+        <i class="fa fa-folder-tree">&nbsp;&nbsp; RECENT &nbsp;ENCRYPTED &nbsp;RECORDS</i>
+    </button>
 
     <!--Table-->
     <div class="container">
@@ -194,7 +192,6 @@
                         </tr>
                         {% endfor %}
                     </tbody>
-
                     <tbody>
                         {% for txt in text %}
                         <tr>
@@ -212,7 +209,6 @@
                         </tr>
                         {% endfor %}
                     </tbody>
-
                     <tbody>
                         {% for repo in textfile %}
                         <tr>
@@ -230,7 +226,6 @@
                         </tr>
                         {% endfor %}
                     </tbody>
-
                 </table>
             </div>
         </div>
@@ -240,9 +235,9 @@
     </div>
     <!--End Table-->
 
+    <!-- Content access control -->
     {% else %}
         <div class="container pt-5 pl-5 mt-5 mb-5">
-            <!-- Content accessible by regular users -->
             {% if request.user.is_authenticated %}
             {% else %}<a href="{% url django.contrib.auth.login %}">Login</a>{% endif %}
             <p style="color: black; font-size: 20px;"><i class="fas fa-triangle-exclamation">&nbsp;&nbsp;PAGE RESTRICTED!</i></p>
@@ -252,7 +247,6 @@
             </a>
         </div>
     {% endif %}
-
 </div>
 {% endblock content %}
 

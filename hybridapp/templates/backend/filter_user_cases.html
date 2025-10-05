@@ -6,8 +6,6 @@
 
 <title>{% block title %} CBDET | Filter User-Records {% endblock %}</title>
 
-
-
 <!-- Logout Button -->
 {% block nav-btn %}
     <a class="btn btn-custom" id="btn-nav-view" onclick="goBack()"><i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i></a>
@@ -31,7 +29,6 @@
     </div>
 {% endblock %}
 
-
 <!-- Block NavBar Content -->
 {% block nav-content %}
   {% if user.is_staff == False %}
@@ -43,119 +40,119 @@
 
 <!-- Page Content -->
 {% block content %}
-    <br>
+<br>
+<div class="container mt-2 mb-4 pb-5" style="width: 95%; font-size: 14px">
+    <button class="btn btn-danger w-100 mt-3 mb-3 no-pointer" style="color: black;">
+        <i class="fas fa-calendar-day">&nbsp;&nbsp;FILTER &nbsp;USER &nbsp;RECORDS</i>
+    </button>
 
-    <div class="container mt-2 mb-5 col-md-12" style="width: 95%; font-size: 14px">
-        <button class="btn btn-danger w-100 mt-3 mb-3 no-pointer" style="color: black;">
-            <i class="fas fa-calendar-day">&nbsp;&nbsp;FILTER &nbsp;USER &nbsp;RECORDS</i>
-        </button>
+    <!-- Message From BackEnd -->
+    {% for message in messages %}
+        {% if message.tags == 'success' %}
+            <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
+                <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
+            </div>
+        {% elif message.tags == 'error' %}
+            <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
+                <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
+            </div>
+        {% endif %}
+    {% endfor%}
 
-        <!-- Message From BackEnd -->
-        {% for message in messages %}
-            {% if message.tags == 'success' %}
-                <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
-                    <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
-                </div>
-            {% elif message.tags == 'error' %}
-                <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
-                    <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
-                </div>
-            {% endif %}
-        {% endfor%}
-
-      <div class="container m-2" style="width: 90%; font-size: 14px">
+    <div class="container m-2" style="width: 100%; font-size: 14px">
         <div class=" row align-items-center">
             <div class="col-8 m-3 ">
-              <form method="POST" action="{% url 'filter_user_cases' user_details.id %}">
+                <form method="POST" action="{% url 'filter_user_cases' user_details.id %}">
                     {% csrf_token %}
-                      <label><i class="fas fa-hand-pointer">&nbsp;&nbsp;Select Date &nbsp;&nbsp;</i></label>
-                      <i class="fas fa-">&nbsp;&nbsp;From: &nbsp;&nbsp;</i> <input type="date" name="from_date">
-                      <i class="fas fa-">&nbsp;&nbsp;To: &nbsp;&nbsp;</i><input type="date" name="to_date">
-                      &nbsp;&nbsp;&nbsp;<button class="btn btn-secondary" type="submit"><i class="fas fa-search">&nbsp;&nbsp; Search</i></button>
+                        <label><i class="fas fa-hand-pointer">&nbsp;&nbsp;Select Date &nbsp;&nbsp;</i></label>
+                        <i class="fas fa-">&nbsp;&nbsp;From: &nbsp;&nbsp;</i> <input type="date" name="from_date">
+                        <i class="fas fa-">&nbsp;&nbsp;To: &nbsp;&nbsp;</i><input type="date" name="to_date">
+                        &nbsp;&nbsp;&nbsp;<button class="btn btn-secondary" type="submit"><i class="fas fa-search">&nbsp;&nbsp; Search</i></button>
                 </form>
             </div>
             <div class="col-4 m-4">
-              <th scope="col"><i class="fas fa-square-poll-horizontal">&nbsp;&nbsp;Search Results For: &nbsp; {{ date }}</i></th>
-              </div>
-        </div>
-      </div>
-
-            <!--Table-->
-        <div class="container">
-            <div class="row my-4">
-                <div class="col-md-12">
-                    <table class="table bg-white">
-                        <thead class="bg-info">
-                            <tr>
-                              <th scope="col"><i class="fas fa-table-list">&nbsp;&nbsp;DB.ID</i></th>
-                              <th scope="col"><i class="fas fa-folder-closed">&nbsp;&nbsp;RECORD-ID</i></th>
-                              <th scope="col"><i class="fas fa-file-lines">&nbsp;&nbsp;RECORD NAME</i></th>
-                              <th scope="col"><i class="fas fa-user-tag">&nbsp;&nbsp;USER-ID</i></th>
-                              <th scope="col"><i class="fas fa-calendar-day">&nbsp;&nbsp;DATE</i></th>
-                              <th scope="col"><i class="fas fa-circle-info">&nbsp;&nbsp;DETAILS</i></th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                          {% if textfiles %}
-                          {% for case_r in textfiles %}
-                            <tr>
-                                <td>{{ case_r.id }}</td>
-                                <td>{{ case_r.case_id }}</td>
-                                <td>{{ case_r.case_name }}</td>
-                                <td>{{ case_r.user.email }}</td>
-                                <td>{{ case_r.case_date }}</td>
-                                <td><a href="{% url 'view_report_encrypt' case_r.id %}">
-                    <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
-                    </a></td>
-                            </tr>
-                            {% endfor %}
-                            {% endif %}
-                        </tbody>
-
-                        <tbody>
-                          {% if files %}
-                          {% for file in files %}
-                            <tr>
-                                <td>{{ file.id }}</td>
-                                <td>{{ file.case_id }}</td>
-                                <td>{{ file.case_file }}</td>
-                                <td>{{ file.user.email }}</td>
-                                <td>{{ file.case_date }}</td>
-                                <td><a href="{% url 'view_data' file.id %}">
-                    <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
-                    </a></td>
-                            </tr>
-                            {% endfor %}
-                            {% endif %}
-                        </tbody>
-
-                        <tbody>
-                          {% if texts %}
-                          {% for txt in texts %}
-                            <tr>
-                                <td>{{ txt.id }}</td>
-                                <td>{{ txt.case_id }}</td>
-                                <td>{{ txt.case_name }} </td>
-                                <td>{{ txt.user.email }}</td>
-                                <td>{{ txt.case_date }}</td>
-                                <td><a href="{% url 'view_file' txt.id %}">
-                    <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
-                    </a></td>
-                            </tr>
-                            {% endfor %}
-                            {% endif %}
-                        </tbody>
-                    </table>
-                  </div>
+                <th scope="col"><i class="fas fa-square-poll-horizontal">&nbsp;&nbsp;Search Results For: &nbsp; {{ date }}</i></th>
                 </div>
-            </div>
-            <a href="{% url 'user_cases_backend' user_details.id %}">
-                <button class="btn btn-outline-secondary mb-1 ml-5"><i class="fas fa-folder-minus">&nbsp;&nbsp;Back To Records</i></button>
-            </a>
-            <!--End Table-->
+        </div>
     </div>
 
+    <!--Table-->
+    <div class="container">
+        <div class="row my-4">
+            <div class="col-md-12">
+                <table class="table bg-white">
+                    <thead class="bg-info">
+                        <tr>
+                            <th scope="col"><i class="fas fa-table-list">&nbsp;&nbsp;DB.ID</i></th>
+                            <th scope="col"><i class="fas fa-folder-closed">&nbsp;&nbsp;RECORD-ID</i></th>
+                            <th scope="col"><i class="fas fa-file-lines">&nbsp;&nbsp;RECORD NAME</i></th>
+                            <th scope="col"><i class="fas fa-user-tag">&nbsp;&nbsp;USER-ID</i></th>
+                            <th scope="col"><i class="fas fa-calendar-day">&nbsp;&nbsp;DATE</i></th>
+                            <th scope="col"><i class="fas fa-circle-info">&nbsp;&nbsp;DETAILS</i></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if textfiles %}
+                        {% for case_r in textfiles %}
+                        <tr>
+                            <td>{{ case_r.id }}</td>
+                            <td>{{ case_r.case_id }}</td>
+                            <td>{{ case_r.case_name }}</td>
+                            <td>{{ case_r.user.email }}</td>
+                            <td>{{ case_r.case_date }}</td>
+                            <td>
+                                <a href="{% url 'view_report_encrypt' case_r.id %}">
+                                    <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% endif %}
+                    </tbody>
+                    <tbody>
+                        {% if files %}
+                        {% for file in files %}
+                        <tr>
+                            <td>{{ file.id }}</td>
+                            <td>{{ file.case_id }}</td>
+                            <td>{{ file.case_file }}</td>
+                            <td>{{ file.user.email }}</td>
+                            <td>{{ file.case_date }}</td>
+                            <td>
+                                <a href="{% url 'view_data' file.id %}">
+                                    <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% endif %}
+                    </tbody>
+                    <tbody>
+                        {% if texts %}
+                        {% for txt in texts %}
+                        <tr>
+                            <td>{{ txt.id }}</td>
+                            <td>{{ txt.case_id }}</td>
+                            <td>{{ txt.case_name }} </td>
+                            <td>{{ txt.user.email }}</td>
+                            <td>{{ txt.case_date }}</td>
+                            <td>
+                                <a href="{% url 'view_file' txt.id %}">
+                                    <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+                </div>
+            </div>
+        </div>
+    <a href="{% url 'user_cases_backend' user_details.id %}">
+        <button class="btn btn-outline-secondary mb-1 ml-5"><i class="fas fa-folder-minus">&nbsp;&nbsp;Back To Records</i></button>
+    </a>
+</div>
 {% endblock content %}
 
 <!-- Block Encrypt -->
@@ -164,5 +161,8 @@
 <!-- Block Decrypt -->
 {% block decrypt %} {% endblock %}
 
+<!-- Block Footer-Position -->
+{% block footer-position %} class="fixed-bottom bg-dark text-center text-lg-start text-light" {% endblock %}
+
 <!-- Block Footer -->
-{% block footer %} style="color: #d3d3d3;" {% endblock %}
+{% block footer %} style="color: #ff7f7f;" {% endblock %}

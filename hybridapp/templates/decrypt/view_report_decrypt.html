@@ -16,10 +16,10 @@
   {% endif %}
 {% endblock %}
 
-
-<!-- Logout Button -->
+<!-- NavBar Button -->
 {% block nav-btn %}
     <a class="btn btn-custom" id="btn-nav-view" onclick="goBack()"><i class="fa fa-chevron-left">&nbsp;&nbsp; back</i></a>
+    <a class="btn btn-custom" id="btn-nav-back" href="{% url 'decrypt' %}" ><i class="fa fa-table-columns">&nbsp;&nbsp; Dashboard</i></a>
     <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout"><i class="fa fa-right-from-bracket">&nbsp;&nbsp; Logout</i></a>
 {% endblock %}
 
@@ -38,43 +38,40 @@
     </div>
 {% endblock %}
 
-
 <!-- Page Content -->
 {% block content %}
 <br>
-    <div class="container mt-1 mb-5 pb-2">
-        <button class="btn btn-warning w-100 mt-3 mb-2 no-pointer">
-            <i class="fa-solid fa-circle-info">&nbsp;&nbsp;TEXT+FILE-RECORD &nbsp;DETAILS</i>
-        </button>
+<div class="container mt-1 mb-5 pb-2">
+    <button class="btn btn-warning w-100 mt-3 mb-2 no-pointer">
+        <i class="fa-solid fa-circle-info">&nbsp;&nbsp;TEXT+FILE-RECORD &nbsp;DETAILS</i>
+    </button>
 
-        <div id="pt" class="col-12">
-            <div class="card p-3 mt-3 mb-4">
-                <div class="row" >
-                    <h3>TEXT+FILE-RECORD CIPHER INFORMATION</h3>
-                    <div class="container m-3">
-                      <p>RECORD ID  : {{ textfile.case_id }} </p>
-                      <p>USER ID: NAME: {{ textfile.user.username }} &nbsp; EMAIL: {{ textfile.user.email }}</p>
-                      <p>DATE ENCRYPTED: {{ textfile.case_date }}</p>
-                      <p>TEXT NAME: {{ textfile.case_name }}</p>
-                      <p>FILE NAME: {{ textfile.case_file }}</p>
-                      <p>TEXT CIPHER: {{ textfile.case_info }}</p>
-                      <p>FILE CIPHER: {{ textfile.case_data }}</p>
-                    </div>
+    <div id="pt" class="col-12">
+        <div class="card p-3 mt-3 mb-4">
+            <div class="row" >
+                <h3>TEXT+FILE-RECORD CIPHER INFORMATION</h3>
+                <div class="container m-3">
+                    <p>RECORD ID  : {{ textfile.case_id }} </p>
+                    <p>USER ID: NAME: {{ textfile.user.username }} &nbsp; EMAIL: {{ textfile.user.email }}</p>
+                    <p>DATE ENCRYPTED: {{ textfile.case_date }}</p>
+                    <p>TEXT NAME: {{ textfile.case_name }}</p>
+                    <p>FILE NAME: {{ textfile.case_file }}</p>
+                    <p>TEXT CIPHER: {{ textfile.case_info }}</p>
+                    <p>FILE CIPHER: {{ textfile.case_data }}</p>
                 </div>
             </div>
-                <a href="/delete_case_report/{{ textfile.id }}">
-                    <button type="button" class="btn btn-outline-danger m-1 p-2"><i class="fas fa-trash-arrow-up">&nbsp;Delete</i></button>
-                </a>
-                <a href="{% url 'decrypt_case' textfile.id %}">
-                  <button type="button" class="btn btn-outline-success m-1 p-2"><i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i></button>
-                </a>
-                <a href="">
-                    <button onclick="myfun('pt')" type="button" class="btn btn-outline-primary m-1 p-2"><i class="fas fa-print">&nbsp;Print</i></button>
-                </a>
-      </div>
-
+        </div>
+        <a href="/delete_case_report/{{ textfile.id }}">
+            <button type="button" class="btn btn-outline-danger m-1 p-2"><i class="fas fa-trash-arrow-up">&nbsp;Delete</i></button>
+        </a>
+        <a href="{% url 'decrypt_case' textfile.id %}">
+            <button type="button" class="btn btn-outline-success m-1 p-2"><i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i></button>
+        </a>
+        <a href="">
+            <button onclick="myfun('pt')" type="button" class="btn btn-outline-primary m-1 p-2"><i class="fas fa-print">&nbsp;Print</i></button>
+        </a>
+    </div>
 </div> <!-- END // container -->
-
 {% endblock content %}
 
 <!-- Block Encrypt -->
@@ -84,4 +81,4 @@
 {% block decrypt %} {% endblock %}
 
 <!-- Block Footer -->
-{% block footer %} style="color: #d3d3d3;" {% endblock %}
+{% block footer %} style="color: gold;" {% endblock %}
