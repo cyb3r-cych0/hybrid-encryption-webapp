@@ -25,6 +25,7 @@ db.sqlite3
 # Static and media files
 staticfiles/
 media/
+migrations/
 
 # IDE files
 .idea/

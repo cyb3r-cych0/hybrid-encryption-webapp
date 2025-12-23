@@ -25,18 +25,17 @@ urlpatterns = [
     path('backend/filter_user_cases/<id>/', views.FilterUserCases.as_view(), name='filter_user_cases'),
 
     # Encrypt
-    path('encrypt/upload_file', views.EncryptFile.as_view(), name='upload_file'),
-    path('encrypt/encrypt_case_data/', views.EncryptText.as_view(), name='encrypt_case_data'),
-    path('encrypt/encrypt_case/', views.EncryptTextFile.as_view(), name='encrypt_case'),
+    path('encrypt/encrypt_file', views.EncryptFile.as_view(), name='encrypt_file'),
+    path('encrypt/encrypt_text/', views.EncryptText.as_view(), name='encrypt_text'),
+    path('encrypt/encrypt_textfile/', views.EncryptTextFile.as_view(), name='encrypt_textfile'),
 
-    path('encrypt/view_files/', views.ViewCasesEncrypt.as_view(), name='view_files'),
-    path('encrypt/view_report_encrypt/<id>/', views.ViewTextFileEncrypt.as_view(), name='view_report_encrypt'),
+    path('encrypt/view_cipher_records/', views.ViewCipherRecords.as_view(), name='view_cipher_records'),
+    path('encrypt/search_cipher_records/', views.SearchCipherRecords.as_view(), name='search_cipher_records'),
+    path('encrypt/filter_cipher_records/', views.FilterCipherRecords.as_view(), name='filter_cipher_records'),
 
-    path('encrypt/search_cases_encrypt/', views.SearchCasesEncrypt.as_view(), name='search_cases_encrypt'),
-    path('encrypt/filter_cases_encrypt/', views.FilterCasesEncrypt.as_view(), name='filter_cases_encrypt'),
-
-    path('encrypt/view_file/<id>/', views.ViewTextEncrypt.as_view(), name='view_file'),
-    path('encrypt/view_data/<id>/', views.ViewFileEncrypt.as_view(), name='view_data'),
+    path('encrypt/view_cipher_file/<id>/', views.ViewCipherFile.as_view(), name='view_cipher_file'),
+    path('encrypt/view_cipher_text/<id>/', views.ViewCipherText.as_view(), name='view_cipher_text'),
+    path('encrypt/view_cipher_textfile/<id>/', views.ViewCipherTextFile.as_view(), name='view_cipher_textfile'),
 
     # Decrypt
     path('decrypt_case/<int:id>/', views.DecryptTextFile.as_view(), name='decrypt_case'),

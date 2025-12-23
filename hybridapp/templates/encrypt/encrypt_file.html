@@ -2,11 +2,14 @@
 {% load crispy_forms_tags %}
 {% load static %}
 
+
 <!-- Block Title -->
-<title>{% block title %} CBDET | Encrypt Text+File {% endblock %}</title>
+<title>{% block title %} CBDET | Encrypt Record {% endblock %}</title>
+
 
 <!-- Navbar links control -->
 {% block links %}{% endblock %}
+
 
 <!-- Block NavBar Content -->
 {% block nav-content %}
@@ -17,10 +20,12 @@
   {% endif %}
 {% endblock %}
 
+
 <!-- Logout Button -->
 {% block nav-btn %}
-<a href="{% url 'encrypt' %}" class="btn btn-custom" id="btn-nav"><i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i></a>
+    <a href="{% url 'encrypt' %}" class="btn btn-custom" id="btn-nav"><i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i></a>
 {% endblock %}
+
 
 <!-- Block TopBar -->
 {% block topbar %}
@@ -38,23 +43,26 @@
     </div>
 {% endblock %}
 
-<!-- Page Contentt -->
+
+<!-- Page Content -->
 {% block content %}
 <br>
 <div class="container mt-2 mb-5 pb-5" style="width: 95%; font-size: 14px">
     <!-- Add Form -->
-    <button class="btn btn-danger w-100 mt-3 mb-3 no-pointer" style="color: black;">
-        <i class="fas fa-folder-open">&nbsp;&nbsp;ADD &nbsp;TEXT+FILE &nbsp;DETAILS</i>
+    <button class="btn btn-danger w-100 mt-3 mb-5 no-pointer" style="color: black;">
+        <i class="fas fa-file">&nbsp;&nbsp;ADD &nbsp;FILE &nbsp;DETAILS</i>
     </button>
 
     <!-- Message From BackEnd -->
     {% for message in messages %}
         {% if message.tags == 'success' %}
-            <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
+            <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">
+                {{ message }}
                 <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
             </div>
         {% elif message.tags == 'error' %}
-            <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
+            <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">
+                {{ message }}
                 <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
             </div>
         {% endif %}
@@ -62,30 +70,17 @@
 
     <!-- Encrypt Form -->
     <div class="row">
-        <div class="col-md-6">
-            <form method="POST" class="card p-3 mt-2" autocomplete="off" enctype="multipart/form-data">
-                {% csrf_token %}
-                <div class="row">
-                        <div class="col-6">
-                            {{ form.case_id|as_crispy_field }}
-                        </div>
-                        <div class="col-6">
-                            {{ form.case_name|as_crispy_field }}
-                        </div>
-                        <div class="col-12">
-                            {{ form.case_info|as_crispy_field }}
-                        </div>
-                        <div class="col-12">
-                            {{ form.case_file|as_crispy_field }}
-                        </div>
-                    </div>
-                <button type="submit" class="btn btn-outline-primary mt-3"><i class="fas fa-lock">&nbsp;&nbsp;Encrypt &nbsp;Text+File</i></button>
-            </form>
-        </div>
-        <div class="col-md-6 mt-5">
-            <img src="{% static 'img/encdd.png' %}" alt="Image" style="width: 540px; height: 450px; padding: 1rem;" >
-        </div>
-    </div>
+      <div class="col-md-6">
+        <form method="POST" class="card p-3 mt-2" autocomplete="off" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button type="submit" class="btn btn-outline-primary mt-3"><i class="fas fa-lock">&nbsp;&nbsp;Encrypt &nbsp;File</i></button>
+        </form>
+      </div>
+      <div class="col-md-6 mt-2">
+            <img src="{% static 'img/red.avif' %}" alt="Image" style="width: 540px; height: 255px; padding-right: 10px;" >
+      </div>
+  </div>
 </div> <!-- END // container -->
 {% endblock content %}
 
@@ -94,6 +89,9 @@
 
 <!-- Block Decrypt -->
 {% block decrypt %} {% endblock %}
+
+<!-- Block Footer-Position -->
+{% block footer-position %} class="fixed-bottom bg-dark text-center text-lg-start text-light" {% endblock %}
 
 <!-- Block Footer -->
 {% block footer %} style="color: red;" {% endblock %}

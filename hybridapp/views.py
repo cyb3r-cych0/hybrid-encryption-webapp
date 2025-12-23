@@ -3,7 +3,6 @@ import csv
 import io
 import time
 import zipfile
-import subprocess
 
 from Crypto.Cipher import AES, PKCS1_OAEP
 from Crypto.Hash import SHA256
@@ -21,11 +20,11 @@ from django.views.decorators.cache import cache_control
 from django.utils.decorators import method_decorator
 from django.views.generic import View
 
-from .forms import TextForm, FileUploadForm, RegisterForm, TextFileForm
+from .forms import TextForm, RegisterForm, TextFileForm, FileForm
 from .models import KeyPair, File, Text, TextFile, DecryptInfo
 
-""" START USER INFO """
 
+""" START USER INFO """
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
 @method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
@@ -189,18 +188,18 @@ class EncryptTextFile(View):
         context = {
             'form': form
         }
-        return render(request, 'encrypt/encrypt_case.html', context)
+        return render(request, 'encrypt/encrypt_textfile.html', context)
 
     @staticmethod
     def post(request):
         form = TextFileForm(request.POST, request.FILES)
         if form.is_valid():
             try:
-                case_id = form.cleaned_data['case_id']
-                case_name = form.cleaned_data['case_name']
-                case_info = form.cleaned_data['case_info'].encode()
-                case_data = form.cleaned_data['case_file'].read()
                 user = request.user
+                textfile_id = form.cleaned_data['textfile_id']
+                textfile_name = form.cleaned_data['textfile_name']
+                textfile_text = form.cleaned_data['textfile_text'].encode()
+                textfile_file = form.cleaned_data['textfile_file'].read()
 
                 # Fetch user's RSA public key
                 key_pair = KeyPair.objects.get(user=user)
@@ -208,11 +207,11 @@ class EncryptTextFile(View):
 
                 # Hash object for file verification
                 file_hash_object = SHA256.new()
-                file_hash_object.update(case_data)
+                file_hash_object.update(textfile_file)
                 file_original_hash = file_hash_object.digest()
 
                 text_hash_object = SHA256.new()
-                text_hash_object.update(case_info)
+                text_hash_object.update(textfile_text)
                 text_original_hash = text_hash_object.digest()
 
                 # Encrypt file data
@@ -220,42 +219,42 @@ class EncryptTextFile(View):
                 cipher_rsa = PKCS1_OAEP.new(public_key)
                 enc_session_key = cipher_rsa.encrypt(session_key)
                 cipher_aes = AES.new(session_key, AES.MODE_EAX)
-                cipherfile, tag = cipher_aes.encrypt_and_digest(case_data)
+                file_cipher, tag = cipher_aes.encrypt_and_digest(textfile_file)
 
                 # Generate AES, pad & encrypted text data
                 text_cipher_rsa = PKCS1_OAEP.new(public_key)
                 text_session_key = get_random_bytes(16)
                 text_cipher_aes = AES.new(text_session_key, AES.MODE_EAX)
-                text_ciphertext, text_tag = text_cipher_aes.encrypt_and_digest(case_info)
+                text_cipher, text_tag = text_cipher_aes.encrypt_and_digest(textfile_text)
                 text_enc_session_key = text_cipher_rsa.encrypt(text_session_key)
 
                 # Store encrypted data in database
-                encrypted_file = enc_session_key + cipher_aes.nonce + tag + cipherfile + file_original_hash
-                encrypted_text = base64.b64encode(
-                    text_enc_session_key + text_cipher_aes.nonce + text_tag + text_ciphertext + text_original_hash).decode(
+                cipher_file = enc_session_key + cipher_aes.nonce + tag + file_cipher + file_original_hash
+                cipher_text = base64.b64encode(
+                    text_enc_session_key + text_cipher_aes.nonce + text_tag + text_cipher + text_original_hash).decode(
                     'utf-8')
 
                 # Save encrypted case data to the database
                 new_case = TextFile.objects.create(
-                    case_id=case_id,
-                    case_name=case_name,
-                    case_info=encrypted_text,
-                    case_file=form.cleaned_data['case_file'],
-                    case_data=encrypted_file,
+                    textfile_id=textfile_id,
+                    textfile_name=textfile_name,
+                    textfile_text=cipher_text,
+                    textfile_file=form.cleaned_data['textfile_file'],
+                    textfile_cipher=cipher_file,
                     user=user
                 )
 
                 # software feedback
                 if new_case:
-                    messages.success(request, 'SUCCESS! Case TextFile Encrypted __ Scrambled Data Saved __')
+                    messages.success(request, f'SUCCESS! TextFile Encrypted __ {textfile_name} Cipher Saved __')
                     return redirect('encrypt')
             except Exception as e:
-                messages.error(request, f'FAILED! Error Encrypting TextFile __ Error: {str(e)} __')
-                return redirect('encrypt_case')
+                messages.error(request, f'FAILED! TextFile Not Encrypted __ Error: {str(e)} __')
+                return redirect('encrypt_textfile')
         context = {
             'form': form
         }
-        return render(request, 'encrypt/encrypt_case.html', context)
+        return render(request, 'encrypt/encrypt_textfile.html', context)
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
@@ -267,17 +266,16 @@ class EncryptText(View):
         context = {
             'form': form
         }
-        return render(request, 'encrypt/encrypt_case_data.html', context)
+        return render(request, 'encrypt/encrypt_text.html', context)
 
     @staticmethod
     def post(request):
         form = TextForm(request.POST, request.FILES)
         if form.is_valid():
             try:
-                case_id = form.cleaned_data['case_id']
-                case_name = form.cleaned_data['case_name']
-                case_data = form.cleaned_data['case_data'].encode()
                 user = request.user
+                text_id = form.cleaned_data['text_id']
+                text_name = form.cleaned_data['text_name'].encode()
 
                 # Fetch user's RSA public key
                 key_pair = KeyPair.objects.get(user=user)
@@ -285,37 +283,38 @@ class EncryptText(View):
 
                 # Hash object for verification
                 hash_object = SHA256.new()
-                hash_object.update(case_data)
+                hash_object.update(text_name)
                 original_hash = hash_object.digest()
 
                 # Generate AES, pad & encrypted data
                 cipher_rsa = PKCS1_OAEP.new(public_key)
                 session_key = get_random_bytes(16)
                 cipher_aes = AES.new(session_key, AES.MODE_EAX)
-                ciphertext, tag = cipher_aes.encrypt_and_digest(case_data)
+                ciphertext, tag = cipher_aes.encrypt_and_digest(text_name)
                 enc_session_key = cipher_rsa.encrypt(session_key)
-                encrypted_data = base64.b64encode(
-                    enc_session_key + cipher_aes.nonce + tag + ciphertext + original_hash).decode('utf-8')
+                cipher = base64.b64encode(enc_session_key + cipher_aes.nonce + tag + ciphertext + original_hash).decode('utf-8')
 
                 # Save encrypted case data to the database
-                new_case = Text.objects.create(
-                    case_id=case_id,
-                    case_name=case_name,
-                    case_data=encrypted_data,
-                    user=user
+                cipher_text = Text.objects.create(
+                    user=user,
+                    text_id=text_id,
+                    text_name=text_name,
+                    text_cipher=cipher,
                 )
 
                 # software feedback
-                if new_case:
-                    messages.success(request, 'SUCCESS! Case Text Encrypted __ Scrambled Data Saved __')
+                if cipher_text:
+                    messages.success(
+                        request, f'SUCCESS! Text Encrypted __ {cipher_text.text_name} Cipher Saved __'
+                    )
                     return redirect('encrypt')
             except Exception as e:
-                messages.error(request, f'FAILED! Error Encrypting Text __ Error: {str(e)} __')
-                return redirect('encrypt_case_data')
+                messages.error(request, f'FAILED! Text Not Encrypted __ Error: {str(e)} __')
+                return redirect('encrypt_text')
         context = {
             'form': form
         }
-        return render(request, 'encrypt/encrypt_case_data.html', context)
+        return render(request, 'encrypt/encrypt_text.html', context)
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
@@ -323,20 +322,20 @@ class EncryptText(View):
 class EncryptFile(View):
     @staticmethod
     def get(request):
-        form = FileUploadForm()
+        form = FileForm()
         context = {
             'form': form
         }
-        return render(request, 'encrypt/upload_file.html', context)
+        return render(request, 'encrypt/encrypt_file.html', context)
 
     @staticmethod
     def post(request):
-        form = FileUploadForm(request.POST, request.FILES)
+        form = FileForm(request.POST, request.FILES)
         if form.is_valid():
             try:
                 user = request.user
-                case_id = form.cleaned_data['case_id']
-                case_data = form.cleaned_data['case_file'].read()
+                file_id = form.cleaned_data['file_id']
+                file_name = form.cleaned_data['file_name'].read()
 
                 # Fetch user's RSA public key
                 key_pair = KeyPair.objects.get(user=user)
@@ -344,7 +343,7 @@ class EncryptFile(View):
 
                 # Hash object for verification
                 hash_object = SHA256.new()
-                hash_object.update(case_data)
+                hash_object.update(file_name)
                 original_hash = hash_object.digest()
 
                 # Encrypt file data
@@ -352,24 +351,32 @@ class EncryptFile(View):
                 cipher_rsa = PKCS1_OAEP.new(public_key)
                 enc_session_key = cipher_rsa.encrypt(session_key)
                 cipher_aes = AES.new(session_key, AES.MODE_EAX)
-                ciphertext, tag = cipher_aes.encrypt_and_digest(case_data)
+                ciphertext, tag = cipher_aes.encrypt_and_digest(file_name)
+                cipher = enc_session_key + cipher_aes.nonce + tag + ciphertext + original_hash
 
                 # Store encrypted data in database
-                encrypted_data = enc_session_key + cipher_aes.nonce + tag + ciphertext + original_hash
-                new_case = File.objects.create(user=user, case_id=case_id, case_file=form.cleaned_data['case_file'],
-                                               case_data=encrypted_data)
+                cipher_file = File.objects.create(
+                    user=user,
+                    file_id=file_id,
+                    file_name=form.cleaned_data['file_name'],
+                    file_cipher=cipher,
+                )
 
                 # software feedback
-                if new_case:
-                    messages.success(request, 'SUCCESS! Case File Encrypted __ Scrambled Data Saved __')
+                if cipher_file:
+                    messages.success(
+                        request, f'SUCCESS! File Encrypted __ {cipher_file.file_name} Cipher Saved __'
+                    )
                     return redirect('encrypt')
             except Exception as e:
-                messages.error(request, f'FAILED! Error Encrypting File __ Error: {str(e)} __')
-                return redirect('upload_file')
+                messages.error(
+                    request, f'FAILED! File Not Encrypted __ Error: {str(e)} __'
+                )
+                return redirect('encrypt_file')
         context = {
             'form': form
         }
-        return render(request, 'encrypt/upload_file.html', context)
+        return render(request, 'encrypt/encrypt_file.html', context)
 
 
 """ END ENCRYPT CASES """
@@ -736,7 +743,7 @@ class SearchCasesBackend(View):
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
 @method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class SearchCasesEncrypt(View):
+class SearchCipherRecords(View):
     @staticmethod
     def get(request):
         user = request.user
@@ -744,14 +751,14 @@ class SearchCasesEncrypt(View):
         try:
             if query:
                 # Perform search in both tables
-                case_files = File.objects.filter(case_id__icontains=query)
-                case_texts = Text.objects.filter(case_id__icontains=query)
-                case_textfiles = TextFile.objects.filter(case_id__icontains=query)
-                count = case_files.count() + case_texts.count() + case_textfiles.count()
+                files = File.objects.filter(file_id__icontains=query)
+                texts = Text.objects.filter(text_id__icontains=query)
+                textfiles = TextFile.objects.filter(textfile_id__icontains=query)
+                count = files.count() + texts.count() + textfiles.count()
                 context = {
-                    'case_files': case_files,
-                    'case_texts': case_texts,
-                    'case_textfiles': case_textfiles,
+                    'files': files,
+                    'texts': texts,
+                    'textfiles': textfiles,
                     'query': query,
                     'count': count,
                     'user': user
@@ -759,11 +766,11 @@ class SearchCasesEncrypt(View):
                 messages.success(request, f'{count} - Matching Cases Found')
             else:
                 context = {'user': user}  # Empty context if no query provided
-                messages.error(request, f'Type Case ID In TextBox To Search All Cases')
-            return render(request, 'encrypt/search_cases_encrypt.html', context)
+                messages.error(request, f'Type Record ID In TextBox To Search All Records')
+            return render(request, 'encrypt/search_cipher_records.html', context)
         except Exception as e:
             messages.error(request, f'Error: {str(e)}')
-            return redirect('search_cases_encrypt')
+            return redirect('search_cipher_records')
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
@@ -918,25 +925,25 @@ class EncryptDashboard(View):
 # View Encrypted text Files (backend)
 @method_decorator(login_required(login_url='login'), name='dispatch')
 @method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class ViewTextEncrypt(View):
+class ViewCipherText(View):
     @staticmethod
     def get(request, id):
         user = request.user
         try:
-            file = get_object_or_404(Text, id=id)
+            text = get_object_or_404(Text, id=id)
         except Exception as e:
             raise Http404(f'File Details Not Found! Error{str(e)}')
         context = {
-            'file': file,
+            'text': text,
             'user': user
         }
-        return render(request, 'encrypt/view_file.html', context)
+        return render(request, 'encrypt/view_cipher_text.html', context)
 
 
 # view encrypted text and files
 @method_decorator(login_required(login_url='login'), name='dispatch')
 @method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class ViewCasesEncrypt(View):
+class ViewCipherRecords(View):
     @staticmethod
     def get(request):
         user = request.user
@@ -949,7 +956,7 @@ class ViewCasesEncrypt(View):
             'texts': texts,
             'textfiles': textfiles
         }
-        return render(request, 'encrypt/view_files.html', context)
+        return render(request, 'encrypt/view_cipher_records.html', context)
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
@@ -1022,7 +1029,7 @@ class ViewTextFileDecrypt(View):
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
 @method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class ViewTextFileEncrypt(View):
+class ViewCipherTextFile(View):
     @staticmethod
     def get(request, id):
         user = request.user
@@ -1034,13 +1041,13 @@ class ViewTextFileEncrypt(View):
             'textfile': textfile,
             'user': user
         }
-        return render(request, 'encrypt/view_report_encrypt.html', context)
+        return render(request, 'encrypt/view_cipher_textfile.html', context)
 
 
-# View Encrypted Data Files (backend)
+# View Cipher  Files (backend)
 @method_decorator(login_required(login_url='login'), name='dispatch')
 @method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class ViewFileEncrypt(View):
+class ViewCipherFile(View):
     @staticmethod
     def get(request, id):
         user = request.user
@@ -1052,7 +1059,7 @@ class ViewFileEncrypt(View):
             'file': file,
             'user': user
         }
-        return render(request, 'encrypt/view_data.html', context)
+        return render(request, 'encrypt/view_cipher_file.html', context)
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
@@ -1537,14 +1544,14 @@ class FilterCasesBackend(View):
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
 @method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class FilterCasesEncrypt(View):
+class FilterCipherRecords(View):
     @staticmethod
     def get(request):
         is_superuser = request.user.is_superuser
         context = {
             'is_superuser': is_superuser
         }
-        return render(request, 'encrypt/filter_cases_encrypt.html', context)
+        return render(request, 'encrypt/filter_cipher_records.html', context)
 
     @staticmethod
     def post(request):
@@ -1554,35 +1561,29 @@ class FilterCasesEncrypt(View):
                 from_date = request.POST.get('from_date')
                 to_date = request.POST.get('to_date')
 
-                search_file_result = File.objects.raw(
-                    'select id, case_id, case_file, case_data from hybridapp_file where case_date between "' + from_date + '" and "' + to_date + '"')
-                search_text_result = Text.objects.raw(
-                    'select id, case_id, case_name, case_data from hybridapp_text where case_date between "' + from_date + '" and "' + to_date + '"')
-                search_textfile_result = TextFile.objects.raw(
-                    'select id, case_id, case_name, case_info, case_file, case_data from hybridapp_textfile where case_date between "' + from_date + '" and "' + to_date + '"')
+                filter_files = File.objects.raw(
+                    'select id, file_id, file_name, file_cipher from hybridapp_file where file_date between "' + from_date + '" and "' + to_date + '"')
+                filter_texts = Text.objects.raw(
+                    'select id, text_id, text_name, text_cipher from hybridapp_text where text_date between "' + from_date + '" and "' + to_date + '"')
+                filter_textfiles = TextFile.objects.raw(
+                    'select id, textfile_id, textfile_name, textfile_text, textfile_file, textfile_cipher from hybridapp_textfile where textfile_date between "' + from_date + '" and "' + to_date + '"')
 
-                # Extract date values from the raw_queryset
-                date_values = [item.case_date for item in search_textfile_result]
-                for date_value in date_values:
-                    date = date_value
                 context = {
-                    'files': search_file_result,
-                    'texts': search_text_result,
-                    'textfiles': search_textfile_result,
-                    'date_values': date_values,
-                    'date': date,
+                    'files': filter_files,
+                    'texts': filter_texts,
+                    'textfiles': filter_textfiles,
                     'is_superuser': is_superuser
                 }
-                return render(request, 'encrypt/filter_cases_encrypt.html', context)
+                return render(request, 'encrypt/filter_cipher_records.html', context)
             else:
                 messages.error(request, f'Select Calender Date To Filter Searched Cases.')
                 context = {
                     'is_superuser': is_superuser
                 }
-                return render(request, 'encrypt/filter_cases_encrypt.html', context)
+                return render(request, 'encrypt/filter_cipher_records.html', context)
         except Exception as e:
             messages.error(request, f'Error: {str(e)}!')
-            return redirect('filter_cases_encrypt')
+            return redirect('filter_cipher_records')
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
