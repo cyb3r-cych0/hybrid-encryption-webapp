@@ -5,49 +5,48 @@ from django.forms import ModelForm
 from .models import Text, TextFile, File
 
 
-class FileUploadForm(forms.ModelForm):
+class FileForm(forms.ModelForm):
     class Meta:
         model = File
-        fields = ('case_id', 'case_file')
+        fields = ('file_id', 'file_name')
 
-    case_id = forms.CharField(
-        widget=forms.TextInput(attrs={'autocomplete': 'new-password', 'placeholder': 'enter ''case ID'}))
+    file_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'enter ''File ID'}))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['case_id'].label = 'CASE ID'.format(self.fields['case_id'].label)
-        self.fields['case_file'].label = 'UPLOAD CASE FILE'.format(self.fields['case_file'].label)
+        self.fields['file_id'].label = 'FILE ID'.format(self.fields['file_id'].label)
+        self.fields['file_name'].label = 'UPLOAD FILE'.format(self.fields['file_name'].label)
 
 
 class TextForm(ModelForm):
     class Meta:
         model = Text
-        fields = ["case_id", "case_name", "case_data"]
+        fields = ["text_id", "text_name", "text_cipher"]
 
-    case_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'enter case ID'}))
-    case_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'enter case name/title'}))
+    text_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'enter Text ID'}))
+    text_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'enter Text Name'}))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['case_id'].label = 'CASE ID'.format(self.fields['case_id'].label)
-        self.fields['case_name'].label = 'CASE NAME/TITLE'.format(self.fields['case_name'].label)
-        self.fields['case_data'].label = 'CASE INFORMATION'.format(self.fields['case_data'].label)
+        self.fields['text_id'].label = 'TEXT ID'.format(self.fields['text_id'].label)
+        self.fields['text_name'].label = 'TEXT NAME'.format(self.fields['text_name'].label)
+        self.fields['text_cipher'].label = 'TEXT INFO'.format(self.fields['text_cipher'].label)
 
 
 class TextFileForm(ModelForm):
     class Meta:
         model = TextFile
-        fields = ["case_id", "case_name", "case_info", "case_file"]
+        fields = ["textfile_id", "textfile_name", "textfile_text", "textfile_file"]
 
-    case_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'enter case ID...'}))
-    case_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'enter case name/title...'}))
+    textfile_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'enter TextFile ID'}))
+    textfile_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'enter TextFile Name'}))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['case_id'].label = 'CASE ID'.format(self.fields['case_id'].label)
-        self.fields['case_name'].label = 'CASE NAME/TITLE'.format(self.fields['case_name'].label)
-        self.fields['case_info'].label = 'CASE INFORMATION'.format(self.fields['case_info'].label)
-        self.fields['case_file'].label = 'UPLOAD CASE FILE'.format(self.fields['case_file'].label)
+        self.fields['textfile_id'].label = 'TEXTFILE ID'.format(self.fields['textfile_id'].label)
+        self.fields['textfile_name'].label = 'TEXTFILE NAME'.format(self.fields['textfile_name'].label)
+        self.fields['textfile_text'].label = 'TEXT INFO'.format(self.fields['textfile_text'].label)
+        self.fields['textfile_file'].label = 'UPLOAD FILE'.format(self.fields['textfile_file'].label)
 
 
 class RegisterForm(UserCreationForm):
@@ -58,11 +57,11 @@ class RegisterForm(UserCreationForm):
     email = forms.EmailField(
         widget=forms.TextInput(attrs={'autocomplete': 'new-password', 'placeholder': 'example@gmail.com'}))
     username = forms.CharField(
-        widget=forms.TextInput(attrs={'autocomplete': 'new-password', 'placeholder': 'John/Alice etc...'}))
+        widget=forms.TextInput(attrs={'autocomplete': 'new-password', 'placeholder': 'John/Alice'}))
     password1 = forms.CharField(
-        widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'placeholder': 'strong password...'}))
+        widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'placeholder': 'strong password'}))
     password2 = forms.CharField(
-        widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'placeholder': 'should match...'}))
+        widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'placeholder': 'should match'}))
 
     email.widget.input_type = 'email'
     password1.widget.input_type = 'password'

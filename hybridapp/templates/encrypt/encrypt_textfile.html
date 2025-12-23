@@ -3,10 +3,12 @@
 {% load static %}
 
 <!-- Block Title -->
-<title>{% block title %} CBDET | Encrypt Record {% endblock %}</title>
+<title>{% block title %} CBDET | Encrypt Text+File {% endblock %}</title>
+
 
 <!-- Navbar links control -->
 {% block links %}{% endblock %}
+
 
 <!-- Block NavBar Content -->
 {% block nav-content %}
@@ -17,10 +19,14 @@
   {% endif %}
 {% endblock %}
 
+
 <!-- Logout Button -->
 {% block nav-btn %}
-<a href="{% url 'encrypt' %}" class="btn btn-custom" id="btn-nav"><i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i></a>
+    <a href="{% url 'encrypt' %}" class="btn btn-custom" id="btn-nav">
+        <i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i>
+    </a>
 {% endblock %}
+
 
 <!-- Block TopBar -->
 {% block topbar %}
@@ -38,49 +44,58 @@
     </div>
 {% endblock %}
 
+
 <!-- Page Contentt -->
 {% block content %}
 <br>
 <div class="container mt-2 mb-5 pb-5" style="width: 95%; font-size: 14px">
-    <button class="btn btn-danger w-100 mt-3 mb-4 no-pointer" style="color: black;">
-        <i class="fas fa-file-lines">&nbsp;&nbsp;ADD &nbsp;TEXT-RECORD &nbsp;DETAILS</i>
+    <!-- Add Form -->
+    <button class="btn btn-danger w-100 mt-3 mb-3 no-pointer" style="color: black;">
+        <i class="fas fa-folder-open">&nbsp;&nbsp;ADD &nbsp;TEXT+FILE &nbsp;DETAILS</i>
     </button>
 
     <!-- Message From BackEnd -->
     {% for message in messages %}
         {% if message.tags == 'success' %}
-            <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
-                <a href="{% url 'file_upload' %}" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
+            <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">
+                {{ message }}
+                <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
             </div>
         {% elif message.tags == 'error' %}
-            <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
-                <a href="{% url 'file_upload' %}" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
+            <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">
+                {{ message }}
+                <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
             </div>
         {% endif %}
     {% endfor%}
 
     <!-- Encrypt Form -->
     <div class="row">
-      <div class="col-md-6">
+        <div class="col-md-6">
             <form method="POST" class="card p-3 mt-2" autocomplete="off" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="row">
                         <div class="col-6">
-                            {{ form.case_id|as_crispy_field }}
+                            {{ form.textfile_id|as_crispy_field }}
                         </div>
                         <div class="col-6">
-                            {{ form.case_name|as_crispy_field }}
+                            {{ form.textfile_name|as_crispy_field }}
                         </div>
                         <div class="col-12">
-                            {{ form.case_data|as_crispy_field }}
+                            {{ form.textfile_text|as_crispy_field }}
+                        </div>
+                        <div class="col-12">
+                            {{ form.textfile_file|as_crispy_field }}
                         </div>
                     </div>
-                <button type="submit" class="btn btn-outline-primary mt-3"><i class="fas fa-lock">&nbsp;&nbsp;Encrypt &nbsp;Text</i></button>
+                <button type="submit" class="btn btn-outline-primary mt-3">
+                    <i class="fas fa-lock">&nbsp;&nbsp;Encrypt &nbsp;Text+File</i>
+                </button>
             </form>
-      </div>
-      <div class="col-md-6 mt-4">
-          <img src="{% static 'img/encd.jpg' %}" alt="Image" style="width: 539px; height: 420px; padding: 1.5rem" >
-      </div>
+        </div>
+        <div class="col-md-6 mt-5">
+            <img src="{% static 'img/encdd.png' %}" alt="Image" style="width: 540px; height: 450px; padding: 1rem;" >
+        </div>
     </div>
 </div> <!-- END // container -->
 {% endblock content %}
@@ -90,9 +105,6 @@
 
 <!-- Block Decrypt -->
 {% block decrypt %} {% endblock %}
-
-<!-- Block Footer-Position -->
-{% block footer-position %} class="fixed-bottom bg-dark text-center text-lg-start text-light" {% endblock %}
 
 <!-- Block Footer -->
 {% block footer %} style="color: red;" {% endblock %}

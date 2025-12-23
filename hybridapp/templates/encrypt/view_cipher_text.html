@@ -4,6 +4,11 @@
 <!-- Navbar links control -->
 {% block links %}{% endblock %}
 
+
+<!-- Block Title -->
+<title>{% block title %} CBDET | Text Details {% endblock %}</title>
+
+
 <!-- Block NavBar Content -->
 {% block nav-content %}
   {% if user.is_staff == False %}
@@ -13,15 +18,20 @@
   {% endif %}
 {% endblock %}
 
-<!-- Block Title -->
-<title>{% block title %} CBDET | Text+File Details {% endblock %}</title>
 
 <!-- Logout Button -->
 {% block nav-btn %}
-    <a class="btn btn-custom" id="btn-nav-view" onclick="goBack()"><i class="fa fa-chevron-left">&nbsp;&nbsp; Back</i></a>
-    <a class="btn btn-custom" id="btn-nav-back" href="{% url 'encrypt' %}" ><i class="fas fa-table-columns">&nbsp;&nbsp;Dashboard</i></a>
-    <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout"><i class="fa fa-right-from-bracket">&nbsp;&nbsp; Logout</i></a>
+    <a class="btn btn-custom" id="btn-nav-view" onclick="goBack()">
+        <i class="fa fa-chevron-left">&nbsp;&nbsp; Back</i>
+    </a>
+    <a class="btn btn-custom" id="btn-nav-back" href="{% url 'encrypt' %}" >
+        <i class="fas fa-table-columns">&nbsp;&nbsp;Dashboard</i>
+    </a>
+    <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout">
+        <i class="fa fa-right-from-bracket">&nbsp;&nbsp; Logout</i>
+    </a>
 {% endblock %}
+
 
 {% block topbar %}
 <div class="top-bar mt-4 pt-5">
@@ -38,31 +48,30 @@
     </div>
 {% endblock %}
 
+
 <!-- Page Content -->
 {% block content %}
 <br>
 <div class="container mt-1 mb-5 pb-2">
     <button class="btn btn-warning w-100 mt-3 mb-2 no-pointer">
-        <i class="fa-solid fa-circle-info">&nbsp;TEXT+FILE-RECORD &nbsp;DETAILS</i>
+        <i class="fa-solid fa-circle-info">&nbsp;&nbsp;TEXT-RECORD &nbsp;DETAILS</i>
     </button>
 
     <div id="pt" class="col-12">
         <div class="card p-3 mt-3 mb-4">
             <div class="row" >
-                <h3>TEXT+FILE CIPHER INFORMATION</h3>
+                <h3>TEXT-RECORD CIPHER INFORMATION</h3>
                 <div class="container m-3">
-                    <p>RECORD ID : {{ textfile.case_id }} </p>
-                    <p>USER ID : NAME: {{ textfile.user.username }} | EMAIL: {{ textfile.user.email }}</p>
-                    <p>DATE ENCRYPTED : {{ textfile.case_date }}</p>
-                    <p>TEXT NAME : {{ textfile.case_file }}</p>
-                    <p>FILE NAME : {{ textfile.case_name }}</p>
-                    <p>TEXT CIPHER : {{ textfile.case_info }}</p>
-                    <p>FILE CIPHER : {{ textfile.case_data }}</p>
+                    <p> RECORD ID  : {{ text.text_id }} </p>
+                    <p> USER ID: NAME: {{ text.user.username }} &nbsp;|&nbsp; EMAIL: {{ text.user.email }}</p>
+                    <p> DATE ENCRYPTED: {{ text.text_date }}</p>
+                    <p> TEXT NAME: {{ text.text_name }}</p>
+                    <p> TEXT CIPHER: {{ text.text_cipher }}</p>
                 </div>
             </div>
         </div>
         <a href="">
-            <button onclick="myfun('pt')" type="button" class="btn btn-outline-primary m-1 p-2"><i class="fa-solid fa-print">&nbsp;Print</i></button>
+            <button onclick="myfun('pt')" type="button" class="btn btn-outline-primary m-1 p-2"><i class="fas fa-print">&nbsp;&nbsp;Print</i></button>
         </a>
     </div>
 </div> <!-- END // container -->
@@ -73,6 +82,9 @@
 
 <!-- Block Decrypt -->
 {% block decrypt %} {% endblock %}
+
+<!-- Block Footer-Position -->
+{% block footer-position %} class="fixed-bottom bg-dark text-center text-lg-start text-light" {% endblock %}
 
 <!-- Block Footer -->
 {% block footer %} style="color: gold;" {% endblock %}

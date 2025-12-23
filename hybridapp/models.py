@@ -30,38 +30,38 @@ def create_key_pair(sender, instance, created, **kwargs):
 
 
 class File(models.Model):
-    case_id = models.CharField(max_length=20, blank=False)
-    case_file = models.FileField(upload_to='')
-    case_data = models.BinaryField()
-    case_date = models.DateField(default=timezone.now)
+    file_id = models.CharField(max_length=20, blank=False)
+    file_name = models.FileField(upload_to='', blank=False)
+    file_cipher = models.BinaryField()
+    file_date = models.DateField(default=timezone.now)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.case_file.name
+        return self.file_name.name
 
 
 class Text(models.Model):
-    case_id = models.CharField(max_length=20, blank=False)
-    case_name = models.CharField(max_length=20)
-    case_data = models.TextField()
-    case_date = models.DateField(default=timezone.now)
+    text_id = models.CharField(max_length=20, blank=False)
+    text_name = models.CharField(max_length=20)
+    text_cipher = models.TextField()
+    text_date = models.DateField(default=timezone.now)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.case_name
+        return self.text_name
 
 
 class TextFile(models.Model):
-    case_id = models.CharField(blank=False, max_length=20)
-    case_name = models.CharField(max_length=100, blank=False)
-    case_info = models.TextField(blank=True)
-    case_file = models.FileField(upload_to='', blank=False)
-    case_data = models.BinaryField(blank=False)
-    case_date = models.DateField(default=timezone.now)
+    textfile_id = models.CharField(blank=False, max_length=20)
+    textfile_name = models.CharField(max_length=100, blank=False)
+    textfile_text = models.TextField(blank=True)
+    textfile_file = models.FileField(upload_to='', blank=False)
+    textfile_cipher = models.BinaryField(blank=False)
+    textfile_date = models.DateField(default=timezone.now)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.case_name
+        return self.textfile_name
 
 
 class DecryptInfo(models.Model):

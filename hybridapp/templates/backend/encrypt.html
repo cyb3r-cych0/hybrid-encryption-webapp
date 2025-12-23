@@ -4,15 +4,24 @@
 <!-- Navbar links control -->
 {% block links %}{% endblock %}
 
+
 <!-- Block Title -->
 <title>{% block title %} CBDET | Encrypt Dashboard {% endblock %}</title>
 
+
 <!-- NavBar Button -->
 {% block nav-btn %}
-    <a class="btn btn-custom" id="btn-nav-search" href="{% url 'search_cases_encrypt' %}" ><i class="fa fa-search">&nbsp;&nbsp; Search</i></a>
-    <a class="btn btn-custom" id="btn-nav-back" href="{% url 'backend' %}" ><i class="fa fa-sliders">&nbsp;&nbsp; Control Panel</i></a>
-    <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout"><i class="fa fa-right-from-bracket">&nbsp;&nbsp; Logout</i></a>
+    <a class="btn btn-custom" id="btn-nav-search" href="{% url 'search_cipher_records' %}" >
+        <i class="fa fa-search">&nbsp;&nbsp; Search</i>
+    </a>
+    <a class="btn btn-custom" id="btn-nav-back" href="{% url 'backend' %}" >
+        <i class="fa fa-sliders">&nbsp;&nbsp; Control Panel</i>
+    </a>
+    <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout">
+        <i class="fa fa-right-from-bracket">&nbsp;&nbsp; Logout</i>
+    </a>
 {% endblock %}
+
 
 {% block nav-content %}
   {% if user.is_staff == False %}
@@ -21,6 +30,7 @@
     <i class="fa-solid fa-user-tie mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Admin-User &nbsp;{{ user  }}</i>
   {% endif %}
 {% endblock %}
+
 
 <!-- Block TopBar -->
 {% block topbar %}
@@ -38,17 +48,20 @@
     </div>
 {% endblock %}
 
+
 <!-- Page Content -->
 {% block content %}
 <div class="container mt-5 mb-5" style="width: 95%; font-size: 14px">
     <!-- Message From BackEnd -->
     {% for message in messages %}
         {% if message.tags == 'success' %}
-            <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
+            <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">
+                {{ message }}
                 <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
             </div>
         {% elif message.tags == 'error' %}
-            <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
+            <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">
+                {{ message }}
                 <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
             </div>
         {% endif %}
@@ -91,7 +104,7 @@
                                 </a>
                             </div>
                             <div class="col-md-4">
-                                <a class="text-decoration-none text-dark" href="{% url 'view_files'%}">
+                                <a class="text-decoration-none text-dark" href="{% url 'view_cipher_records'%}">
                                     <div class="card my-card shadow text-center p-3" style="color: green;">
                                         <h5 class="border" style="color: black;">Enc. Records</h5>
                                         <h1><i class="fa fa-folder-plus" >&nbsp;&nbsp;{{ total_files }}</i></h1>
@@ -119,7 +132,9 @@
         <div class="col">
             <div class="card mb-5 rounded-3 shadow-lg border-secondary ">
               <div class="card-header py-3 text-bg-secondary border-secondary">
-                <h6 class="my-0 fw-normal" style="color: white;"><i class="fa fa-folder-closed">&nbsp;&nbsp;ADD &nbsp;NEW &nbsp;RECORD &nbsp;FOR &nbsp;ENCRYPTION</i></h6>
+                <h6 class="my-0 fw-normal" style="color: white;">
+                    <i class="fa fa-folder-closed">&nbsp;&nbsp;ADD &nbsp;NEW &nbsp;RECORD &nbsp;FOR &nbsp;ENCRYPTION</i>
+                </h6>
               </div>
               <div class="card-body">
                 <div class="container mb-2">
@@ -129,17 +144,25 @@
                       <h4><i class="fa fa-file-image" style="color: grey;">&nbsp;.jpg/.png/.jpeg</i></h4>
                     </ul>
                     <div class="mt-5 mb-4">
-                      <p style="font-size: 18px; font-type: bold;">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-lightbulb" style="color: orange;"></i><i class="fa fa-">&nbsp;&nbsp;Select option to add new records for encryption</i></p>
+                      <p style="font-size: 18px; font-type: bold;">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-lightbulb" style="color: orange;"></i>
+                          <i class="fa fa-">&nbsp;&nbsp;Select option to add new records for encryption</i>
+                      </p>
                     </div>
                 </div>
-                <a href="/encrypt/upload_file">
-                    <button type="button" class="w-90 btn btn-lg btn-outline-success m-2"><i class="fas fa-file">&nbsp;&nbsp;ADD FILE</i></button>
+                <a href="/encrypt/encrypt_file">
+                    <button type="button" class="w-90 btn btn-lg btn-outline-success m-2">
+                        <i class="fas fa-file">&nbsp;&nbsp;ADD FILE</i>
+                    </button>
                 </a>
-                <a href="/encrypt/encrypt_case_data">
-                    <button type="button" class="w-90 btn btn-lg btn-outline-primary m-2"><i class="fas fa-file-lines">&nbsp;&nbsp;ADD TEXT</i></button>
+                <a href="/encrypt/encrypt_text">
+                    <button type="button" class="w-90 btn btn-lg btn-outline-primary m-2">
+                        <i class="fas fa-file-lines">&nbsp;&nbsp;ADD TEXT</i>
+                    </button>
                 </a>
-                <a href="/encrypt/encrypt_case">
-                    <button type="button" class="w-90 btn btn-lg btn-outline-secondary m-2"><i class="fas fa-folder-open">&nbsp;&nbsp;ADD TEXT + FILE</i></button>
+                <a href="/encrypt/encrypt_textfile">
+                    <button type="button" class="w-90 btn btn-lg btn-outline-secondary m-2">
+                        <i class="fas fa-folder-open">&nbsp;&nbsp;ADD TEXT + FILE</i>
+                    </button>
                 </a>
               </div>
             </div>
@@ -166,59 +189,70 @@
                           <th scope="col"><i class="fa fa-circle-info">&nbsp;&nbsp; DETAILS</i></th>
                         </tr>
                     </thead>
+
                     <tbody>
-                        {% for txt in text %}
-                        <tr>
-                            <td>{{ txt.id }}</td>
-                            <td>{{ txt.case_id }}</td>
-                            <td>{{ txt.case_name }}</td>
-                            <td>{{ txt.user.email }}</td>
-                            <td>{{ txt.case_date }}</td>
-                            <td>
-                                <a href="{% url 'view_file' txt.id %}">
-                                    <button type="button" class="w-100 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
+                      {% for f in file %}
+                          <tr>
+                              <td>{{ f.id }}</td>
+                              <td>{{ f.file_id }}</td>
+                              <td>{{ f.file_name }}</td>
+                              <td>{{ f.user.email }}</td>
+                              <td>{{ f.file_date }}</td>
+                              <td>
+                                <a href="{% url 'view_cipher_file' f.id %}">
+                                    <button type="button" class="w-100 btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-expand">&nbsp;View</i>
+                                    </button>
                                 </a>
                             </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                    <tbody>
-                      {% for fil in file %}
-                      <tr>
-                          <td>{{ fil.id }}</td>
-                          <td>{{ fil.case_id }}</td>
-                          <td>{{ fil.case_file }}</td>
-                          <td>{{ fil.user.email }}</td>
-                          <td>{{ fil.case_date }}</td>
-                          <td>
-                            <a href="{% url 'view_data' fil.id %}">
-                                <button type="button" class="w-100 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
-                            </a>
-                        </td>
-                      </tr>
+                          </tr>
                       {% endfor %}
                     </tbody>
+
+                    <tbody>
+                        {% for txt in text %}
+                            <tr>
+                                <td>{{ txt.id }}</td>
+                                <td>{{ txt.text_id }}</td>
+                                <td>{{ txt.text_name }}</td>
+                                <td>{{ txt.user.email }}</td>
+                                <td>{{ txt.text_date }}</td>
+                                <td>
+                                    <a href="{% url 'view_cipher_text' txt.id %}">
+                                        <button type="button" class="w-100 btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-expand">&nbsp;View</i>
+                                        </button>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+
                     <tbody>
                       {% for tf in textfile %}
-                      <tr>
-                          <td>{{ tf.id }}</td>
-                          <td>{{ tf.case_id }}</td>
-                          <td>{{ tf.case_file }}</td>
-                          <td>{{ tf.user.email }}</td>
-                          <td>{{ tf.case_date }}</td>
-                          <td>
-                            <a href="{% url 'view_report_encrypt' tf.id %}">
-                                <button type="button" class="w-100 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
-                            </a>
-                        </td>
-                      </tr>
+                          <tr>
+                              <td>{{ tf.id }}</td>
+                              <td>{{ tf.textfile_id }}</td>
+                              <td>{{ tf.textfile_name }}</td>
+                              <td>{{ tf.user.email }}</td>
+                              <td>{{ tf.textfile_date }}</td>
+                              <td>
+                                <a href="{% url 'view_cipher_textfile' tf.id %}">
+                                    <button type="button" class="w-100 btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-expand">&nbsp;View</i>
+                                    </button>
+                                </a>
+                            </td>
+                          </tr>
                       {% endfor %}
                     </tbody>
                 </table>
             </div>
         </div>
-        <a href="{% url 'view_files' %}">
-            <button class="btn btn-secondary mb-1 ml-5"><i class="fa fa-folder-plus">&nbsp;&nbsp;More &nbsp;Records</i></button>
+        <a href="{% url 'view_cipher_records' %}">
+            <button class="btn btn-secondary mb-1 ml-5">
+                <i class="fa fa-folder-plus">&nbsp;&nbsp;More &nbsp;Records</i>
+            </button>
         </a>
     </div>
     <!--End Table-->
