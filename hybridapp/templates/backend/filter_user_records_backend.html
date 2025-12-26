@@ -62,7 +62,7 @@
     <div class="container m-2" style="width: 100%; font-size: 14px">
         <div class=" row align-items-center">
             <div class="col-8 m-3 ">
-                <form method="POST" action="{% url 'filter_user_cases' user_details.id %}">
+                <form method="POST" action="{% url 'filter_user_records_backend' user_details.id %}">
                     {% csrf_token %}
                         <label><i class="fas fa-hand-pointer">&nbsp;&nbsp;Select Date &nbsp;&nbsp;</i></label>
                         <i class="fas fa-">&nbsp;&nbsp;From: &nbsp;&nbsp;</i> <input type="date" name="from_date">
@@ -93,15 +93,15 @@
                     </thead>
                     <tbody>
                         {% if textfiles %}
-                        {% for case_r in textfiles %}
+                        {% for tf in textfiles %}
                         <tr>
-                            <td>{{ case_r.id }}</td>
-                            <td>{{ case_r.case_id }}</td>
-                            <td>{{ case_r.case_name }}</td>
-                            <td>{{ case_r.user.email }}</td>
-                            <td>{{ case_r.case_date }}</td>
+                            <td>{{ tf.id }}</td>
+                            <td>{{ tf.textfile_id }}</td>
+                            <td>{{ tf.textfile_name }}</td>
+                            <td>{{ tf.user.email }}</td>
+                            <td>{{ tf.textfile_date }}</td>
                             <td>
-                                <a href="{% url 'view_report_encrypt' case_r.id %}">
+                                <a href="{% url 'view_cipher_textfile_backend' tf.id %}">
                                     <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
                                 </a>
                             </td>
@@ -111,15 +111,15 @@
                     </tbody>
                     <tbody>
                         {% if files %}
-                        {% for file in files %}
+                        {% for f in files %}
                         <tr>
-                            <td>{{ file.id }}</td>
-                            <td>{{ file.case_id }}</td>
-                            <td>{{ file.case_file }}</td>
-                            <td>{{ file.user.email }}</td>
-                            <td>{{ file.case_date }}</td>
+                            <td>{{ f.id }}</td>
+                            <td>{{ f.file_id }}</td>
+                            <td>{{ f.file_name }}</td>
+                            <td>{{ f.user.email }}</td>
+                            <td>{{ f.file_date }}</td>
                             <td>
-                                <a href="{% url 'view_data' file.id %}">
+                                <a href="{% url 'view_cipher_file_backend' f.id %}">
                                     <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
                                 </a>
                             </td>
@@ -132,12 +132,12 @@
                         {% for txt in texts %}
                         <tr>
                             <td>{{ txt.id }}</td>
-                            <td>{{ txt.case_id }}</td>
-                            <td>{{ txt.case_name }} </td>
+                            <td>{{ txt.text_id }}</td>
+                            <td>{{ txt.text_name }} </td>
                             <td>{{ txt.user.email }}</td>
-                            <td>{{ txt.case_date }}</td>
+                            <td>{{ txt.text_date }}</td>
                             <td>
-                                <a href="{% url 'view_file' txt.id %}">
+                                <a href="{% url 'view_cipher_text_backend' txt.id %}">
                                     <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
                                 </a>
                             </td>
@@ -149,7 +149,7 @@
                 </div>
             </div>
         </div>
-    <a href="{% url 'user_cases_backend' user_details.id %}">
+    <a href="{% url 'view_user_records_backend' user_details.id %}">
         <button class="btn btn-outline-secondary mb-1 ml-5"><i class="fas fa-folder-minus">&nbsp;&nbsp;Back To Records</i></button>
     </a>
 </div>
