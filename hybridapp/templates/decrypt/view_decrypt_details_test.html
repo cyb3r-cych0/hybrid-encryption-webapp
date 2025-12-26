@@ -2,10 +2,12 @@
 {% load static %}
 
 <!-- Block Title -->
-<title>{% block title %} CBDET | Decrypt File Details {% endblock %}</title>
+<title>{% block title %} NebuCrypt | Decrypt File Details {% endblock %}</title>
+
 
 <!-- Navbar links control -->
 {% block links %}{% endblock %}
+
 
 <!-- Block NavBar Content -->
 {% block nav-content %}
@@ -16,12 +18,19 @@
   {% endif %}
 {% endblock %}
 
+
 <!-- NavBar Buttons -->
 {% block nav-btn %}
-    <a class="btn btn-custom" onclick="goBack()" id="btn-nav-view"><i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i></a>
-    <a class="btn btn-custom" id="btn-nav-back" href="{% url 'decrypt' %}" ><i class="fas fa-table-columns">&nbsp;&nbsp;Dashboard</i></a>
-    <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout"><i class="fas fa-right-from-bracket">&nbsp;&nbsp;Logout</i></a>
+    <a class="btn btn-custom" onclick="goBack()" id="btn-nav-view">
+        <i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i></a>
+    <a class="btn btn-custom" id="btn-nav-back" href="{% url 'decrypt' %}" >
+        <i class="fas fa-table-columns">&nbsp;&nbsp;Dashboard</i>
+    </a>
+    <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout">
+        <i class="fas fa-right-from-bracket">&nbsp;&nbsp;Logout</i>
+    </a>
 {% endblock %}
+
 
 {% block topbar %}
 <div class="top-bar mt-4 pt-5">
@@ -37,6 +46,7 @@
         </div>
     </div>
 {% endblock %}
+
 
 <!-- Page Content -->
 {% block content %}
@@ -65,10 +75,14 @@
         </div>
     </div>
     <a href="{% url 'delete_decrypt_info' info.id %}">
-        <button type="button" class="btn btn-outline-danger m-1 p-2"><i class="fas fa-trash-can">&nbsp;Delete</i></button>
+        <button type="button" class="btn btn-outline-danger m-1 p-2">
+            <i class="fas fa-trash-can">&nbsp;Delete</i>
+        </button>
     </a>
     <a href="">
-        <button onclick="myfun('pt')" type="button" class="btn btn-outline-primary m-1 p-2"><i class="fas fa-print">&nbsp;Print</i></button>
+        <button onclick="myfun('pt')" type="button" class="btn btn-outline-primary m-1 p-2">
+            <i class="fas fa-print">&nbsp;Print</i>
+        </button>
     </a>
 </div> <!-- END // container -->
 {% endblock content %}

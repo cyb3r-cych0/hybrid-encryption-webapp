@@ -2,10 +2,12 @@
 {% load static %}
 
 <!-- Block Title -->
-<title>{% block title %} CBDET | Text+File Details {% endblock %}</title>
+<title>{% block title %} NebuCrypt | TextFile Cipher Details {% endblock %}</title>
+
 
 <!-- Navbar links control -->
 {% block links %}{% endblock %}
+
 
 <!-- Block NavBar Content -->
 {% block nav-content %}
@@ -16,12 +18,20 @@
   {% endif %}
 {% endblock %}
 
+
 <!-- NavBar Button -->
 {% block nav-btn %}
-    <a class="btn btn-custom" id="btn-nav-view" onclick="goBack()"><i class="fa fa-chevron-left">&nbsp;&nbsp; back</i></a>
-    <a class="btn btn-custom" id="btn-nav-back" href="{% url 'decrypt' %}" ><i class="fa fa-table-columns">&nbsp;&nbsp; Dashboard</i></a>
-    <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout"><i class="fa fa-right-from-bracket">&nbsp;&nbsp; Logout</i></a>
+    <a class="btn btn-custom" id="btn-nav-view" onclick="goBack()">
+        <i class="fa fa-chevron-left">&nbsp;&nbsp; back</i>
+    </a>
+    <a class="btn btn-custom" id="btn-nav-back" href="{% url 'decrypt' %}" >
+        <i class="fa fa-table-columns">&nbsp;&nbsp; Dashboard</i>
+    </a>
+    <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout">
+        <i class="fa fa-right-from-bracket">&nbsp;&nbsp; Logout</i>
+    </a>
 {% endblock %}
+
 
 {% block topbar %}
 <div class="top-bar mt-4 pt-5">
@@ -38,6 +48,7 @@
     </div>
 {% endblock %}
 
+
 <!-- Page Content -->
 {% block content %}
 <br>
@@ -51,24 +62,30 @@
             <div class="row" >
                 <h3>TEXT+FILE-RECORD CIPHER INFORMATION</h3>
                 <div class="container m-3">
-                    <p>RECORD ID  : {{ textfile.case_id }} </p>
+                    <p>RECORD ID  : {{ textfile.textfile_id }} </p>
                     <p>USER ID: NAME: {{ textfile.user.username }} &nbsp; EMAIL: {{ textfile.user.email }}</p>
-                    <p>DATE ENCRYPTED: {{ textfile.case_date }}</p>
-                    <p>TEXT NAME: {{ textfile.case_name }}</p>
-                    <p>FILE NAME: {{ textfile.case_file }}</p>
-                    <p>TEXT CIPHER: {{ textfile.case_info }}</p>
-                    <p>FILE CIPHER: {{ textfile.case_data }}</p>
+                    <p>DATE ENCRYPTED: {{ textfile.textfile_date }}</p>
+                    <p>TEXT NAME: {{ textfile.textfile_name }}</p>
+                    <p>FILE NAME: {{ textfile.textfile_file }}</p>
+                    <p>TEXT CIPHER: {{ textfile.textfile_text }}</p>
+                    <p>FILE CIPHER: {{ textfile.textfile_cipher }}</p>
                 </div>
             </div>
         </div>
         <a href="/delete_case_report/{{ textfile.id }}">
-            <button type="button" class="btn btn-outline-danger m-1 p-2"><i class="fas fa-trash-arrow-up">&nbsp;Delete</i></button>
+            <button type="button" class="btn btn-outline-danger m-1 p-2">
+                <i class="fas fa-trash-arrow-up">&nbsp;Delete</i>
+            </button>
         </a>
-        <a href="{% url 'decrypt_case' textfile.id %}">
-            <button type="button" class="btn btn-outline-success m-1 p-2"><i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i></button>
+        <a href="{% url 'decrypt_textfile' textfile.id %}">
+            <button type="button" class="btn btn-outline-success m-1 p-2">
+                <i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i>
+            </button>
         </a>
         <a href="">
-            <button onclick="myfun('pt')" type="button" class="btn btn-outline-primary m-1 p-2"><i class="fas fa-print">&nbsp;Print</i></button>
+            <button onclick="myfun('pt')" type="button" class="btn btn-outline-primary m-1 p-2">
+                <i class="fas fa-print">&nbsp;Print</i>
+            </button>
         </a>
     </div>
 </div> <!-- END // container -->
