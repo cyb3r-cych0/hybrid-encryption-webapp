@@ -4,7 +4,8 @@
 <!-- Navbar links control -->
 {% block links %}{% endblock %}
 
-<title>{% block title %} CBDET | Search Text+File {% endblock %}</title>
+<title>{% block title %} NebuCrypt | Search TextFile {% endblock %}</title>
+
 
 <!-- Block NavBar Content -->
 {% block nav-content %}
@@ -15,12 +16,20 @@
   {% endif %}
 {% endblock %}
 
+
 <!-- NavBar Buttons -->
 {% block nav-btn %}
-    <a class="btn btn-custom" id="btn-nav-back" onclick="goBack()"><i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i></a>
-    <a class="btn btn-custom" id="btn-nav-filter" href="{% url 'filter_reports' %}" ><i class="fas fa-filter">&nbsp;&nbsp;Filter</i></a>
-    <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout"><i class="fas fa-right-from-bracket">&nbsp;&nbsp;Logout</i></a>
+    <a class="btn btn-custom" id="btn-nav-back" onclick="goBack()">
+        <i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i>
+    </a>
+    <a class="btn btn-custom" id="btn-nav-filter" href="{% url 'filter_cipher_textfile' %}" >
+        <i class="fas fa-filter">&nbsp;&nbsp;Filter</i>
+    </a>
+    <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout">
+        <i class="fas fa-right-from-bracket">&nbsp;&nbsp;Logout</i>
+    </a>
 {% endblock %}
+
 
 <!-- Block TopBar -->
 {% block topbar %}
@@ -38,6 +47,7 @@
     </div>
 {% endblock %}
 
+
 <!-- Page Content -->
 {% block content %}
 <br>
@@ -49,11 +59,13 @@
     <!-- Message From BackEnd -->
     {% for message in messages %}
         {% if message.tags == 'success' %}
-            <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
+            <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">
+                {{ message }}
                 <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
             </div>
         {% elif message.tags == 'error' %}
-            <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
+            <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">
+                {{ message }}
                 <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
             </div>
         {% endif %}
@@ -65,9 +77,11 @@
             <i class="fas fa-keyboard">&nbsp;&nbsp;Enter RECORD-ID To Search</i>
           </div>
           <div class="col-lg-4 m-3">
-            <form method="GET" action="{% url 'search_report_cases' %}">
-                <input type="text" name="case_id" placeholder="text+file RECORD-ID...">
-                &nbsp;&nbsp;&nbsp;<button class="btn btn-secondary" type="submit"><i class="fas fa-search">&nbsp;&nbsp;Search</i></button>
+            <form method="GET" action="{% url 'search_cipher_textfile' %}">
+                <input type="text" name="textfile_id" placeholder="text+file RECORD-ID...">
+                &nbsp;&nbsp;&nbsp;<button class="btn btn-secondary" type="submit">
+                <i class="fas fa-search">&nbsp;&nbsp;Search</i>
+            </button>
             </form>
           </div>
           <div class="row col-lg-4 ml-2">
@@ -94,24 +108,32 @@
                 </thead>
                 <tbody>
                   {% if textfiles %}
-                  {% for case_r in textfiles %}
+                  {% for tf in textfiles %}
                     <tr>
-                        <td>{{ case_r.id }}</td>
-                        <td>{{ case_r.case_id }}</td>
-                        <td>{{ case_r.case_name }}</td>
-                        <td>{{ case_r.user.email }}</td>
-                        <td>{{ case_r.case_date }}</td>
-                        <td><a href="{% url 'view_report_decrypt' case_r.id %}">
-            <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
-            </a></td>
+                        <td>{{ tf.id }}</td>
+                        <td>{{ tf.textfile_id }}</td>
+                        <td>{{ tf.textfile_name }}</td>
+                        <td>{{ tf.user.email }}</td>
+                        <td>{{ tf.textfile_date }}</td>
+                        <td>
+                            <a href="{% url 'view_cipher_textfile' tf.id %}">
+                                <button type="button" class="w-90 btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-expand">&nbsp;View</i>
+                                </button>
+                            </a>
+                        </td>
                         <td>
                           {% if user.is_staff == False %}
                           <a href="#">
-                            <button type="button" class="btn btn-sm btn-outline-danger" disabled><i class="fas fa-triangle-exclamation">&nbsp;Decrypt</i></button>
+                            <button type="button" class="btn btn-sm btn-outline-danger" disabled>
+                                <i class="fas fa-triangle-exclamation">&nbsp;Decrypt</i>
+                            </button>
                           </a>
                         {% elif user.is_staff == True %}
-                          <a href="{% url 'decrypt_case' case_r.id %}">
-                            <button type="button" class="btn btn-sm btn-outline-success"><i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i></button>
+                          <a href="{% url 'decrypt_textfile' tf.id %}">
+                            <button type="button" class="btn btn-sm btn-outline-success">
+                                <i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i>
+                            </button>
                           </a>
                           {% endif %}
                         </td>
@@ -126,7 +148,9 @@
       <!--End Table-->
     </ul>
     <a href="{% url 'export_report_csv' %}">
-      <button class="btn btn-outline-success mb-1 ml-5"><i class="fas fa-file-export">&nbsp;&nbsp;text+files.csv</i></button>
+      <button class="btn btn-outline-success mb-1 ml-5">
+          <i class="fas fa-file-export">&nbsp;&nbsp;text+files.csv</i>
+      </button>
     </a>
 </div>
 {% endblock content %}

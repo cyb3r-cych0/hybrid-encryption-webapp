@@ -24,7 +24,49 @@ from .forms import TextForm, RegisterForm, TextFileForm, FileForm
 from .models import KeyPair, File, Text, TextFile, DecryptInfo
 
 
+""" START FRONTEND / BACKEND"""
+
+class FrontEnd(View):
+    @staticmethod
+    def get(request):
+        return render(request, 'frontend.html')
+
+
+@method_decorator(login_required(login_url='login'), name='dispatch')
+@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
+class BackEnd(View):
+    @staticmethod
+    def get(request):
+        return render(request, 'backend.html')
+
+""" END FRONTEND / BACKEND"""
+
+
 """ START USER INFO """
+
+class RegisterUser(View):
+    @staticmethod
+    def get(request):
+        form = RegisterForm()
+        context = {
+            'form': form
+        }
+        return render(request, 'registration/register_user.html', context)
+
+    @staticmethod
+    def post(request):
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'SUCCESS! User Registered __ Encryption Keys Generated __ ')
+            return redirect('login')
+        else:
+            messages.error(request, 'FAILED! Registration Unsuccessful __ Error: Form is not valid __')
+            context = {
+                'form': form
+            }
+            return render(request, 'registration/register_user.html', context)
+
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
 @method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
@@ -173,11 +215,10 @@ class SearchUsers(View):
             messages.error(request, f'Error: {str(e)}')
             return redirect('search_users')
 
-
 """ END USER INFO """
 
-""" START ENCRYPT CASES """
 
+""" START ENCRYPT RECORDS """
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
 @method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
@@ -378,11 +419,10 @@ class EncryptFile(View):
         }
         return render(request, 'encrypt/encrypt_file.html', context)
 
+""" END ENCRYPT RECORDS """
 
-""" END ENCRYPT CASES """
 
-""" START DECRYPT CASES """
-
+""" START DECRYPT RECORDS """
 
 class DecryptDetails:
     @staticmethod
@@ -402,11 +442,11 @@ class DecryptTextFile(View):
     @staticmethod
     def get_file(id):
         # get encrypted data RSA private key for decryption
-        encrypted_file = get_object_or_404(TextFile, id=id)  # encrypted_file = TextFile.objects.get(id=id)
-        private_key = RSA.import_key(KeyPair.objects.get(user=encrypted_file.user_id).private_key)
+        encrypted_file = get_object_or_404(TextFile, id=id)
+        private_key = RSA.import_key(KeyPair.objects.get(user=encrypted_file.user).private_key)
 
         # Extract components from the decrypted data with correct lengths for slicing
-        encrypted_file_data = encrypted_file.case_data
+        encrypted_file_data = encrypted_file.textfile_cipher
         key_len = private_key.size_in_bytes()
         enc_session_key = encrypted_file_data[:key_len]
         nonce = encrypted_file_data[key_len:key_len + 16]
@@ -424,14 +464,14 @@ class DecryptTextFile(View):
     @staticmethod
     def get_text(id):
         # get encrypted data RSA private key for decryption
-        encrypted_file = get_object_or_404(TextFile, id=id)  # encrypted_file = TextFile.objects.get(id=id)
+        encrypted_file = get_object_or_404(TextFile, id=id)
 
         # Fetch user's private key
-        key_pair = KeyPair.objects.get(user=encrypted_file.user_id)
+        key_pair = KeyPair.objects.get(user=encrypted_file.user)
         private_ky = RSA.import_key(key_pair.private_key)
 
         text_cipher_rsa = PKCS1_OAEP.new(private_ky)
-        encrypted_text_data = base64.b64decode(encrypted_file.case_info)  # ensure this is decoding correctly
+        encrypted_text_data = base64.b64decode(encrypted_file.textfile_text)  # ensure this is decoding correctly
 
         # Extract components from the decrypted data with correct lengths for slicing
         ky_len = private_ky.size_in_bytes()
@@ -487,24 +527,25 @@ class DecryptTextFile(View):
                     zip_buffer = io.BytesIO()
                     with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
                         if file_data:
-                            zip_file.writestr(f'CASE-ID[{encrypted_file.case_id}] <> FILE-NAME-{encrypted_file.case_file}',
-                                              file_data)
+                            zip_file.writestr(f'TEXTFILE-ID[{encrypted_file.textfile_id}] '
+                                              f'<> FILE-NAME-{encrypted_file.textfile_file}',file_data)
                         if text_data:
                             zip_file.writestr(
-                                f'CASE-ID[{encrypted_file.case_id}] <> TEXT-NAME-{encrypted_file.case_name}.txt', text_data)
+                                f'RECORD-ID[{encrypted_file.textfile_id}] '
+                                f'<> TEXT-NAME-{encrypted_file.textfile_name}.txt', text_data)
 
                     # Set the appropriate response headers for a ZIP file
                     response = HttpResponse(zip_buffer.getvalue(), content_type='application/zip')
-                    response[
-                        'Content-Disposition'] = f'attachment; filename="CASE-ID:{encrypted_file.case_id} <> DECRYPTED-DATA.zip"'
+                    response['Content-Disposition'] = (f'attachment; filename="TEXTFILE-ID:{encrypted_file.textfile_id} '
+                                                  f'<> DECRYPTED-DATA.zip"')
                     messages.success(request, 'SUCCESS! Decryption successful, check downloads')
 
                     # Run the class method to capture output
                     decrypt_details_obj = DecryptDetails()
                     user = request.user
-                    case_id = encrypted_file.case_id
-                    file_name = encrypted_file.case_name
-                    decrypt_details_obj.save_decrypt_details(user, case_id, file_name, integrity_check)
+                    textfile_id = encrypted_file.textfile_id
+                    textfile_name = encrypted_file.textfile_name
+                    decrypt_details_obj.save_decrypt_details(user, textfile_id, textfile_name, integrity_check)
 
             if error_message:
                 integrity_check = False
@@ -513,9 +554,9 @@ class DecryptTextFile(View):
                 # Run the class method to capture output
                 decrypt_details_obj = DecryptDetails()
                 user = request.user
-                case_id = encrypted_file.case_id
-                file_name = encrypted_file.case_name
-                decrypt_details_obj.save_decrypt_details(user, case_id, file_name, integrity_check)
+                textfile_id = encrypted_file.textfile_id
+                textfile_name = encrypted_file.textfile_name
+                decrypt_details_obj.save_decrypt_details(user, textfile_id, textfile_name, integrity_check)
 
                 return HttpResponseRedirect(reverse('decrypt'))
 
@@ -541,7 +582,7 @@ class DecryptText(View):
         try:
             # Fetch the encrypted case data from the database
             encrypted_file = get_object_or_404(Text, id=id)  # encrypted_file = TextFile.objects.get(id=id)
-            encrypted_data = base64.b64decode(encrypted_file.case_data)  # ensure this is decoding correctly
+            encrypted_data = base64.b64decode(encrypted_file.text_cipher)  # ensure this is decoding correctly
 
             # Fetch user's private key
             key_pair = KeyPair.objects.get(user=encrypted_file.user)
@@ -575,15 +616,15 @@ class DecryptText(View):
                 integrity_check = False
                 # Return the decrypted data
                 response = HttpResponse(decrypted_data, content_type='application/octet-stream')
-                response['Content-Disposition'] = (f'attachment; filename="CASE-ID:'
-                                                   f'{encrypted_file.case_id} <> FILE-NAME:'
-                                                   f'{encrypted_file.case_name}.txt"')
+                response['Content-Disposition'] = (f'attachment; filename="TEXT-ID:'
+                                                   f'{encrypted_file.text_id} <> TEXT-NAME:'
+                                                   f'{encrypted_file.text_name}.txt"')
                 # Run the class method to capture output
                 decrypt_details_obj = DecryptDetails()
                 user = request.user
-                case_id = encrypted_file.case_id
-                file_name = encrypted_file.case_name
-                decrypt_details_obj.save_decrypt_details(user, case_id, file_name, integrity_check)
+                text_id = encrypted_file.text_id
+                text_name = encrypted_file.text_name
+                decrypt_details_obj.save_decrypt_details(user, text_id, text_name, integrity_check)
                 time.sleep(.5)
                 return redirect('decrypt')
             else:
@@ -592,15 +633,15 @@ class DecryptText(View):
 
                 # Return the decrypted data
                 response = HttpResponse(decrypted_data, content_type='application/octet-stream')
-                response['Content-Disposition'] = (f'attachment; filename="CASE-ID:'
-                                                   f'{encrypted_file.case_id} <> FILE-NAME:'
-                                                   f'{encrypted_file.case_name}.txt"')
+                response['Content-Disposition'] = (f'attachment; filename="TEXT-ID:'
+                                                   f'{encrypted_file.text_id} <> TEXT-NAME:'
+                                                   f'{encrypted_file.text_name}.txt"')
                 # Run the class method to capture output
                 decrypt_details_obj = DecryptDetails()
                 user = request.user
-                case_id = encrypted_file.case_id
-                file_name = encrypted_file.case_name
-                decrypt_details_obj.save_decrypt_details(user, case_id, file_name, integrity_check)
+                text_id = encrypted_file.text_id
+                text_name = encrypted_file.text_name
+                decrypt_details_obj.save_decrypt_details(user, text_id, text_name, integrity_check)
                 time.sleep(.5)
             return response
         except Exception as e:
@@ -624,7 +665,7 @@ class DecryptText(View):
             #     'original_hash': original_hash,
             #     'calculated_hash': calculated_hash
             # }
-            # return render(request, 'decrypt/view_dec_file.html', context)
+            # return render(request, 'decrypt/view_dec_file_test.html', context)
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
@@ -645,7 +686,7 @@ class DecryptFile(View):
             private_key = RSA.import_key(KeyPair.objects.get(user=encrypted_file.user).private_key)
 
             # Extract components from the decrypted data with correct lengths for slicing
-            encrypted_data = encrypted_file.case_data
+            encrypted_data = encrypted_file.file_cipher
             key_len = private_key.size_in_bytes()
             enc_session_key = encrypted_data[:key_len]
             nonce = encrypted_data[key_len:key_len + 16]
@@ -668,46 +709,45 @@ class DecryptFile(View):
                 integrity_check = False
                 # Prepare response to download decrypted file
                 response = HttpResponse(decrypted_data, content_type='application/octet-stream')
-                response['Content-Disposition'] = (f'attachment; filename="CASE-ID:'
-                                                   f'{encrypted_file.case_id} <> FILE-NAME:'
-                                                   f'{encrypted_file.case_file.name}"')
+                response['Content-Disposition'] = (f'attachment; filename="FILE-ID:'
+                                                   f'{encrypted_file.file_id} <> FILE-NAME:'
+                                                   f'{encrypted_file.file_name.name}"')
                 # Run the command and capture the output
                 decrypt_details_obj = DecryptDetails()
                 user = request.user
-                case_id = encrypted_file.case_id
-                file_name = encrypted_file.case_file.name
-                decrypt_details_obj.save_decrypt_details(user, case_id, file_name, integrity_check)
+                file_id = encrypted_file.file_id
+                file_name = encrypted_file.file_name.name
+                decrypt_details_obj.save_decrypt_details(user, file_id, file_name, integrity_check)
                 time.sleep(.5)
 
-                e = messages.error(request, 'FAILED! Integrity check failed __ File tampered __')
-                return HttpResponse(f'Error decrypting data: {str(e)}', status=500)
+                messages.error(request, 'FAILED! Integrity check failed __ File tampered __')
+                # return HttpResponse(f'Error decrypting data: {str(e)}', status=500)
             else:
                 integrity_check = True
                 messages.success(request, f'SUCCESS! Integrity Check Passed __ '
-                                          f'{encrypted_file.case_id} File Decrypted And Downloaded __')
+                                          f'{encrypted_file.file_id} File Decrypted And Downloaded __')
                 # Prepare response to download decrypted file
                 response = HttpResponse(decrypted_data, content_type='application/octet-stream')
-                response['Content-Disposition'] = (f'attachment; filename="CASE-ID:'
-                                                   f'{encrypted_file.case_id} <> FILE-NAME:'
-                                                   f'{encrypted_file.case_file.name}"')
+                response['Content-Disposition'] = (f'attachment; filename="FILE-ID:'
+                                                   f'{encrypted_file.file_id} <> FILE-NAME:'
+                                                   f'{encrypted_file.file_name.name}"')
                 # Run the command and capture the output
                 # Run the class method to capture output
                 decrypt_details_obj = DecryptDetails()
                 user = request.user
-                case_id = encrypted_file.case_id
-                file_name = encrypted_file.case_file.name
-                decrypt_details_obj.save_decrypt_details(user, case_id, file_name, integrity_check)
+                file_id = encrypted_file.file_id
+                file_name = encrypted_file.file_name.name
+                decrypt_details_obj.save_decrypt_details(user, file_id, file_name, integrity_check)
                 time.sleep(.5)
 
                 return response
         except Exception as e:
             return HttpResponse(f'Error decrypting data: {str(e)}', status=500)
 
+""" END DECRYPT RECORDS """
 
-""" END DECRYPT CASES """
 
-""" START SEARCH CASE RECORDS """
-
+""" START SEARCH CIPHER RECORDS """
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
 @method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
@@ -775,34 +815,33 @@ class SearchCipherRecords(View):
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
 @method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class SearchCasesDecrypt(View):
+class SearchRecordsDecrypt(View):
     @staticmethod
     def get(request):
         user = request.user
         query = request.GET.get('q')
         try:
             if query:
-                # Perform search in both tables
-                case_files = File.objects.filter(case_id__icontains=query)
-                case_texts = Text.objects.filter(case_id__icontains=query)
-                case_textfiles = TextFile.objects.filter(case_id__icontains=query)
-                count = case_files.count() + case_texts.count() + case_textfiles.count()
+                files = File.objects.filter(file_id__icontains=query)
+                texts = Text.objects.filter(text_id__icontains=query)
+                textfiles = TextFile.objects.filter(textfile_id__icontains=query)
+                count = files.count() + texts.count() + textfiles.count()
                 context = {
-                    'case_files': case_files,
-                    'case_texts': case_texts,
-                    'case_textfiles': case_textfiles,
+                    'files': files,
+                    'texts': texts,
+                    'textfiles': textfiles,
                     'query': query,
                     'count': count,
                     'user': user
                 }
-                messages.success(request, f'{count} - Matching Cases Found')
+                messages.success(request, f'{count} - Matching Records Found')
             else:
                 context = {'user': user}  # Empty context if no query provided
-                messages.error(request, f'Type Case ID In TextBox To Search All Cases')
-            return render(request, 'decrypt/search_cases_decrypt.html', context)
+                messages.warning(request, f'Type Record ID In TextBox To Search All Records')
+            return render(request, 'decrypt/search_records_decrypt.html', context)
         except Exception as e:
             messages.error(request, f'Error: {str(e)}')
-            return redirect('search_cases_decrypt')
+            return redirect('search_records_decrypt')
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
@@ -811,26 +850,25 @@ class SearchTextDecrypt(View):
     @staticmethod
     def get(request):
         user = request.user
-        query = request.GET.get('caseID')
+        query = request.GET.get('text_id')
         try:
             if query:
-                # Perform search in both tables
-                texts = Text.objects.filter(case_id__icontains=query)
+                texts = Text.objects.filter(text_id__icontains=query)
                 count = texts.count()
                 context = {
-                    'cases': texts,
+                    'texts': texts,
                     'query': query,
                     'count': count,
                     'user': user
                 }
-                messages.success(request, f'{count} - Matching Cases Found')
+                messages.success(request, f'{count} - Matching Records Found')
             else:
-                context = {'user': user}  # Empty context if no query provided
-                messages.error(request, f'Type Case ID In TextBox To Search Text Cases')
-            return render(request, 'decrypt/search_text_cases.html', context)
+                context = {'user': user}
+                messages.error(request, f'Type Record ID In TextBox To Search Text Records')
+            return render(request, 'decrypt/search_cipher_text.html', context)
         except Exception as e:
             messages.error(request, f'Error: {str(e)}')
-            return redirect('search_text_cases')
+            return redirect('search_cipher_text')
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
@@ -839,11 +877,10 @@ class SearchFileDecrypt(View):
     @staticmethod
     def get(request):
         user = request.user
-        query = request.GET.get('case_id')
+        query = request.GET.get('file_id')
         try:
             if query:
-                # Perform search in both tables
-                files = File.objects.filter(case_id__icontains=query)
+                files = File.objects.filter(file_id__icontains=query)
                 count = files.count()
                 context = {
                     'files': files,
@@ -851,14 +888,14 @@ class SearchFileDecrypt(View):
                     'count': count,
                     'user': user
                 }
-                messages.success(request, f'{count} - Matching Cases Found')
+                messages.success(request, f'{count} - Matching Records Found')
             else:
                 context = {'user': user}  # Empty context if no query provided
-                messages.error(request, f'Type Case ID In TextBox To Search File Cases!')
-            return render(request, 'decrypt/search_file_cases.html', context)
+                messages.error(request, f'Type File ID In TextBox To Search File Records!')
+            return render(request, 'decrypt/search_cipher_file.html', context)
         except Exception as e:
             messages.error(request, f'Error: {str(e)}!')
-            return redirect('search_file_cases')
+            return redirect('search_cipher_file')
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
@@ -867,11 +904,10 @@ class SearchTextFileDecrypt(View):
     @staticmethod
     def get(request):
         user = request.user
-        query = request.GET.get('case_id')
+        query = request.GET.get('textfile_id')
         try:
             if query:
-                # Perform search in both tables
-                textfiles = TextFile.objects.filter(case_id__icontains=query)
+                textfiles = TextFile.objects.filter(textfile_id__icontains=query)
                 count = textfiles.count()
                 context = {
                     'textfiles': textfiles,
@@ -879,18 +915,19 @@ class SearchTextFileDecrypt(View):
                     'count': count,
                     'user': user
                 }
-                messages.success(request, f'{count} - Matching Cases Found')
+                messages.success(request, f'{count} - Matching Records Found')
             else:
-                context = {'user': user}  # Empty context if no query provided
-                messages.error(request, f'Type Case ID In TextBox To Search Report Cases!')
-            return render(request, 'decrypt/search_report_cases.html', context)
+                context = {'user': user}
+                messages.error(request, f'Type TextFile ID In TextBox To Search Textile Records!')
+            return render(request, 'decrypt/search_cipher_textfile.html', context)
         except Exception as e:
             messages.error(request, f'Error: {str(e)}!')
-            return redirect('search_report_cases')
+            return redirect('search_cipher_textfile')
+
+""" END SEARCH CIPHER RECORDS """
 
 
-""" END SEARCH CASE RECORDS """
-
+""" START ENCRYPT DASHBOARD """
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
 @method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
@@ -922,7 +959,6 @@ class EncryptDashboard(View):
             return redirect('encrypt')
 
 
-# View Encrypted text Files (backend)
 @method_decorator(login_required(login_url='login'), name='dispatch')
 @method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
 class ViewCipherText(View):
@@ -940,7 +976,6 @@ class ViewCipherText(View):
         return render(request, 'encrypt/view_cipher_text.html', context)
 
 
-# view encrypted text and files
 @method_decorator(login_required(login_url='login'), name='dispatch')
 @method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
 class ViewCipherRecords(View):
@@ -958,7 +993,9 @@ class ViewCipherRecords(View):
         }
         return render(request, 'encrypt/view_cipher_records.html', context)
 
+""" END ENCRYPT DASHBOARD """
 
+""" START BACKEND """
 @method_decorator(login_required(login_url='login'), name='dispatch')
 @method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
 class ViewTextBackend(View):
@@ -976,21 +1013,23 @@ class ViewTextBackend(View):
         return render(request, 'backend/view_file_backend.html', context)
 
 
+""" START VIEW CIPHER RECORDS """
+
 @method_decorator(login_required(login_url='login'), name='dispatch')
 @method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class ViewTextDecrypt(View):
+class ViewCipherTextDecrypt(View):
     @staticmethod
     def get(request, id):
         user = request.user
         try:
-            file = get_object_or_404(Text, id=id)
+            text = get_object_or_404(Text, id=id)
         except Exception as e:
             raise Http404(f'File Details Not Found! Error: {str(e)}')
         context = {
-            'file': file,
+            'text': text,
             'user': user
         }
-        return render(request, 'decrypt/view_file_decrypt.html', context)
+        return render(request, 'decrypt/view_cipher_text.html', context)
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
@@ -1012,7 +1051,7 @@ class ViewTextFileBackend(View):
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
 @method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class ViewTextFileDecrypt(View):
+class ViewCipherTextFileDecrypt(View):
     @staticmethod
     def get(request, id):
         user = request.user
@@ -1024,12 +1063,12 @@ class ViewTextFileDecrypt(View):
             'textfile': textfile,
             'user': user
         }
-        return render(request, 'decrypt/view_report_decrypt.html', context)
+        return render(request, 'decrypt/view_cipher_textfile.html', context)
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
 @method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class ViewCipherTextFile(View):
+class ViewCipherTextFileEncrypt(View):
     @staticmethod
     def get(request, id):
         user = request.user
@@ -1044,10 +1083,9 @@ class ViewCipherTextFile(View):
         return render(request, 'encrypt/view_cipher_textfile.html', context)
 
 
-# View Cipher  Files (backend)
 @method_decorator(login_required(login_url='login'), name='dispatch')
 @method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class ViewCipherFile(View):
+class ViewCipherFileEncrypt(View):
     @staticmethod
     def get(request, id):
         user = request.user
@@ -1081,7 +1119,7 @@ class ViewFileBackend(View):
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
 @method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class ViewFileDecrypt(View):
+class ViewCipherFileDecrypt(View):
     @staticmethod
     def get(request, id):
         user = request.user
@@ -1093,35 +1131,13 @@ class ViewFileDecrypt(View):
             'file': file,
             'user': user
         }
-        return render(request, 'decrypt/view_data_decrypt.html', context)
+        return render(request, 'decrypt/view_cipher_file.html', context)
+
+""" END VIEW RECORDS"""
 
 
-# Register New User
-class RegisterUser(View):
-    @staticmethod
-    def get(request):
-        form = RegisterForm()
-        context = {
-            'form': form
-        }
-        return render(request, 'registration/register_user.html', context)
+""" START BACKEND DASHBOARD """
 
-    @staticmethod
-    def post(request):
-        form = RegisterForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'SUCCESS! User Registered __ Encryption Keys Generated __ ')
-            return redirect('login')
-        else:
-            messages.error(request, 'FAILED! Registration Unsuccessful __ Error: Form is not valid __')
-            context = {
-                'form': form
-            }
-            return render(request, 'registration/register_user.html', context)
-
-
-# Decrypt Dashboard (backend)
 @method_decorator(login_required(login_url='login'), name='dispatch')
 @method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
 class DecryptDashboard(View):
@@ -1135,23 +1151,24 @@ class DecryptDashboard(View):
         texts = Text.objects.all().count()
         files = File.objects.all().count()
         textfiles = TextFile.objects.all().count()
-        decrypt_details = DecryptInfo.objects.all().count()
-        case_files = files + texts + textfiles
+        decrypted_records = DecryptInfo.objects.all().count()
+        sum_decrypted_records = files + texts + textfiles
 
         context = {
             'is_superuser': is_superuser,
-            'case_files': case_files,
-            'text': text,
             'file': file,
+            'text': text,
             'textfile': textfile,
-            'decrypt_details': decrypt_details
+            'decrypted_records': decrypted_records,
+            'sum_decrypted_records': sum_decrypted_records
+
         }
         return render(request, 'backend/decrypt.html', context)
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
 @method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class ViewCasesDecrypt(View):
+class ViewCipherRecordsDecrypt(View):
     @staticmethod
     def get(request):
         is_superuser = request.user.is_superuser
@@ -1161,17 +1178,17 @@ class ViewCasesDecrypt(View):
                 files = File.objects.all().order_by('-id')[:10]
                 textfiles = TextFile.objects.all().order_by('-id')[:10]
                 context = {
-                    'texts': texts,
                     'files': files,
+                    'texts': texts,
                     'textfiles': textfiles
                 }
-                return render(request, 'decrypt/view_all.html', context)
+                return render(request, 'decrypt/view_cipher_records_all.html', context)
             except Exception as e:
                 messages.error(request, f'Error: {str(e)}')
-                return render(request, 'decrypt/view_all.html')
+                return render(request, 'decrypt/view_cipher_records_all.html')
         else:
             messages.error(request, f'Error: Unauthorized User {request.user}')
-            return redirect('view_all')
+            return redirect('view_cipher_records_all')
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
@@ -1196,179 +1213,10 @@ class ViewCasesBackend(View):
             messages.error(request, f'No Files Found! __ Error: {str(e)}')
             return render(request, 'backend/view_all_backend.html', {'user': user})
 
+""" END BACKEND DASHBOARD """
 
-# Frontend
-class FrontEnd(View):
-    @staticmethod
-    def get(request):
-        return render(request, 'frontend.html')
-
-
-# Backend
-@method_decorator(login_required(login_url='login'), name='dispatch')
-@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class BackEnd(View):
-    @staticmethod
-    def get(request):
-        return render(request, 'backend.html')
-
-
-""" START DELETE CASE RECORDS """
-
-
-@method_decorator(login_required(login_url='login'), name='dispatch')
-@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class DeleteFile(View):
-    @staticmethod
-    def get(request, id):
-        listing_case_file = get_object_or_404(File, id=id)
-        return render(request, 'confirm_delete.html', {'object': listing_case_file})
-
-    @staticmethod
-    def post(request, id):
-        is_superuser = request.user.is_superuser
-        listing_case_file = get_object_or_404(File, id=id)
-        if request.method == 'POST':
-            try:
-                if is_superuser:
-                    listing_case_file.delete()
-                    messages.success(request, 'SUCCESS! File Deleted Successfully')
-                    return redirect('decrypt')
-                else:
-                    messages.error(request, f'FAILED! Unauthorized User: {request.user}')
-                    return redirect('encrypt')
-            except Exception as e:
-                messages.error(request, f'Error: {str(e)}')
-                return redirect('decrypt')
-        else:
-            return render(request, 'confirm_delete.html', {'object': listing_case_file})
-
-
-@method_decorator(login_required(login_url='login'), name='dispatch')
-@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class DeleteText(View):
-    @staticmethod
-    def get(request, id):
-        listing_case_text = get_object_or_404(Text, id=id)
-        return render(request, 'confirm_delete.html', {'object': listing_case_text})
-
-    @staticmethod
-    def post(request, id):
-        is_superuser = request.user.is_superuser
-        listing_case_text = get_object_or_404(Text, id=id)
-        if request.method == 'POST':
-            try:
-                if is_superuser:
-                    listing_case_text.delete()
-                    messages.success(request, 'SUCCESS! File Deleted Successfully')
-                    return redirect('decrypt')
-                else:
-                    messages.error(request, f'FAILED! Unauthorized User: {request.user}')
-                    return redirect('encrypt')
-            except Exception as e:
-                messages.error(request, f'Error: {str(e)}')
-                return redirect('decrypt')
-        else:
-            return render(request, 'confirm_delete.html', {'object': listing_case_text})
-
-
-@method_decorator(login_required(login_url='login'), name='dispatch')
-@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class DeleteTextFile(View):
-    @staticmethod
-    def get(request, id):
-        listing_case_textfile = get_object_or_404(TextFile, id=id)
-        return render(request, 'confirm_delete.html', {'object': listing_case_textfile})
-
-    @staticmethod
-    def post(request, id):
-        is_superuser = request.user.is_superuser
-        listing_case_textfile = get_object_or_404(TextFile, id=id)
-        if request.method == 'POST':
-            try:
-                if is_superuser:
-                    listing_case_textfile.delete()
-                    messages.success(request, 'SUCCESS! File Deleted Successfully')
-                    return redirect('decrypt')
-                else:
-                    messages.error(request, f'FAILED! Unauthorized User: {request.user}')
-                    return redirect('encrypt')
-            except Exception as e:
-                messages.error(request, f'Error: {str(e)}')
-                return redirect('decrypt')
-        else:
-            return render(request, 'confirm_delete.html', {'object': listing_case_textfile})
-
-
-""" END DELETE CASE RECORDS """
-
-""" START CSV DOWNLOADS"""
-
-
-@method_decorator(login_required(login_url='login'), name='dispatch')
-@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class ExportTextsCSV(View):
-    @staticmethod
-    def get(request):
-        try:
-            texts = Text.objects.all()
-            response = HttpResponse()
-            response['Content-Disposition'] = 'attachment; filename=case-texts_export.csv'
-            writer = csv.writer(response)
-            writer.writerow(['CASE-ID', 'CASE-DATA', 'USER-ID', 'CASE-NAME'])
-            fields = texts.values_list('case_id', 'case_data', 'user', 'case_name')
-            for text in fields:
-                writer.writerow(text)
-            return response
-        except Exception as e:
-            messages.error(request, f'Error: {str(e)}')
-            return redirect('search_text_cases')
-
-
-@method_decorator(login_required(login_url='login'), name='dispatch')
-@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class ExportFilesCSV(View):
-    @staticmethod
-    def get(request):
-        try:
-            files = File.objects.all()
-            response = HttpResponse()
-            response['Content-Disposition'] = 'attachment; filename=case-files_export.csv'
-            writer = csv.writer(response)
-            writer.writerow(['CASE-ID', 'CASE-FILE', 'CASE-DATA', 'USER-ID'])
-            fields = files.values_list('case_id', 'case_file', 'case_data', 'user')
-            for file in fields:
-                writer.writerow(file)
-            return response
-        except Exception as e:
-            messages.error(request, f'Error: {str(e)}')
-            return redirect('search_file_cases')
-
-
-@method_decorator(login_required(login_url='login'), name='dispatch')
-@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class ExportTextFilesCSV(View):
-    @staticmethod
-    def get(request):
-        try:
-            textfiles = TextFile.objects.all()
-            response = HttpResponse()
-            response['Content-Disposition'] = 'attachment; filename=case-reports_export.csv'
-            writer = csv.writer(response)
-            writer.writerow(['CASE-ID', 'CASE-NAME', 'CASE-INFO', 'CASE-FILE', 'CASE-DATA', 'USER-ID'])
-            fields = textfiles.values_list('case_id', 'case_name', 'case_info', 'case_file', 'case_data', 'user')
-            for textfile in fields:
-                writer.writerow(textfile)
-            return response
-        except Exception as e:
-            messages.error(request, f'Error: {str(e)}')
-            return redirect('search_report_cases')
-
-
-""" END CSV DOWNLOADS"""
 
 """ START FILTER CASES"""
-
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
 @method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
@@ -1379,7 +1227,7 @@ class FilterTextFilesDecrypt(View):
         context = {
             'is_superuser': is_superuser
         }
-        return render(request, 'decrypt/filter_reports.html', context)
+        return render(request, 'decrypt/filter_cipher_textfile.html', context)
 
     @staticmethod
     def post(request):
@@ -1387,23 +1235,23 @@ class FilterTextFilesDecrypt(View):
         try:
             from_date = request.POST.get('from_date')
             to_date = request.POST.get('to_date')
-            search_result = TextFile.objects.raw(
-                'select id, case_id, case_name, case_info, case_file, case_data from hybridapp_textfile where case_date between "' + from_date + '" and "' + to_date + '"')
+            filter_textfiles = TextFile.objects.raw(
+                'select id, textfile_id, textfile_name, textfile_text, textfile_file, textfile_cipher '
+                'from hybridapp_textfile where textfile_date between "' + from_date + '" and "' + to_date + '"')
 
-            # Extract date values from the raw_queryset
-            date_values = [item.case_date for item in search_result]
+            date_values = [item.textfile_date for item in filter_textfiles]
             for date_value in date_values:
                 date = date_value
+
             context = {
-                'reports': search_result,
-                'date_values': date_values,
-                'date': date,
-                'is_superuser': is_superuser
+                'textfiles': filter_textfiles,
+                'is_superuser': is_superuser,
+                'date': date
             }
-            return render(request, 'decrypt/filter_reports.html', context)
+            return render(request, 'decrypt/filter_cipher_textfile.html', context)
         except Exception as e:
             messages.error(request, f'Error: {str(e)}')
-            return redirect('filter_reports')
+            return redirect('filter_cipher_textfile')
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
@@ -1415,7 +1263,7 @@ class FilterTextsDecrypt(View):
         context = {
             'is_superuser': is_superuser
         }
-        return render(request, 'decrypt/filter_texts.html', context)
+        return render(request, 'decrypt/filter_cipher_text.html', context)
 
     @staticmethod
     def post(request):
@@ -1424,29 +1272,28 @@ class FilterTextsDecrypt(View):
             if request.method == 'POST':
                 from_date = request.POST.get('from_date')
                 to_date = request.POST.get('to_date')
-                search_result = Text.objects.raw(
-                    'select id, case_id, case_name, case_data from hybridapp_text where case_date between "' + from_date + '" and "' + to_date + '"')
+                filter_texts = Text.objects.raw(
+                    'select id, text_id, text_name, text_cipher '
+                    'from hybridapp_text where text_date between "' + from_date + '" and "' + to_date + '"')
 
-                # Extract date values from the raw_queryset
-                date_values = [item.case_date for item in search_result]
+                date_values = [item.text_date for item in filter_texts]
                 for date_value in date_values:
                     date = date_value
                 context = {
-                    'texts': search_result,
-                    'date_values': date_values,
+                    'texts': filter_texts,
+                    'is_superuser': is_superuser,
                     'date': date,
-                    'is_superuser': is_superuser
                 }
-                return render(request, 'decrypt/filter_texts.html', context)
+                return render(request, 'decrypt/filter_cipher_text.html', context)
             else:
                 messages.error(request, f'Select Calender Date To Filter Searched Texts.')
                 context = {
                     'is_superuser': is_superuser
                 }
-                return render(request, 'decrypt/filter_texts.html', context)
+                return render(request, 'decrypt/filter_cipher_text.html', context)
         except Exception as e:
             messages.error(request, f'Error:. {str(e)}')
-            return redirect('filter_texts')
+            return redirect('filter_cipher_text')
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
@@ -1458,7 +1305,7 @@ class FilterFilesDecrypt(View):
         context = {
             'is_superuser': is_superuser
         }
-        return render(request, 'decrypt/filter_files.html', context)
+        return render(request, 'decrypt/filter_cipher_file.html', context)
 
     @staticmethod
     def post(request):
@@ -1467,29 +1314,28 @@ class FilterFilesDecrypt(View):
             if request.method == 'POST':
                 from_date = request.POST.get('from_date')
                 to_date = request.POST.get('to_date')
-                search_result = File.objects.raw(
-                    'select id, case_id, case_file, case_data from hybridapp_file where case_date between "' + from_date + '" and "' + to_date + '"')
+                filter_files = File.objects.raw(
+                    'select id, file_id, file_name, file_cipher '
+                    'from hybridapp_file where file_date between "' + from_date + '" and "' + to_date + '"')
 
-                # Extract date values from the raw_queryset
-                date_values = [item.case_date for item in search_result]
+                date_values = [item.file_date for item in filter_files]
                 for date_value in date_values:
                     date = date_value
                 context = {
-                    'files': search_result,
-                    'date_values': date_values,
+                    'files': filter_files,
                     'date': date,
                     'is_superuser': is_superuser
                 }
-                return render(request, 'decrypt/filter_files.html', context)
+                return render(request, 'decrypt/filter_cipher_file.html', context)
             else:
                 messages.error(request, f'Select Calender Date To Filter Searched Files.')
                 context = {
                     'is_superuser': is_superuser
                 }
-                return render(request, 'decrypt/filter_files.html', context)
+                return render(request, 'decrypt/filter_cipher_file.html', context)
         except Exception as e:
             messages.error(request, f'Error: {str(e)}!')
-            return redirect('filter_files')
+            return redirect('filter_cipher_file')
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
@@ -1588,14 +1434,14 @@ class FilterCipherRecords(View):
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
 @method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class FilterCasesDecrypt(View):
+class FilterRecordsDecrypt(View):
     @staticmethod
     def get(request):
         is_superuser = request.user.is_superuser
         context = {
             'is_superuser': is_superuser
         }
-        return render(request, 'decrypt/filter_cases_decrypt.html', context)
+        return render(request, 'decrypt/filter_records_decrypt.html', context)
 
     @staticmethod
     def post(request):
@@ -1605,38 +1451,250 @@ class FilterCasesDecrypt(View):
                 from_date = request.POST.get('from_date')
                 to_date = request.POST.get('to_date')
 
-                search_file_result = File.objects.raw(
-                    'select id, case_id, case_file, case_data from hybridapp_file where case_date between "' + from_date + '" and "' + to_date + '"')
-                search_text_result = Text.objects.raw(
-                    'select id, case_id, case_name, case_data from hybridapp_text where case_date between "' + from_date + '" and "' + to_date + '"')
-                search_textfile_result = TextFile.objects.raw(
-                    'select id, case_id, case_name, case_info, case_file, case_data from hybridapp_textfile where case_date between "' + from_date + '" and "' + to_date + '"')
+                filter_texts = Text.objects.raw(
+                    'select id, text_id, text_name, text_cipher from hybridapp_text where text_date between "' + from_date + '" and "' + to_date + '"')
+                filter_files = File.objects.raw(
+                    'select id, file_id, file_name, file_cipher from hybridapp_file where file_date between "' + from_date + '" and "' + to_date + '"')
+                filter_textfiles = TextFile.objects.raw(
+                    'select id, textfile_id, textfile_name, textfile_text, textfile_file, textfile_cipher from hybridapp_textfile where textfile_date between "' + from_date + '" and "' + to_date + '"')
 
-                # Extract date values from the raw_queryset
-                date_values = [item.case_date for item in search_textfile_result]
-                for date_value in date_values:
-                    date = date_value
                 context = {
-                    'files': search_file_result,
-                    'texts': search_text_result,
-                    'textfiles': search_textfile_result,
-                    'date_values': date_values,
-                    'date': date,
+                    'files': filter_files,
+                    'texts': filter_texts,
+                    'textfiles': filter_textfiles,
                     'is_superuser': is_superuser
                 }
-                return render(request, 'decrypt/filter_cases_decrypt.html', context)
+                return render(request, 'decrypt/filter_records_decrypt.html', context)
             else:
                 messages.error(request, f'Select Calender Date To Filter Searched Cases.')
                 context = {
                     'is_superuser': is_superuser
                 }
-                return render(request, 'decrypt/filter_cases_decrypt.html', context)
+                return render(request, 'decrypt/filter_records_decrypt.html', context)
         except Exception as e:
             messages.error(request, f'Error: {str(e)}!')
-            return redirect('filter_cases_decrypt')
+            return redirect('filter_records_decrypt')
 
 
 """ END FILTER CASES """
+
+
+@method_decorator(login_required(login_url='login'), name='dispatch')
+@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
+class ViewDecryptDetails(View):
+    @staticmethod
+    def get(request):
+        is_superuser = request.user.is_superuser
+        if is_superuser:
+            try:
+                decrypt_details = DecryptInfo.objects.all().order_by('-id')[:10]
+                context = {
+                    'decrypt_details': decrypt_details,
+                }
+                return render(request, 'decrypt/decrypt_details_test.html', context)
+            except Exception as e:
+                messages.error(request, f'Error: {str(e)}')
+                return render(request, 'decrypt/decrypt_details_test.html')
+        else:
+            messages.error(request, f'Error: Unauthorized User {request.user}')
+            return redirect('decrypt_details_test')
+
+
+@method_decorator(login_required(login_url='login'), name='dispatch')
+@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
+class ViewDecryptedDetails(View):
+    @staticmethod
+    def get(request, id):
+        user = request.user
+        try:
+            info = get_object_or_404(DecryptInfo, id=id)
+        except Exception as e:
+            raise Http404(f'File Details Not Found! Error: {str(e)}')
+        context = {
+            'info': info,
+            'user': user
+        }
+        return render(request, 'decrypt/view_decrypt_details_test.html', context)
+
+
+@method_decorator(login_required(login_url='login'), name='dispatch')
+@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
+class DeleteDecryptInfo(View):
+    @staticmethod
+    def get(request, id):
+        listing_decrypt_info = get_object_or_404(DecryptInfo, id=id)
+        return render(request, 'confirm_delete.html', {'object': listing_decrypt_info})
+
+    @staticmethod
+    def post(request, id):
+        is_superuser = request.user.is_superuser
+        listing_decrypt_info = get_object_or_404(DecryptInfo, id=id)
+        try:
+            if is_superuser:
+                listing_decrypt_info.delete()
+                messages.success(request, 'SUCCESS! Decrypt Information Deleted.')
+                return redirect('decrypt_details')
+            else:
+                messages.error(request, f'FAILED! Unauthorized User: {request.user} Forbidden.')
+                return redirect('decrypt_details')
+        except Exception as e:
+            messages.error(request, f'FAILED! Something Went Wrong. Error: {str(e)}')
+            return redirect('decrypt_details')
+
+
+""" START DELETE RECORDS """
+
+
+@method_decorator(login_required(login_url='login'), name='dispatch')
+@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
+class DeleteFile(View):
+    @staticmethod
+    def get(request, id):
+        listing_case_file = get_object_or_404(File, id=id)
+        return render(request, 'confirm_delete.html', {'object': listing_case_file})
+
+    @staticmethod
+    def post(request, id):
+        is_superuser = request.user.is_superuser
+        listing_case_file = get_object_or_404(File, id=id)
+        if request.method == 'POST':
+            try:
+                if is_superuser:
+                    listing_case_file.delete()
+                    messages.success(request, 'SUCCESS! File Deleted Successfully')
+                    return redirect('decrypt')
+                else:
+                    messages.error(request, f'FAILED! Unauthorized User: {request.user}')
+                    return redirect('encrypt')
+            except Exception as e:
+                messages.error(request, f'Error: {str(e)}')
+                return redirect('decrypt')
+        else:
+            return render(request, 'confirm_delete.html', {'object': listing_case_file})
+
+
+@method_decorator(login_required(login_url='login'), name='dispatch')
+@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
+class DeleteText(View):
+    @staticmethod
+    def get(request, id):
+        listing_case_text = get_object_or_404(Text, id=id)
+        return render(request, 'confirm_delete.html', {'object': listing_case_text})
+
+    @staticmethod
+    def post(request, id):
+        is_superuser = request.user.is_superuser
+        listing_case_text = get_object_or_404(Text, id=id)
+        if request.method == 'POST':
+            try:
+                if is_superuser:
+                    listing_case_text.delete()
+                    messages.success(request, 'SUCCESS! File Deleted Successfully')
+                    return redirect('decrypt')
+                else:
+                    messages.error(request, f'FAILED! Unauthorized User: {request.user}')
+                    return redirect('encrypt')
+            except Exception as e:
+                messages.error(request, f'Error: {str(e)}')
+                return redirect('decrypt')
+        else:
+            return render(request, 'confirm_delete.html', {'object': listing_case_text})
+
+
+@method_decorator(login_required(login_url='login'), name='dispatch')
+@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
+class DeleteTextFile(View):
+    @staticmethod
+    def get(request, id):
+        listing_case_textfile = get_object_or_404(TextFile, id=id)
+        return render(request, 'confirm_delete.html', {'object': listing_case_textfile})
+
+    @staticmethod
+    def post(request, id):
+        is_superuser = request.user.is_superuser
+        listing_case_textfile = get_object_or_404(TextFile, id=id)
+        if request.method == 'POST':
+            try:
+                if is_superuser:
+                    listing_case_textfile.delete()
+                    messages.success(request, 'SUCCESS! File Deleted Successfully')
+                    return redirect('decrypt')
+                else:
+                    messages.error(request, f'FAILED! Unauthorized User: {request.user}')
+                    return redirect('encrypt')
+            except Exception as e:
+                messages.error(request, f'Error: {str(e)}')
+                return redirect('decrypt')
+        else:
+            return render(request, 'confirm_delete.html', {'object': listing_case_textfile})
+
+
+""" END DELETE RECORDS """
+
+""" START CSV DOWNLOADS"""
+
+
+@method_decorator(login_required(login_url='login'), name='dispatch')
+@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
+class ExportTextsCSV(View):
+    @staticmethod
+    def get(request):
+        try:
+            texts = Text.objects.all()
+            response = HttpResponse()
+            response['Content-Disposition'] = 'attachment; filename=case-texts_export.csv'
+            writer = csv.writer(response)
+            writer.writerow(['CASE-ID', 'CASE-DATA', 'USER-ID', 'CASE-NAME'])
+            fields = texts.values_list('case_id', 'case_data', 'user', 'case_name')
+            for text in fields:
+                writer.writerow(text)
+            return response
+        except Exception as e:
+            messages.error(request, f'Error: {str(e)}')
+            return redirect('search_text_cases')
+
+
+@method_decorator(login_required(login_url='login'), name='dispatch')
+@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
+class ExportFilesCSV(View):
+    @staticmethod
+    def get(request):
+        try:
+            files = File.objects.all()
+            response = HttpResponse()
+            response['Content-Disposition'] = 'attachment; filename=case-files_export.csv'
+            writer = csv.writer(response)
+            writer.writerow(['CASE-ID', 'CASE-FILE', 'CASE-DATA', 'USER-ID'])
+            fields = files.values_list('case_id', 'case_file', 'case_data', 'user')
+            for file in fields:
+                writer.writerow(file)
+            return response
+        except Exception as e:
+            messages.error(request, f'Error: {str(e)}')
+            return redirect('search_file_cases')
+
+
+@method_decorator(login_required(login_url='login'), name='dispatch')
+@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
+class ExportTextFilesCSV(View):
+    @staticmethod
+    def get(request):
+        try:
+            textfiles = TextFile.objects.all()
+            response = HttpResponse()
+            response['Content-Disposition'] = 'attachment; filename=case-reports_export.csv'
+            writer = csv.writer(response)
+            writer.writerow(['CASE-ID', 'CASE-NAME', 'CASE-INFO', 'CASE-FILE', 'CASE-DATA', 'USER-ID'])
+            fields = textfiles.values_list('case_id', 'case_name', 'case_info', 'case_file', 'case_data', 'user')
+            for textfile in fields:
+                writer.writerow(textfile)
+            return response
+        except Exception as e:
+            messages.error(request, f'Error: {str(e)}')
+            return redirect('search_report_cases')
+
+
+""" END CSV DOWNLOADS"""
 
 """ REDUNDANT CODE START """
 
@@ -1673,66 +1731,3 @@ def update(request, id):
 
 
 """ REDUNDANT CODE END """
-
-
-@method_decorator(login_required(login_url='login'), name='dispatch')
-@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class ViewDecryptDetails(View):
-    @staticmethod
-    def get(request):
-        is_superuser = request.user.is_superuser
-        if is_superuser:
-            try:
-                decrypt_details = DecryptInfo.objects.all().order_by('-id')[:10]
-                context = {
-                    'decrypt_details': decrypt_details,
-                }
-                return render(request, 'decrypt/decrypt_details.html', context)
-            except Exception as e:
-                messages.error(request, f'Error: {str(e)}')
-                return render(request, 'decrypt/decrypt_details.html')
-        else:
-            messages.error(request, f'Error: Unauthorized User {request.user}')
-            return redirect('decrypt_details')
-
-
-@method_decorator(login_required(login_url='login'), name='dispatch')
-@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class ViewDecryptedDetails(View):
-    @staticmethod
-    def get(request, id):
-        user = request.user
-        try:
-            info = get_object_or_404(DecryptInfo, id=id)
-        except Exception as e:
-            raise Http404(f'File Details Not Found! Error: {str(e)}')
-        context = {
-            'info': info,
-            'user': user
-        }
-        return render(request, 'decrypt/view_decrypt_details.html', context)
-
-
-@method_decorator(login_required(login_url='login'), name='dispatch')
-@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class DeleteDecryptInfo(View):
-    @staticmethod
-    def get(request, id):
-        listing_decrypt_info = get_object_or_404(DecryptInfo, id=id)
-        return render(request, 'confirm_delete.html', {'object': listing_decrypt_info})
-
-    @staticmethod
-    def post(request, id):
-        is_superuser = request.user.is_superuser
-        listing_decrypt_info = get_object_or_404(DecryptInfo, id=id)
-        try:
-            if is_superuser:
-                listing_decrypt_info.delete()
-                messages.success(request, 'SUCCESS! Decrypt Information Deleted.')
-                return redirect('decrypt_details')
-            else:
-                messages.error(request, f'FAILED! Unauthorized User: {request.user} Forbidden.')
-                return redirect('decrypt_details')
-        except Exception as e:
-            messages.error(request, f'FAILED! Something Went Wrong. Error: {str(e)}')
-            return redirect('decrypt_details')
