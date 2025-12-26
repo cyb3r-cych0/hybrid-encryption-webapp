@@ -19,7 +19,7 @@
 <!-- NavBar Button -->
 {% block nav-btn %}
     <a class="btn btn-custom" id="btn-nav-back" onclick="goBack()"><i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i></a>
-    <a class="btn btn-custom" id="btn-nav-back" href="{% url 'backend' %}" ><i class="fa fa-sliders">&nbsp;&nbsp; Control Panel</i></a>
+    <a class="btn btn-custom" id="btn-nav-panel" href="{% url 'backend' %}" ><i class="fa fa-sliders">&nbsp;&nbsp; Control Panel</i></a>
     <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout"><i class="fas fa-right-from-bracket">&nbsp;&nbsp;Logout</i></a>
 {% endblock %}
 
@@ -43,7 +43,7 @@
 <br>
 <div class="container mt-1 mb-5 pb-2">
     <button class="btn btn-warning w-100 mt-3 mb-2 no-pointer">
-        <i class="fa-solid fa-circle-info">&nbsp;&nbsp;TEXT+FILE RECORD &nbsp;DETAILS</i>
+        <i class="fa-solid fa-circle-info">&nbsp;&nbsp;TEXTFILE RECORD &nbsp;DETAILS</i>
     </button>
 
     <div id="pt" class="col-12">
@@ -51,13 +51,13 @@
             <div class="row" >
                 <h3>FILE+TEXT RECORD CIPHER INFORMATION</h3>
                 <div class="container m-3">
-                    <p>RECORD ID: {{ textfile.case_id }} </p>
-                    <p>RECORD TITLE: {{ textfile.case_file }}</p>
+                    <p>RECORD ID: {{ textfile.textfile_id }} </p>
+                    <p>RECORD TITLE: {{ textfile.textfile_name }}</p>
                     <p>USER ID: NAME: {{ user }}&nbsp; | &nbsp; EMAIL: {{ user.email }}</p>
-                    <p>DATE ENCRYPTED: {{ user.case_date }}</p>
-                    <p>RECORD NAME: {{ textfile.case_name }}</p>
-                    <p>TEXT-RECORD CIPHER: {{ textfile.case_info }}</p>
-                    <p>FILE-RECORD CIPHER: {{ textfile.case_data }}</p>
+                    <p>DATE ENCRYPTED: {{ user.textfile_date }}</p>
+                    <p>RECORD NAME: {{ textfile.textfile_file }}</p>
+                    <p>TEXT-RECORD CIPHER: {{ textfile.textfile_text }}</p>
+                    <p>FILE-RECORD CIPHER: {{ textfile.textfile_ciphere }}</p>
                 </div>
             </div>
         </div>
@@ -72,7 +72,7 @@
             <a href="/delete_case_report/{{ textfile.id }}">
                 <button type="button" class="btn btn-outline-danger m-1 p-2"><i class="fas fa-trash-can">&nbsp;Delete</i></button>
             </a>
-            <a href="{% url 'decrypt_case' textfile.id %}">
+            <a href="{% url 'decrypt_textfile' textfile.id %}">
                 <button type="button" class="btn btn-outline-success m-1 p-2"><i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i></button>
             </a>
             {% endif %}

@@ -11,18 +11,18 @@ urlpatterns = [
     path('backend/decrypt/', views.DecryptDashboard.as_view(), name='decrypt'),
 
     path('backend/view_users_backend/', views.ViewUsersBackend.as_view(), name='view_users_backend'),
-    path('backend/user_details_backend/<id>/', views.UserDetailsBackend.as_view(), name='user_details_backend'),
-    path('backend/user_cases_backend/<id>/', views.UserCasesBackend.as_view(), name='user_cases_backend'),
-    path('backend/search_users/', views.SearchUsers.as_view(), name='search_users'),
-    path('backend/search_cases/', views.SearchCasesBackend.as_view(), name='search_cases'),
+    path('backend/view_user_details_backend/<id>/', views.ViewUserDetailsBackend.as_view(), name='view_user_details_backend'),
+    path('backend/view_user_records_backend/<id>/', views.ViewUserRecordsBackend.as_view(), name='view_user_records_backend'),
+    path('backend/search_users_backend/', views.SearchUsersBackend.as_view(), name='search_users_backend'),
+    path('backend/search_cipher_records_backend/', views.SearchCipherRecordsBackend.as_view(), name='search_cipher_records_backend'),
 
-    path('backend/view_file_backend/<id>/', views.ViewTextBackend.as_view(), name='view_file_backend'),
-    path('backend/view_data_backend/<id>/', views.ViewFileBackend.as_view(), name='view_data_backend'),
-    path('backend/view_report_backend/<id>/', views.ViewTextFileBackend.as_view(), name='view_report_backend'),
-    path('backend/view_all_backend/',  views.ViewCasesBackend.as_view(), name='view_all_backend'),
-    path('backend/filter_cases/', views.FilterCasesBackend.as_view(), name='filter_cases'),
+    path('backend/view_cipher_text_backend/<id>/', views.ViewCipherTextBackend.as_view(), name='view_cipher_text_backend'),
+    path('backend/view_cipher_file_backend/<id>/', views.ViewCipherFileBackend.as_view(), name='view_cipher_file_backend'),
+    path('backend/view_cipher_textfile_backend/<id>/', views.ViewCipherTextFileBackend.as_view(), name='view_cipher_textfile_backend'),
+    path('backend/view_cipher_records_backend/',  views.ViewCipherRecordsBackend.as_view(), name='view_cipher_records_backend'),
+    path('backend/filter_cipher_records_backend/', views.FilterCipherRecordsBackend.as_view(), name='filter_cipher_records_backend'),
 
-    path('backend/filter_user_cases/<id>/', views.FilterUserCases.as_view(), name='filter_user_cases'),
+    path('backend/filter_user_records_backend/<id>/', views.FilterUserRecordsBackend.as_view(), name='filter_user_records_backend'),
 
     # Encrypt
     path('encrypt/encrypt_file', views.EncryptFile.as_view(), name='encrypt_file'),
@@ -42,8 +42,8 @@ urlpatterns = [
     path('decrypt/decrypt_file/<int:id>/', views.DecryptFile.as_view(), name='decrypt_file'),
     path('decrypt/decrypt_text/<id>/', views.DecryptText.as_view(), name='decrypt_text'),
 
-    path('decrypt/decrypt_details_test', views.ViewDecryptDetails.as_view(), name='decrypt_details_test'),
-    path('decrypt/view_decrypt_details_test/<id>/', views.ViewDecryptedDetails.as_view(), name='view_decrypt_details_test'),
+    path('decrypt/decrypt_details', views.ViewDecryptDetails.as_view(), name='decrypt_details'),
+    path('decrypt/view_decrypt_details/<id>/', views.ViewDecryptedDetails.as_view(), name='view_decrypt_details'),
 
     path('decrypt/search_records_decrypt/', views.SearchRecordsDecrypt.as_view(), name='search_records_decrypt'),
     path('decrypt/search_cipher_text/', views.SearchTextDecrypt.as_view(), name='search_cipher_text'),

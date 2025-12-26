@@ -5,7 +5,8 @@
 {% block links %}{% endblock %}
 
 <!-- Block Title -->
-<title>{% block title %} CBDET | Search Records {% endblock %}</title>
+<title>{% block title %} NebuCrypt | Search Records {% endblock %}</title>
+
 
 <!-- Block NavBar Content -->
 {% block nav-content %}
@@ -16,12 +17,20 @@
   {% endif %}
 {% endblock %}
 
+
 <!-- NavBar Button -->
 {% block nav-btn %}
-    <a class="btn btn-custom" id="btn-nav-back" onclick="goBack()"><i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i></a>
-    <a class="btn btn-custom" id="btn-nav-filter" href="{% url 'filter_cases' %}" ><i class="fas fa-filter">&nbsp;&nbsp;Filter</i></a>
-    <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout"><i class="fas fa-right-from-bracket">&nbsp;&nbsp;Logout</i></a>
+    <a class="btn btn-custom" id="btn-nav-back" onclick="goBack()">
+      <i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i>
+    </a>
+    <a class="btn btn-custom" id="btn-nav-filter" href="{% url 'filter_cipher_records_backend' %}" >
+      <i class="fas fa-filter">&nbsp;&nbsp;Filter</i>
+    </a>
+    <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout">
+      <i class="fas fa-right-from-bracket">&nbsp;&nbsp;Logout</i>
+    </a>
 {% endblock %}
+
 
 <!-- Block TopBar -->
 {% block topbar %}
@@ -39,6 +48,7 @@
     </div>
 {% endblock %}
 
+
 <!-- Page Content -->
 {% block content %}
 <br>
@@ -50,11 +60,13 @@
   <!-- Message From BackEnd -->
   {% for message in messages %}
       {% if message.tags == 'success' %}
-          <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
+          <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">
+            {{ message }}
               <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
           </div>
       {% elif message.tags == 'error' %}
-          <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
+          <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">
+            {{ message }}
               <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
           </div>
       {% endif %}
@@ -67,9 +79,11 @@
         <i class="fas fa-keyboard">&nbsp;&nbsp;Enter RECORD-ID To Search</i>
       </div>
       <div class="col-lg-4 m-3">
-        <form method="GET" action="{% url 'search_cases' %}">
+        <form method="GET" action="{% url 'search_cipher_records_backend' %}">
             <input type="text" name="q" placeholder="file/text/text+file RECORD ID...">
-            &nbsp;&nbsp;&nbsp;<button class="btn btn-secondary" type="submit"><i class="fas fa-search">&nbsp;&nbsp;Search</i></button>
+            &nbsp;&nbsp;&nbsp;<button class="btn btn-secondary" type="submit">
+                <i class="fas fa-search">&nbsp;&nbsp;Search</i>
+              </button>
         </form>
       </div>
       <div class="row col-lg-4 ml-2">
@@ -95,27 +109,33 @@
             </tr>
           </thead>
           <tbody>
-            {% if case_files %}
-            {% for file in case_files %}
+            {% if files %}
+            {% for f in files %}
               <tr>
-                <td>{{ file.id }}</td>
-                <td>{{ file.case_id }}</td>
-                <td>{{ file.case_file }}</td>
-                <td>{{ file.user.email }}</td>
-                <td>{{ file.case_date }}</td>
+                <td>{{ f.id }}</td>
+                <td>{{ f.file_id }}</td>
+                <td>{{ f.file_name }}</td>
+                <td>{{ f.user.email }}</td>
+                <td>{{ f.file_date }}</td>
                 <td>
-                  <a href="{% url 'view_data_backend' file.id %}">
-                    <button type="button" class="btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
+                  <a href="">
+                    <button type="button" class="btn btn-sm btn-outline-primary">
+                      <i class="fas fa-expand">&nbsp;View</i>
+                    </button>
                   </a>
                 </td>
                 <td>
                   {% if user.is_staff == False %}
                     <a href="#">
-                      <button type="button" class="btn btn-sm btn-outline-danger" disabled><i class="fas fa-triangle-exclamation">&nbsp;Decrypt</i></button>
+                      <button type="button" class="btn btn-sm btn-outline-danger" disabled>
+                        <i class="fas fa-triangle-exclamation">&nbsp;Decrypt</i>
+                      </button>
                     </a>
                   {% elif user.is_staff == True %}
-                    <a href="{% url 'decrypt_and_download' file.id %}">
-                      <button type="button" class="btn btn-sm btn-outline-success"><i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i></button>
+                    <a href="">
+                      <button type="button" class="btn btn-sm btn-outline-success">
+                        <i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i>
+                      </button>
                     </a>
                   {% endif %}
                 </td>
@@ -124,25 +144,33 @@
               {% endif %}
           </tbody>
           <tbody>
-            {% if case_texts %}
-            {% for case in case_texts %}
+            {% if texts %}
+            {% for txt in texts %}
               <tr>
-                <td>{{ case.id }}</td>
-                <td>{{ case.case_id }}</td>
-                <td>{{ case.case_name }}</td>
-                <td>{{ case.user.email }}</td>
-                <td>{{ case.case_date }}</td>
-                <td><a href="{% url 'view_file_backend' case.id %}">
-                <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
-                </a></td>
+                <td>{{ txt.id }}</td>
+                <td>{{ txt.text_id }}</td>
+                <td>{{ txt.text_name }}</td>
+                <td>{{ txt.user.email }}</td>
+                <td>{{ txt.text_date }}</td>
+                <td>
+                  <a href="">
+                    <button type="button" class="w-90 btn btn-sm btn-outline-primary">
+                      <i class="fas fa-expand">&nbsp;View</i>
+                    </button>
+                  </a>
+                </td>
                 <td>
                   {% if user.is_staff == False %}
                     <a href="#">
-                      <button type="button" class="btn btn-sm btn-outline-danger" disabled><i class="fas fa-triangle-exclamation">&nbsp;Decrypt</i></button>
+                      <button type="button" class="btn btn-sm btn-outline-danger" disabled>
+                        <i class="fas fa-triangle-exclamation">&nbsp;Decrypt</i>
+                      </button>
                     </a>
                   {% elif user.is_staff == True %}
-                    <a href="{% url 'view_dec_file' case.id %}">
-                      <button type="button" class="btn btn-sm btn-outline-success"><i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i></button>
+                    <a href="">
+                      <button type="button" class="btn btn-sm btn-outline-success">
+                        <i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i>
+                      </button>
                     </a>
                   {% endif %}
                 </td>
@@ -151,27 +179,33 @@
               {% endif %}
           </tbody>
           <tbody>
-            {% if case_textfiles %}
-            {% for case_r in case_textfiles %}
+            {% if textfiles %}
+            {% for tf in textfiles %}
               <tr>
-                <td>{{ case_r.id }}</td>
-                <td>{{ case_r.case_id }}</td>
-                <td>{{ case_r.case_file }}</td>
-                <td>{{ case_r.user.email }}</td>
-                <td>{{ case_r.case_date}}</td>
+                <td>{{ tf.id }}</td>
+                <td>{{ tf.textfile_id }}</td>
+                <td>{{ tf.textfile_name }}</td>
+                <td>{{ tf.user.email }}</td>
+                <td>{{ tf.textfile_date}}</td>
                 <td>
-                  <a href="{% url 'view_report_backend' case_r.id %}">
-                  <button type="button" class="w-90 btn btn-sm btn-outline-primary"><i class="fas fa-expand">&nbsp;View</i></button>
+                  <a href="">
+                  <button type="button" class="w-90 btn btn-sm btn-outline-primary">
+                    <i class="fas fa-expand">&nbsp;View</i>
+                  </button>
                   </a>
                 </td>
                 <td>
                   {% if user.is_staff == False %}
                     <a href="#">
-                      <button type="button" class="btn btn-sm btn-outline-danger" disabled><i class="fas fa-triangle-exclamation">&nbsp;Decrypt</i></button>
+                      <button type="button" class="btn btn-sm btn-outline-danger" disabled>
+                        <i class="fas fa-triangle-exclamation">&nbsp;Decrypt</i>
+                      </button>
                     </a>
                   {% elif user.is_staff == True %}
-                    <a href="{% url 'decrypt_case' case_r.id %}">
-                      <button type="button" class="btn btn-sm btn-outline-success"><i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i></button>
+                    <a href="">
+                      <button type="button" class="btn btn-sm btn-outline-success">
+                        <i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i>
+                      </button>
                     </a>
                   {% endif %}
                 </td>
@@ -184,8 +218,10 @@
     </div>
   </div>
   <!--End Table-->
-  <a href="{% url 'view_all_backend' %}">
-      <button class="btn btn-outline-secondary mb-1 ml-5"><i class="fas fa-folder-plus">&nbsp;&nbsp;More Records</i></button>
+  <a href="{% url 'view_cipher_records_backend'  %}">
+      <button class="btn btn-outline-secondary mb-1 ml-5">
+        <i class="fas fa-folder-plus">&nbsp;&nbsp;More Records</i>
+      </button>
   </a>
 </div>
 {% endblock content %}
