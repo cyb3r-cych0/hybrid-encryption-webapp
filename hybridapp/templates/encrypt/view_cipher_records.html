@@ -136,7 +136,7 @@
                                         </td>
                                         <td>
                                             {% if user.is_staff == True %}
-                                              <a href="{% url 'decrypt_file' f.id %}">
+                                              <a href="{% url 'decrypt_file' file.id %}">
                                                 <button type="button" class="btn btn-md btn-outline-success shadow-md border-1 border-success rounded-3">
                                                     <i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i>
                                                 </button>
