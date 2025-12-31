@@ -30,7 +30,7 @@
                 <div class="col-lg-12 col-md-12">
                     <div class="logo">
                         <img src="{% static 'img/icon.png' %}" alt="Logo">
-                        <h1><span>CB</span>DET<span></span></h1>
+                        <h1><span>NEBU</span>CYRPT<span></span></h1>
                     </div>
                 </div>
             </div>
@@ -53,8 +53,12 @@
               <h5 class="mb-5"><i class="fas fa-circle-exclamation">&nbsp;&nbsp;Are you sure you want to decrypt this file?</i></h5>
               <form id="myForm" method="post">
                   {% csrf_token %}
-                    <button id="decryptButton" type="submit" name="confirm" class="w-90 btn btn-lg btn-outline-success m-2"><i class="fas fa-unlock-keyhole">&nbsp;&nbsp;Yes, Decrypt</i></button>
-                        <button onclick="goBack()" type="button" class="w-90 btn btn-lg btn-outline-secondary m-2"><i class="fas fa-xmark">&nbsp;&nbsp;Cancel</i></button>
+                    <button id="decryptButton" type="submit" name="confirm" class="w-90 btn btn-lg btn-outline-success m-2">
+                        <i class="fas fa-unlock-keyhole">&nbsp;&nbsp;Yes, Decrypt</i>
+                    </button>
+                        <button onclick="goBack()" type="button" class="w-90 btn btn-lg btn-outline-secondary m-2">
+                            <i class="fas fa-xmark">&nbsp;&nbsp;Cancel</i>
+                        </button>
               </form>
             </div>
         </div>

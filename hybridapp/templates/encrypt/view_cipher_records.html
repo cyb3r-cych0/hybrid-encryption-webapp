@@ -7,28 +7,24 @@
 
 
 <!-- Block Title -->
-<title>{% block title %} CBDET | Encrypted Records {% endblock %}</title>
+<title>{% block title %} NebuCrypT | Ciphers {% endblock %}</title>
 
 
 <!-- Block NavBar Content -->
 {% block nav-content %}
-  {% if user.is_staff == False %}
-    <i class="fa-solid fa-user-check mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Standard-User &nbsp;{{ user }}</i>
-  {% elif user.is_staff == True %}
-    <i class="fa-solid fa-user mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Admin-User &nbsp;{{ user  }}</i>
-  {% endif %}
+    <i class="fa-solid fa-user-check mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Welcome &nbsp;{{ user }}</i>
 {% endblock %}
 
 
 <!-- Logout Button -->
 {% block nav-btn %}
-    <a class="btn btn-custom" id="btn-nav-view" onclick="goBack()">
+    <a class="btn btn-custom rounded-3" id="btn-nav-view" onclick="goBack()">
         <i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i>
     </a>
-    <a class="btn btn-custom" id="btn-nav-back" href="{% url 'search_cipher_records' %}" >
+    <a class="btn btn-custom rounded-3" id="btn-nav-back" href="{% url 'search_cipher_records' %}" >
         <i class="fas fa-search">&nbsp;&nbsp;Search</i>
     </a>
-    <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout">
+    <a class="btn btn-custom rounded-3" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout">
         <i class="fas fa-right-from-bracket">&nbsp;&nbsp;Logout</i>
     </a>
 {% endblock %}
@@ -36,13 +32,13 @@
 
 <!-- Block TopBar -->
 {% block topbar %}
-<div class="top-bar mt-4 pt-5">
+<div class="top-bar mt-5 pt-5">
         <div class="container mt-5">
             <div class="row align-items-center">
-                <div class="col-lg-4 col-md-12">
+                <div class="col-lg-8">
                     <div class="logo">
                         <img src="{% static 'img/icon.ico' %}" alt="Logo">
-                        <h1><span>CB</span>DET<span></span></h1>
+                        <h1><span></span>CIPHERS'<span>&nbsp;&nbsp;Dashboard</span></h1>
                     </div>
                 </div>
             </div>
@@ -51,84 +47,172 @@
 {% endblock %}
 
 
-<!-- Page Content -->
-{% block content %}
-<br>
-<div class="container mt-2 mb-5" style="width: 95%; font-size: 14px">
-    <button class="btn btn-secondary w-100 mt-3 mb-1 no-pointer">
-        <i class="fas fa-folder-tree">&nbsp;&nbsp;ENCRYPTED &nbsp;RECORDS</i>
-    </button>
-
-    <!--Table-->
-    <div class="container">
-        <div class="row my-4">
-            <div class="col-md-12">
-                <table class="table bg-white">
-                    <thead class="bg-info">
-                        <tr>
-                            <th scope="col"><i class="fas fa-table-list">&nbsp;&nbsp;DB.ID</i></th>
-                            <th scope="col"><i class="fas fa-folder-closed">&nbsp;&nbsp;RECORD-ID</i></th>
-                            <th scope="col"><i class="fas fa-file">&nbsp;&nbsp;RECORD NAME</i></th>
-                            <th scope="col"><i class="fas fa-user-tag">&nbsp;&nbsp;USER-ID</i></th>
-                            <th scope="col"><i class="fas fa-calendar-day">&nbsp;&nbsp;DATE</i></th>
-                            <th scope="col"><i class="fas fa-circle-info">&nbsp;&nbsp;DETAILS</i></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for file in files %}
-                            <tr>
-                                <td>{{ file.id }}</td>
-                                <td>{{ file.file_id }}</td>
-                                <td>{{ file.file_name }}</td>
-                                <td>{{ file.user.email }}</td>
-                                <td>{{ file.file_date }}</td>
-                                <td>
-                                    <a href="{% url 'view_cipher_file' file.id %}">
-                                        <button type="button" class="w-100 btn btn-sm btn-outline-primary">
-                                            <i class="fas fa-expand">&nbsp;View</i>
-                                        </button>
-                                    </a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        {% for txt in texts %}
-                            <tr>
-                                <td>{{ txt.id }}</td>
-                                <td>{{ txt.text_id }}</td>
-                                <td>{{ txt.text_name }}</td>
-                                <td>{{ txt.user.email }}</td>
-                                <td>{{ txt.text_date }}</td>
-                                <td>
-                                    <a href="{% url 'view_cipher_text' txt.id %}">
-                                        <button type="button" class="w-100 btn btn-sm btn-outline-primary">
-                                            <i class="fas fa-expand">&nbsp;View</i>
-                                        </button>
-                                    </a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        {% for tf in textfiles %}
-                            <tr>
-                                <td>{{ tf.id }}</td>
-                                <td>{{ tf.textfile_id }}</td>
-                                <td>{{ tf.textfile_file }}</td>
-                                <td>{{ tf.user.email }}</td>
-                                <td>{{ tf.textfile_date }}</td>
-                                <td>
-                                    <a href="{% url 'view_cipher_textfile' tf.id %}">
-                                        <button type="button" class="w-100 btn btn-sm btn-outline-primary">
-                                            <i class="fas fa-expand">&nbsp;View</i>
-                                        </button>
-                                    </a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+{% block sidebar %}
+<div class="container mt-5 mb-1 pb- col-lg-10" style="width: 100%; font-size: 14px">
+    <div class="card-body">
+        <div class="row m-1">
+            <div class="col-md-4">
+                <div class="card my-card shadow-lg text-center border-0 p-3 text-success rounded-4">
+                    <h5 style="color: #082567;">Files Encrypted</h5>
+                    <h4><i class="fas fa-file" >&nbsp;&nbsp;{{ files_count }}</i></h4>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card my-card shadow-lg text-center border-0 p-3 text-success rounded-4">
+                    <h5 style="color: #082567;">Texts Encrypted</h5>
+                        <h4><i class="fa fa-align-left">&nbsp;&nbsp;{{ texts_count }}</i></h4>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card my-card shadow-lg text-center border-0 p-3 text-success rounded-4">
+                    <h5 style="color: #082567;">Text Files Encrypted</h5>
+                    <h4><i class="fa fa-folder-minus" >&nbsp;&nbsp;{{ textfiles_count }}</i></h4>
+                    </div>
+            </div>
+        </div>
+        <div class="row m-1 mt-3">
+            <div class="col-md-4">
+                <div class="card my-card shadow-lg text-center border-0 p-3 rounded-3 text-success">
+                    <h5 style="color: #082567;">Total Encrypted Data</h5>
+                    <h4><i class="fas fa-file" >&nbsp;&nbsp;{{ encrypted_ciphers_count }}</i></h4>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card my-card shadow-lg text-center border-0 p-3 rounded-3 text-success" style="color: #082567;">
+                    <h5 style="color: #082567;">Total Decrypted Data</h5>
+                        <h4><i class="fa fa-align-left">&nbsp;&nbsp;{{ decrypted_ciphers_count }}</i></h4>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card my-card shadow-lg text-center border-0 p-3 rounded-3 text-success" style="color:#082567;">
+                    <h5 style="color: #082567;">Something</h5>
+                    <h4><i class="fa fa-folder-minus" >&nbsp;&nbsp;{{ q_textfiles }}</i></h4>
+                    </div>
             </div>
         </div>
     </div>
-    <!--End Table-->
+</div>
+{% endblock %}
+
+<!-- Page Content -->
+{% block content %}
+<br>
+<div class="container mt-1 mb-4 pb-5 col-lg-11" style="width: 100%; font-size: 14px">
+    <!--Table-->
+    <div class="container  mt-2 col-lg-11" >
+        <div class="col">
+            <div class="card mb-5 rounded-3 shadow-lg border-0">
+                <div class="card-header rounded-top-3 py-3 text-bg-success border-0">
+                        <h6 class="my-0 fw-normal" style="color: white; text-align: center;">
+                            <i class="fa fa-folder-tree">&nbsp;&nbsp; RECENTLY &nbsp;ENCRYPTED</i>
+                        </h6>
+                  </div>
+                <div class="row my-4 mx-2">
+                    <div class="col-md-12">
+                        <table class="table bg-white">
+                            <thead class="bg-info">
+                                <tr>
+                                    <th scope="col"><i class="fas fa-folder-closed">&nbsp;&nbsp;RECORD-ID</i></th>
+                                    <th scope="col"><i class="fas fa-file">&nbsp;&nbsp;RECORD NAME</i></th>
+                                    <th scope="col"><i class="fas fa-user-tag">&nbsp;&nbsp;USER-ID</i></th>
+                                    <th scope="col"><i class="fas fa-calendar-day">&nbsp;&nbsp;DATE</i></th>
+                                    <th scope="col"><i class="fas fa-circle-info">&nbsp;&nbsp;DETAILS</i></th>
+                                    <th scope="col"><i class="fas fa-circle-info">&nbsp;&nbsp;ACTION</i></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for file in files %}
+                                    <tr>
+                                        <td>{{ file.file_id }}</td>
+                                        <td>{{ file.file_name }}</td>
+                                        <td>{{ file.user.email }}</td>
+                                        <td>{{ file.file_date }}</td>
+                                        <td>
+                                            <a href="{% url 'view_cipher_file' file.id %}">
+                                                <button type="button" class="btn btn-md btn-outline-info shadow-md border-1 border-info rounded--3">
+                                                    <i class="fas fa-expand">&nbsp;View</i>
+                                                </button>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            {% if user.is_staff == True %}
+                                              <a href="{% url 'decrypt_file' f.id %}">
+                                                <button type="button" class="btn btn-md btn-outline-success shadow-md border-1 border-success rounded-3">
+                                                    <i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i>
+                                                </button>
+                                              </a>
+                                              {% elif user.is_staff == False %}
+                                                <button type="button" class="btn btn-md btn-outline-danger shadow-md border-1 border-danger rounded-3 disabled">
+                                                    <i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i>
+                                                </button>
+                                              {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                {% for txt in texts %}
+                                    <tr>
+                                        <td>{{ txt.text_id }}</td>
+                                        <td>{{ txt.text_name }}</td>
+                                        <td>{{ txt.user.email }}</td>
+                                        <td>{{ txt.text_date }}</td>
+                                        <td>
+                                            <a href="{% url 'view_cipher_text' txt.id %}">
+                                                <button type="button" class="btn btn-md btn-outline-info shadow-md border-1 border-info rounded--3">
+                                                    <i class="fas fa-expand">&nbsp;View</i>
+                                                </button>
+                                            </a>
+                                        </td>
+                                        <td>
+                                              {% if user.is_staff == True %}
+                                                  <a href="{% url 'decrypt_text' txt.id %}">
+                                                    <button type="button" class="btn btn-md btn-outline-success shadow-md border-1 border-success rounded-3">
+                                                        <i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i>
+                                                    </button>
+                                                  </a>
+                                              {% elif user.is_staff == False %}
+                                                <button type="button" class="btn btn-md btn-outline-danger shadow-md border-1 border-danger rounded-3 disabled">
+                                                    <i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i>
+                                                </button>
+                                              {% endif %}
+                                          </td>
+                                    </tr>
+                                {% endfor %}
+                                {% for tf in textfiles %}
+                                    <tr>
+                                        <td>{{ tf.textfile_id }}</td>
+                                        <td>{{ tf.textfile_file }}</td>
+                                        <td>{{ tf.user.email }}</td>
+                                        <td>{{ tf.textfile_date }}</td>
+                                        <td>
+                                            <a href="{% url 'view_cipher_textfile' tf.id %}">
+                                                <button type="button" class="btn btn-md btn-outline-info shadow-md border-1 border-info rounded--3">
+                                                    <i class="fas fa-expand">&nbsp;View</i>
+                                                </button>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            {% if user.is_staff == True %}
+                                              <a href="{% url 'decrypt_textfile' tf.id %}">
+                                                <button type="button" class="btn btn-md btn-outline-success shadow-md border-1 border-success rounded-3">
+                                                    <i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i>
+                                                </button>
+                                              </a>
+                                              {% elif user.is_staff == False %}
+                                                <button type="button" class="btn btn-md btn-outline-danger shadow-md border-1 border-danger rounded-3 disabled">
+                                                    <i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i>
+                                                </button>
+                                              {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!--End Table-->
+        </div>
+    </div>
 </div>
 {% endblock content %}
 
@@ -142,4 +226,4 @@
 {% block footer-position %} class="fixed-bottom bg-dark text-center text-lg-start text-light" {% endblock %}
 
 <!-- Block Footer -->
-{% block footer %} style="color: #d3d3d3;" {% endblock %}
+{% block footer %} style="color: greenyellow;" {% endblock %}

@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static %}
+
+<!-- Block Title -->
+<title>{% block title %} NebuCrypt | Cipher Text {% endblock %}</title>
+
+
+<!-- Navbar links control -->
+{% block links %}{% endblock %}
+
+
+<!-- Block NavBar Content -->
+{% block nav-content %}
+    <i class="fa-solid fa-user-check mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Welcome &nbsp;{{ user }}</i>
+{% endblock %}
+
+
+<!-- Logout Button -->
+{% block nav-btn %}
+    <i class="fas fa-clock" style="color:white;">&nbsp;&nbsp;</i>
+    <a class="btn btn-custom rounded-3" id="btn-nav-view" onclick="goBack()">
+        <i class="fa fa-chevron-left">&nbsp;&nbsp; Back</i>
+    </a>
+    <a class="btn btn-custom rounded-3" id="btn-nav-back" href="{% url 'encrypt' %}" >
+        <i class="fas fa-table-columns">&nbsp;&nbsp;Dashboard</i>
+    </a>
+    <a class="btn btn-custom rounded-3" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout">
+        <i class="fa fa-right-from-bracket">&nbsp;&nbsp; Logout</i>
+    </a>
+{% endblock %}
+
+
+{% block topbar %}
+<div class="top-bar  mt-5 pt-5">
+    <div class="container mt-5 mb-3">
+        <div class="row align-items-center">
+            <div class="col-lg-12">
+                <div class="logo">
+                    <img src="{% static 'img/icon.ico' %}" alt="Logo">
+                    <h1>&nbsp;&nbsp;Cipher<span>&nbsp;&nbsp;Text</span></h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+<!--Topside-->
+{% block sidebar %} {% endblock %}
+
+
+<!-- Page Content -->
+{% block content %}
+<br>
+<div class="container col-lg-11" style="width: 95%; font-size: 14px">
+    <div class="container mb-5 mt-3 col-lg-10" >
+        <div class="col-md-12 mt-5">
+              <div class="card-header rounded-3 py-3 mb-4 bg-info border-0 shadow-lg">
+                    <h6 class="my-0 fw-normal text-center text-dark" style="color: white;">
+                        <i class="fa-solid fa-file-circle-exclamation">&nbsp;&nbsp; Cipher File Information</i>
+                    </h6>
+              </div>
+
+            <div class="container mb-3 pb-2 shadow-lg rounded-3 border-0 " style="height: 500px; overflow-y: auto;">
+                <div id="pt" class="col-12">
+                    <div class="card p-3 mt-3 mb-4">
+                        <div class="row" >
+                            <h3>TEXT-RECORD CIPHER INFORMATION</h3>
+                            <div class="container m-3">
+                                <p> RECORD ID  : {{ text.text_id }} </p>
+                                <p> USER ID: NAME: {{ text.user.username }} &nbsp;|&nbsp; EMAIL: {{ text.user.email }}</p>
+                                <p> DATE ENCRYPTED: {{ text.text_date }}</p>
+                                <p> TEXT NAME: {{ text.text_name }}</p>
+                                <p> TEXT CIPHER: {{ text.text_cipher }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row m-1">
+                <div class="col-2">
+                    <button onclick="myfun('pt')" type="button" class="btn btn-md btn-outline-info m-1 p-2 rounded-3">
+                        <i class="fas fa-print">&nbsp;&nbsp;Print</i>
+                    </button>
+                </div>
+                <div class="col-2">
+                    {% if user.is_staff == True %}
+                        <a href="{% url 'decrypt_file' file.id %}">
+                            <button type="button" class="btn btn-md btn-outline-success m-1 p-2 rounded-3">
+                                <i class="fas fa-unlock-keyhole">&nbsp;&nbsp;Decrypt</i>
+                            </button>
+                        </a>
+                    {% elif user.is_staff == False %}
+                        <button type="button" class="btn btn-md btn-outline-danger m-1 p-2 rounded-3 disabled">
+                            <i class="fas fa-unlock-keyhole">&nbsp;&nbsp;Decrypt</i>
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div> <!-- END // container -->
+{% endblock content %}
+
+<!-- Block Encrypt -->
+{% block encrypt %} {% endblock %}
+
+<!-- Block Decrypt -->
+{% block decrypt %} {% endblock %}
+
+<!-- Block Footer-Position -->
+{% block footer-position %} class="fixed-bottom bg-dark text-center text-lg-start text-light" {% endblock %}
+
+<!-- Block Footer -->
+{% block footer %} style="color: greenyellow;" {% endblock %}

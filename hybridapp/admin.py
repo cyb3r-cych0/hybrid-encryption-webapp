@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Text, KeyPair, File, TextFile, DecryptInfo
+from .models import Text, KeyPair, File, TextFile, CipherInfo
 
 
 @admin.register(KeyPair)
@@ -30,8 +30,8 @@ class TextFileAdmin(admin.ModelAdmin):
     list_per_page = 1
 
 
-@admin.register(DecryptInfo)
-class DecryptInfo(admin.ModelAdmin):
-    list_display = ['case_id', 'file_name', 'user', 'decrypt_date', 'integrity_check']
-    search_fields = ['case_id', 'file_name', 'user', 'decrypt_date', 'integrity_check']
+@admin.register(CipherInfo)
+class CipherInfoAdmin(admin.ModelAdmin):
+    list_display = ['cipher_id', 'cipher_name', 'user', 'decrypt_date', 'integrity_check']
+    search_fields = ['cipher_id', 'cipher_name', 'user', 'decrypt_date', 'integrity_check']
     list_per_page = 5

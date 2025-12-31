@@ -1,6 +1,9 @@
 {% extends 'components/cards/base_card.html' %}
 
-{% block link %} fa-solid fa-folder-tree {% endblock %}
-{% block link-title %} View Record
-    <a href="{% url 'view_cipher_records_backend' %}"><button class="btn btn-outline-secondary w-100 p-1 mt-3"><i class="fa-solid fa-folder-open">&nbsp;&nbsp;Proceed</i></button></a>
+{% block link %} fa-solid fa-folder-tree mt-5 {% endblock %}
+{% block link-title %}
+    <a href="{% url 'view_cipher_records' %}">
+        <button class="btn btn-info ml-5 mb-3 rounded-3 border-1 border-info  shadow-lg ">
+            <i class="fa-solid fa-folder-open">&nbsp;&nbsp;GO TO ALL CIPHERS</i>
+        </button></a>
 {% endblock %}

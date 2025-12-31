@@ -2,8 +2,9 @@
 {% load crispy_forms_tags %}
 {% load static %}
 
+
 <!-- Block Title -->
-<title>{% block title %} CBDET | Encrypt Record {% endblock %}</title>
+<title>{% block title %} NebuCrypT | Encrypt Text {% endblock %}</title>
 
 
 <!-- Navbar links control -->
@@ -12,29 +13,27 @@
 
 <!-- Block NavBar Content -->
 {% block nav-content %}
-  {% if user.is_staff == False %}
-    <i class="fa-solid fa-user-check mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Standard-User &nbsp;{{ user }}</i>
-  {% elif user.is_staff == True %}
-    <i class="fa-solid fa-user mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Admin-User &nbsp;{{ user  }}</i>
-  {% endif %}
+    <i class="fa-solid fa-user-check mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Welcome &nbsp;{{ user }}</i>
 {% endblock %}
 
 
 <!-- Logout Button -->
 {% block nav-btn %}
-    <a href="{% url 'encrypt' %}" class="btn btn-custom" id="btn-nav"><i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i></a>
+    <i class="fas fa-clock" style="color:white;">&nbsp;&nbsp;{{ date }}</i>
+    <a href="{% url 'encrypt' %}" class="btn btn-custom rounded-3" id="btn-nav">
+        <i class="fas fa-chevron-left">&nbsp;&nbsp;Back</i></a>
 {% endblock %}
 
 
 <!-- Block TopBar -->
 {% block topbar %}
-<div class="top-bar mt-4 pt-5">
+<div class="top-bar mt-5 pt-5 mb-3">
         <div class="container mt-5">
             <div class="row align-items-center">
-                <div class="col-lg-4 col-md-12">
+                <div class="col-lg-8">
                     <div class="logo">
                         <img src="{% static 'img/icon.png' %}" alt="Logo">
-                        <h1><span>CB</span>DET<span></span></h1>
+                        <h1><span></span>ENCRYPT<span><small>&nbsp;&nbsp;Text</small></span></h1>
                     </div>
                 </div>
             </div>
@@ -43,55 +42,124 @@
 {% endblock %}
 
 
+{% block sidebar %} {% endblock %}
+
+
 <!-- Page Content -->
 {% block content %}
 <br>
-<div class="container mt-2 mb-5 pb-5" style="width: 95%; font-size: 14px">
-    <button class="btn btn-danger w-100 mt-3 mb-4 no-pointer" style="color: black;">
-        <i class="fas fa-file-lines">&nbsp;&nbsp;ADD &nbsp;TEXT &nbsp;DETAILS</i>
-    </button>
+<div class="container mb-1 col-lg-10" style="width: 95%; font-size: 14px">
 
-    <!-- Message From BackEnd -->
-    {% for message in messages %}
-        {% if message.tags == 'success' %}
-            <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">
-                {{ message }}
-                <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
-            </div>
-        {% elif message.tags == 'error' %}
-            <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">
-                {{ message }}
-                <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
-            </div>
-        {% endif %}
-    {% endfor%}
+    <div class="container py-3 mt-3 col-lg-12">
+        <!-- Message From BackEnd -->
+        {% for message in messages %}
+            {% if message.tags == 'success' %}
+                <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
+                    <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
+                </div>
+            {% elif message.tags == 'error' %}
+                <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
+                    <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
+                </div>
+            {% endif %}
+        {% endfor%}
 
-    <!-- Encrypt Form -->
-    <div class="row">
-      <div class="col-md-6">
-            <form method="POST" class="card p-3 mt-2" autocomplete="off" enctype="multipart/form-data">
-                {% csrf_token %}
-                <div class="row">
-                        <div class="col-6">
-                            {{ form.text_id|as_crispy_field }}
-                        </div>
-                        <div class="col-6">
-                            {{ form.text_name|as_crispy_field }}
-                        </div>
-                        <div class="col-12">
-                            {{ form.text_cipher|as_crispy_field }}
-                        </div>
+        <!-- Encrypt Form -->
+        <div class="col">
+            <div class="card rounded-3 shadow-lg border-0">
+                  <div class="card-header rounded-top-3 py-3 text-bg-success border-0">
+                        <h6 class="my-0 fw-normal" style="color: white;">
+                            <i class="fa fa-file">&nbsp;&nbsp;ADD &nbsp;TEXT &nbsp;DETAILS</i>
+                        </h6>
+                  </div>
+                <div class="row m-1">
+                    <div class="col-lg-8 py-5 px-5">
+                        <form method="POST" class="card p-3 mt-2  rounded-3 shadow-lg border-0" autocomplete="off" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="row">
+                                    <div class="col-6">
+                                        {{ form.text_id|as_crispy_field }}
+                                    </div>
+                                    <div class="col-6">
+                                        {{ form.text_name|as_crispy_field }}
+                                    </div>
+                                    <div class="col-12">
+                                        {{ form.text_cipher|as_crispy_field }}
+                                    </div>
+                                </div>
+                            <button type="submit" class="btn btn-success mt-3 rounded-3 shadow-lg border-1">
+                                <i class="fas fa-lock">&nbsp;&nbsp;Encrypt</i>
+                            </button>
+                        </form>
                     </div>
-                <button type="submit" class="btn btn-outline-primary mt-3">
-                    <i class="fas fa-lock">&nbsp;&nbsp;Encrypt &nbsp;Text</i>
-                </button>
-            </form>
-      </div>
-      <div class="col-md-6 mt-4">
-          <img src="{% static 'img/encd.jpg' %}" alt="Image" style="width: 539px; height: 420px; padding: 1.5rem" >
-      </div>
+                    <div class="col-lg-4 mt-5 py-5 pl-1 pr-5">
+                        <img class="rounded-3 shadow-lg" src="{% static 'img/encd.jpg' %}"  alt="Image" style="width: 100%; height: 90%;" >
+                    </div>
+              </div>
+            </div>
+        </div>
+    </div>
+
+<!--Table-->
+    <div class="container py-3 mt-5 col-lg-12" >
+        <div class="col">
+            <div class="card mb-5 rounded-3 shadow-lg border-0">
+                  <div class="card-header rounded-top-3 py-3 text-bg-secondary border-0">
+                        <h6 class="my-0 fw-normal" style="color: white; text-align: center;">
+                            <i class="fa fa-folder-tree">&nbsp;&nbsp; RECENTLY &nbsp;ENCRYPTED </i>
+                        </h6>
+                  </div>
+                <div class="row my-4 mx-4">
+                    <div class="col-md-12">
+                        <table class="table bg-white">
+                            <thead class="bg-info">
+                                <tr>
+                                  <th scope="col"><i class="fa fa-folder-closed">&nbsp;&nbsp; RECORD ID</i></th>
+                                  <th scope="col"><i class="fa fa-file-lines">&nbsp;&nbsp; RECORD NAME</i></th>
+                                  <th scope="col"><i class="fa fa-user-tag">&nbsp;&nbsp; USER ID</i></th>
+                                  <th scope="col"><i class="fa fa-calendar-day">&nbsp;&nbsp; DATE &nbsp;ENCRYPTED</i></th>
+                                  <th scope="col"><i class="fa fa-circle-info">&nbsp;&nbsp; DETAILS</i></th>
+                                  <th scope="col"><i class="fa fa-circle-info">&nbsp;&nbsp; ACTION</i></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for txt in text %}
+                                    <tr>
+                                        <td>{{ txt.text_id }}</td>
+                                        <td>{{ txt.text_name }}</td>
+                                        <td>{{ txt.user.email }}</td>
+                                        <td>{{ txt.text_date }}</td>
+                                        <td>
+                                            <a href="{% url 'view_cipher_text' txt.id %}">
+                                                <button type="button" class="w-90 btn btn-md btn-outline-info rounded-3 shadow-lg">
+                                                    <i class="fas fa-expand">&nbsp;View</i>
+                                                </button>
+                                            </a>
+                                        </td>
+                                        <td>
+                                          {% if user.is_staff == True %}
+                                                <a href="{% url 'decrypt_text' txt.id %}">
+                                                    <button type="button" class="w-90 btn btn-md btn-outline-success rounded-3 shadow-lg">
+                                                        <i class="fas fa-unlock-keyhole">&nbsp;&nbsp;Decrypt</i>
+                                                    </button>
+                                                </a>
+                                            {% elif user.is_staff == False %}
+                                                <button type="button" class="w-90 btn btn-md btn-outline-danger rounded-3 shadow-lg disabled">
+                                                    <i class="fas fa-unlock-keyhole">&nbsp;&nbsp;Decrypt</i>
+                                                </button>
+                                            {% endif %}
+                                      </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div> <!-- END // container -->
+
 {% endblock content %}
 
 <!-- Block Encrypt -->
@@ -101,7 +169,7 @@
 {% block decrypt %} {% endblock %}
 
 <!-- Block Footer-Position -->
-{% block footer-position %} class="fixed-bottom bg-dark text-center text-lg-start text-light" {% endblock %}
+<!--{% block footer-position %} class="fixed-bottom bg-dark text-center text-lg-start text-light" {% endblock %}-->
 
 <!-- Block Footer -->
-{% block footer %} style="color: red;" {% endblock %}
+{% block footer %} style="color: green;" {% endblock %}

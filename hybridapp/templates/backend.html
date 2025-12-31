@@ -2,32 +2,41 @@
 {% load static %}
 
 <!-- Block Title -->
-<title>{% block title %} CBDET | Control Panel {% endblock %}</title>
+<title>{% block title %} NebuCrypt | Control Panel {% endblock %}</title>
+
 
 <!-- Navbar links control -->
 {% block links %}{% endblock %}
 
+
 <!-- Block NavBar Content -->
 {% block nav-content %}
-    <i class="fa-solid fa-user-tie ml-2 mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Administration</i>    
+    <i class="fa-solid fa-user-tie ml-2 mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;WELCOME {{ user }}</i>
     <h2 style="color: #fff; font-size: 20px"></h2>
 {% endblock %}
 
+
 <!-- Logout Button -->
 {% block nav-btn %}
-<!--    <a class="btn btn-custom" id="btn-nav-home" href="{% url 'frontend' %}" ><i class="fas fa-home">&nbsp;&nbsp;Home</i></a>-->
-    <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout"><i class="fas fa-right-from-bracket">&nbsp;&nbsp;Logout</i></a>
+    <i class="fas fa-clock" style="color:white;">&nbsp;&nbsp;{{ date }}</i>
+    <a class="btn btn-custom rounded-3" id="btn-admin" href="{% url 'admin:index' %}">
+        <i class="fas fa-gear">&nbsp;&nbsp;Admin</i>
+    </a>
+    <a class="btn btn-custom rounded-3" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout">
+        <i class="fas fa-right-from-bracket">&nbsp;&nbsp;Logout</i>
+    </a>
 {% endblock %}
+
 
 <!-- Block TopBar -->
 {% block topbar %}
-<div class="top-bar mt-5 pt-5">
+<div class="top-bar mb-5 mt-5 pt-5">
         <div class="container mt-5">
             <div class="row align-items-center">
-                <div class="col-lg-12 col-md-12">
+                <div class="col-lg-8">
                     <div class="logo">
-                        <img src="{% static 'img/icon.png' %}" alt="Logo">
-                        <h1><span>CB</span>DET<span></span></h1>
+<!--                        <img src="{% static 'img/icon.png' %}" alt="Logo">-->
+                        <h1><span>CONTROL</span>&nbsp;&nbsp;Panel</h1>
                     </div>
                 </div>
             </div>
@@ -35,19 +44,83 @@
     </div>
 {% endblock %}
 
+
+{% block sidebar %}
+<div class="container mt-5 mb-5 pb-1 col-lg-11" style="width: 100%; font-size: 14px">
+        <div class="col">
+            <div class="card-body text-bg-success rounded-4 border-0">
+                <div class="row m-0 p-1">
+                    <div class="col-md-3">
+                            <div class="card my-card bg-light shadow text-center p-3 rounded-3" style="color: green;">
+                                <h5 style="color: #082567;">User Role</h5>
+                                {% if user.is_staff == False %}
+                                    <h3><i class="fa fa-user-check">&nbsp;&nbsp;Standard</i></h3>
+                                {% elif user.is_staff == True %}
+                                    <h3><i class="fa fa-user-check">&nbsp;&nbsp;Admin</i></h3>
+                                {% endif %}
+                            </div>
+                    </div>
+                    <div class="col-md-3">
+                            <div class="card my-card bg-light shadow text-center p-3 rounded-3" style="color: green;">
+                                <h5 style="color: #082567;">Active Users</h5>
+                                <h3><i class="fa fa-user-group">&nbsp;&nbsp;{{ active_users }}</i></h3>
+                            </div>
+                    </div>
+                    <div class="col-md-3">
+                            <div class="card my-card bg-light shadow text-center p-3 rounded-3" style="color: green;">
+                                <h5 style="color: #082567;">Standard Users</h5>
+                                <h3><i class="fa fa-user-group" >&nbsp;&nbsp;{{ standard_users }}</i></h3>
+                            </div>
+                    </div>
+                    <div class="col-md-3">
+                            <div class="card my-card bg-light shadow text-center p-3 rounded-3" style="color: green;">
+                                <h5 style="color: #082567;">Admin Users </h5>
+                                <h3><i class="fa fa-user-group" >&nbsp;&nbsp;{{ admin_users }}</i></h3>
+                            </div>
+                    </div>
+                </div>
+                <div class="row m-0 p-1">
+                    <div class="col-md-3">
+                            <div class="card my-card bg-light shadow text-center p-3 rounded-3" style="color: green;">
+                                <h5 style="color: #082567;">Total Encrypted Data</h5>
+                                <h3><i class="fa fa-lock " >&nbsp;&nbsp;{{ total_ciphers }}</i></h3>
+                            </div>
+                    </div>
+                    <div class="col-md-3">
+                            <div class="card my-card bg-light shadow text-center p-3 rounded-3" style="color: green;">
+                                <h5 style="color: #082567;">Total Decrypted Data</h5>
+                                <h3><i class="fa fa-lock-open">&nbsp;&nbsp;{{ total_deciphers }}</i></h3>
+                            </div>
+                    </div>
+
+                    <div class="col-md-3">
+                            <div class="card my-card bg-light shadow text-center p-3 rounded-3" style="color: green;">
+                                <h5 style="color: #082567;">Keys Generated</h5>
+                                <h3><i class="fa fa-unlock-keyhole" >&nbsp;&nbsp;{{ cipher_keys }}</i></h3>
+                            </div>
+                    </div>
+
+                    <div class="col-md-3">
+                            <div class="card my-card bg-light shadow text-center p-3 rounded-3" style="color: green;">
+                                <h5 style="color: #082567;">Integrity Rate</h5>
+                                <h3><i class="fa fa-file-shield">&nbsp;&nbsp;{{ integrity_rate }}%</i></h3>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
 <!-- Page Content -->
 {% block content %}
 <br>
-<div class="container mt-5 mb-4 pb-5" style="width: 95%; font-size: 14px">
-    <!-- links|cards -->
-    <button class="btn btn-success w-100 mb-5 no-pointer" style="color: black;">
-        <i class="fas fa-sliders">&nbsp;&nbsp;CONTROL PANEL</i>
-    </button>
-    <div class="card p-3 mt-2">
-        <div class="row">
-            {% include 'components/cards/all_cards.html' %}
-        </div>
-    </div>
+<div class="container mb-4 col-lg-10 rounded-4 bg-light shadow-lg border-0" style="width: 95%; font-size: 14px">
+        <!-- links|cards -->
+            <div class="row bg-info rounded-3 shadow-lg border-0">
+                {% include 'components/cards/all_cards.html' %}
+            </div>
 </div> <!-- END // container -->
 
 {% endblock content %}

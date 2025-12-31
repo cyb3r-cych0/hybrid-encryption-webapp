@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.utils.safestring import mark_safe
 from django.forms import ModelForm
 from .models import Text, TextFile, File
 
@@ -14,8 +15,8 @@ class FileForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['file_id'].label = 'FILE ID'.format(self.fields['file_id'].label)
-        self.fields['file_name'].label = 'UPLOAD FILE'.format(self.fields['file_name'].label)
+        self.fields['file_id'].label = mark_safe('<strong>FILE ID</strong>').format(self.fields['file_id'].label)
+        self.fields['file_name'].label = mark_safe('File Upload').format(self.fields['file_name'].label)
 
 
 class TextForm(ModelForm):
@@ -28,9 +29,9 @@ class TextForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['text_id'].label = 'TEXT ID'.format(self.fields['text_id'].label)
-        self.fields['text_name'].label = 'TEXT NAME'.format(self.fields['text_name'].label)
-        self.fields['text_cipher'].label = 'TEXT INFO'.format(self.fields['text_cipher'].label)
+        self.fields['text_id'].label = mark_safe('<strong>TEXT ID</strong>').format(self.fields['text_id'].label)
+        self.fields['text_name'].label = mark_safe('<strong>TEXT NAME</strong>').format(self.fields['text_name'].label)
+        self.fields['text_cipher'].label = mark_safe('<strong>TEXT INFORMATION</strong>').format(self.fields['text_cipher'].label)
 
 
 class TextFileForm(ModelForm):
@@ -43,10 +44,10 @@ class TextFileForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['textfile_id'].label = 'TEXTFILE ID'.format(self.fields['textfile_id'].label)
-        self.fields['textfile_name'].label = 'TEXTFILE NAME'.format(self.fields['textfile_name'].label)
-        self.fields['textfile_text'].label = 'TEXT INFO'.format(self.fields['textfile_text'].label)
-        self.fields['textfile_file'].label = 'UPLOAD FILE'.format(self.fields['textfile_file'].label)
+        self.fields['textfile_id'].label = mark_safe('<strong>TEXTFILE ID</strong>').format(self.fields['textfile_id'].label)
+        self.fields['textfile_name'].label = mark_safe('<strong>TEXTFILE NAME</strong>').format(self.fields['textfile_name'].label)
+        self.fields['textfile_text'].label = mark_safe('<strong>TEXT INFORMATION</strong>').format(self.fields['textfile_text'].label)
+        self.fields['textfile_file'].label = mark_safe('<strong>UPLOAD FILE</strong>').format(self.fields['textfile_file'].label)
 
 
 class RegisterForm(UserCreationForm):
@@ -69,7 +70,7 @@ class RegisterForm(UserCreationForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['email'].label = 'YOUR EMAIL'.format(self.fields['email'].label)
-        self.fields['username'].label = 'USER NAME'.format(self.fields['username'].label)
-        self.fields['password1'].label = 'CREATE PASSWORD'.format(self.fields['password1'].label)
-        self.fields['password2'].label = 'REPEAT PASSWORD'.format(self.fields['password2'].label)
+        self.fields['email'].label = mark_safe('<strong>YOUR EMAIL</strong>').format(self.fields['email'].label)
+        self.fields['username'].label = mark_safe('<strong>USER NAME</strong>').format(self.fields['username'].label)
+        self.fields['password1'].label = mark_safe('<strong>CREATE PASSWORD</strong>').format(self.fields['password1'].label)
+        self.fields['password2'].label = mark_safe('<strong>REPEAT PASSWORD</strong>').format(self.fields['password2'].label)
