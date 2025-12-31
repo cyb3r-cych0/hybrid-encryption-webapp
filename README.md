@@ -1,8 +1,13 @@
 # Hybrid Encryption Web Application
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Django](https://img.shields.io/badge/Django-4.2.13-green.svg)](https://www.djangoproject.com/)
-[![Python](https://img.shields.io/badge/Python-3.12-blue.svg)](https://www.python.org/)
+[![Django](https://img.shields.io/badge/Django-6.0-green.svg)](https://www.djangoproject.com/)
+[![Python](https://img.shields.io/badge/Python-3.14-blue.svg)](https://www.python.org/)
+![Offline](https://img.shields.io/badge/AES-yes-success)
+![Offline](https://img.shields.io/badge/RSA-yes-success)
+![Security](https://img.shields.io/badge/security-runtime--only-critical)
+![Status](https://img.shields.io/badge/status-stable-green)
+
 
 A robust web-based data encryption and decryption platform that implements hybrid encryption techniques combining symmetric (AES) and asymmetric (RSA) cryptography. This application ensures secure data handling with integrity verification, user authentication, and role-based access control.
 
