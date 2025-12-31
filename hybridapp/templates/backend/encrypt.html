@@ -160,7 +160,7 @@
     <div class="container py-3 mt-3 col-lg-11" >
         <div class="col">
             <div class="card mb-5 rounded-3 shadow-lg border-0">
-                  <div class="card-header rounded-top-3 py-3 text-bg-success border-0">
+                  <div class="card-header rounded-top-3 py-3 text-bg-secondary border-0">
                         <h6 class="my-0 fw-normal" style="color: white; text-align: center;">
                             <i class="fa fa-folder-tree">&nbsp;&nbsp; RECENTLY &nbsp;ENCRYPTED</i>
                         </h6>
@@ -175,7 +175,7 @@
                                   <th scope="col"><i class="fa fa-user-tag">&nbsp;&nbsp; USER ID</i></th>
                                   <th scope="col"><i class="fa fa-calendar-day">&nbsp;&nbsp; DATE ENCRYPTED</i></th>
                                   <th scope="col"><i class="fa fa-circle-info">&nbsp;&nbsp; DETAILS</i></th>
-                                  <th scope="col"><i class="fa fa-circle-info">&nbsp;&nbsp; ACTION</i></th>
+                                  <th scope="col"><i class="fa fa-bars-progress">&nbsp;&nbsp; ACTION</i></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -196,7 +196,7 @@
                                     {% if user.is_staff == True %}
                                     <a href="{% url 'decrypt_file' f.id %}">
                                         <button type="button" class="w-100 btn btn-sm btn-outline-success rounded-3 shadow-md border-1 border-success">
-                                            <i class="fas fa-unlock-keyhole">&nbsp;View</i>
+                                            <i class="fas fa-unlock-keyhole">&nbsp;Decrypt</i>
                                         </button>
                                     </a>
                                     {% elif user.is_staff == False %}
@@ -277,7 +277,7 @@
     </div>
     <a href="{% url 'view_cipher_records' %}">
         <button class="w-90 btn btn-lg btn-outline-info rounded-3 shadow-md border-1 border-info">
-            <i class="fa fa-folder-plus">&nbsp;&nbsp;More &nbsp;Ciphers</i>
+            <i class="fa fa-folder-open">&nbsp;&nbsp;More &nbsp;Ciphers</i>
         </button>
     </a>
 </div>

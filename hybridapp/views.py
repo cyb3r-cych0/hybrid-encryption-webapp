@@ -167,27 +167,26 @@ class ViewUsersBackend(View):
 class ViewUserDetailsBackend(View):
     @staticmethod
     def get(request, id):
-        user = request.user
-        user_details = get_object_or_404(User, id=id)
         try:
+            user = request.user
+            user_details = get_object_or_404(User, id=id)
+            keypair = get_object_or_404(KeyPair, id=id)
+            keypair_num = KeyPair.objects.all().count()
             texts = Text.objects.filter(user=user_details).count()
             files = File.objects.filter(user=user_details).count()
             textfiles = TextFile.objects.filter(user=user_details).count()
-            total_files = files + texts + textfiles
-
-            text = Text.objects.filter(user=user_details).order_by('-id')[:1]
-            file = File.objects.filter(user=user_details).order_by('-id')[:1]
-            textfile = TextFile.objects.filter(user=user_details).order_by('-id')[:1]
+            encrypted_data = files + texts + textfiles
+            decrypted_data = CipherInfo.objects.filter(user_id=user_details).count()
         except Exception as e:
             messages.error(request, f'Error: {str(e)}')
-            raise Http404(f'User Details Not Found! {str(e)}')
+            return redirect('view_user_details_backend')
         context = {
+            'keypair': keypair,
+            'keypair_num': keypair_num,
             'user_details': user_details,
-            'total_files': total_files,
+            'encrypted_data': encrypted_data,
+            'decrypted_data': decrypted_data,
             'user': user,
-            'file': file,
-            'text': text,
-            'textfile': textfile
         }
         return render(request, 'backend/view_user_details_backend.html', context)
 
@@ -197,21 +196,25 @@ class ViewUserDetailsBackend(View):
 class ViewAllUsersBackend(View):
     @staticmethod
     def get(request, id):
-        user = request.user
-        user_details = get_object_or_404(User, id=id)
         try:
-            text = Text.objects.filter(user=user_details).order_by('-id')
-            file = File.objects.filter(user=user_details).order_by('-id')
-            textfile = TextFile.objects.filter(user=user_details).order_by('-id')
+            user = request.user
+            user_details = get_object_or_404(User, id=id)
+            keypair = KeyPair.objects.filter(user_id=user_details).count()
+            decrypted_data = CipherInfo.objects.filter(user_id=user_details).count()
+
+            text = Text.objects.filter(user=user_details).count()
+            file = File.objects.filter(user=user_details).count()
+            textfile = TextFile.objects.filter(user=user_details).count()
+            encrypted_data = file + text + textfile
         except Exception as e:
             messages.error(request, f'Error: {str(e)}')
             raise Http404(f'User Details Not Found! {str(e)}')
         context = {
             'user_details': user_details,
-            'user': user,
-            'file': file,
-            'text': text,
-            'textfile': textfile
+            'keypair': keypair,
+            'decrypted_data': decrypted_data,
+            'encrypted_data': encrypted_data,
+            'user': user
         }
         return render(request, 'backend/view_all_users.html', context)
 

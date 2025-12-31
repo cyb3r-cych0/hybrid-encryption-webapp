@@ -5,12 +5,15 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from Crypto.PublicKey import RSA
+from django_cryptography.fields import encrypt
 
 
 class KeyPair(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    # Public key can remain plaintext for easy lookup
     public_key = models.TextField()
-    private_key = models.TextField()
+    # Private key is encrypted before being stored
+    private_key = encrypt(models.TextField())
 
     def __str__(self):
         return self.user
