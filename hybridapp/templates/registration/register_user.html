@@ -3,7 +3,7 @@
 {% load static %}
 
 <!-- Block Title -->
-<title>{% block title %} CBDET | Register {% endblock %}</title>
+<title>{% block title %} NebuCrypT | Register {% endblock %}</title>
 
 <!-- Navbar links control -->
 {% block links %}{% endblock %}
@@ -15,19 +15,22 @@
 
 <!-- Logout Button -->
 {% block nav-btn %}
-<a href="{% url 'frontend' %}" class="btn btn-custom" id="btn-nav"><i class="fas fa-chevron-left">&nbsp;&nbsp;Go Back</i></a>
-<a href="{% url 'backend' %}" class="btn btn-custom" id="btn-nav-login"><i class="fas fa-right-to-bracket">&nbsp;&nbsp;Login</i></a>
+    <a href="{% url 'frontend' %}" class="btn btn-custom" id="btn-nav">
+        <i class="fas fa-chevron-left">&nbsp;&nbsp;Go Back</i>
+    </a>
+    <a href="{% url 'backend' %}" class="btn btn-custom" id="btn-nav-login">
+        <i class="fas fa-right-to-bracket">&nbsp;&nbsp;Login</i>
+    </a>
 {% endblock %}
 
 <!-- Block TopBar -->
 {% block topbar %}
-<div class="top-bar mt-4 pt-5">
+<div class="top-bar mt-5 pt-5">
         <div class="container mt-5">
             <div class="row align-items-center">
-                <div class="col-lg-4 col-md-12">
+                <div class="col-lg-8 mt-5">
                     <div class="logo">
-                        <img src="{% static 'img/icon.png' %}" alt="Logo">
-                        <h1><span>CB</span>DET</h1>
+                        <h1><span></span>Register<span><small>&nbsp;&nbsp;User</small></span></h1>
                     </div>
                 </div>
             </div>
@@ -35,63 +38,79 @@
     </div>
 {% endblock %}
 
+
+{% block sidebar %} {% endblock %}
+
+
 <!-- Page Content -->
 {% block content %}
-<div class="container mt-4 mb-5" style="width: 95%; font-size: 14px">
-    <button class="btn btn-danger w-100 mt-3 mb-2 no-pointer" style="color: black;">
-        <i class="fa-solid fa-circle-info">&nbsp;REGISTER &nbsp;USER &nbsp;DETAILS</i>
-    </button>
-
-    <!-- Message From BackEnd -->
-    {% for message in messages %}
-        {% if message.tags == 'success' %}
-            <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
-                <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
-            </div>
-        {% elif message.tags == 'error' %}
-            <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
-                <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
-            </div>
-        {% endif %}
-    {% endfor%}
+<div class="container col-md-9 mt-5 mb-5" style="width: 95%; font-size: 14px">
 
     <!-- Register Form -->
-    <div class="row mt-5">
-        <div class="col-md-6">
-            <div class="container card p-3 border-dark mt-1 mb-5" style="width: 95%;">
-                <div class="text-center border-bottom mb-3 mt-1"><h5><i class="fa-solid fa-user-pen">&nbsp;NEW &nbsp;USER &nbsp;DETAILS</i></h5></div>
-                    <form method="POST" autocomplete="off" novalidate>
-                        {% csrf_token %}
-                        <div class="row">
-                            <div class="col-12 mt-2">
-                                {{ form.username|as_crispy_field }}
-                            </div>
-                            <div class="col-12 mt-2">
-                                {{ form.email|as_crispy_field }}
-                            </div>
-                            <div class="col-6 mt-2">
-                                {{ form.password1|as_crispy_field }}
-                            </div>
-                            <div class="col-6 mt-2">
-                                {{ form.password2|as_crispy_field }}
-                            </div>
+    <div class="container py-5 mt-3 col-lg-12" >
+        <!-- Message From BackEnd -->
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                    <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
+                        <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
+                    </div>
+                {% elif message.tags == 'error' %}
+                    <div class="text-center alert alert-primary alert-dismissible fade show" role="alert">{{ message }}
+                        <a href="#" type="button" class="btn btn-close" data-bs-dismiss="alert" aria-label="Close"></a>
+                    </div>
+                {% endif %}
+            {% endfor%}
+        <div class="col">
+            <div class="card mb-5 rounded-3 shadow-lg border-0">
+              <div class="card-header py-3 text-bg-success border-0">
+                <h6 class="my-0 fw-normal" style="color: white;">
+                    <i class="fa fa-user">&nbsp;&nbsp;ENTER &nbsp;USER &nbsp;DETAILS</i>
+                </h6>
+              </div>
+            <div class="row mt-5">
+                <div class="col-md-6">
+                    <div class="container card p-3 border-0 shadow-lg mt-1 mb-5" style="width: 95%;">
+                        <div class="text-center mb-3 mt-1"><h5><i class="fa-solid fa-user-pen">&nbsp;NEW &nbsp;USER &nbsp;DETAILS</i></h5></div>
+                            <form method="POST" autocomplete="off" novalidate>
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col-12 mt-2">
+                                        {{ form.username|as_crispy_field }}
+                                    </div>
+                                    <div class="col-12 mt-2">
+                                        {{ form.email|as_crispy_field }}
+                                    </div>
+                                    <div class="col-6 mt-2">
+                                        {{ form.password1|as_crispy_field }}
+                                    </div>
+                                    <div class="col-6 mt-2">
+                                        {{ form.password2|as_crispy_field }}
+                                    </div>
+                                </div>
+                                <button type="submit" class="w-100 btn btn-success mt-2 rounded-pill">
+                                    <i class="fa-solid fa-user-plus">&nbsp;&nbsp;REGISTER</i>
+                                </button>
+                            </form>
                         </div>
-                        <button type="submit" class="w-100 btn btn-outline-primary mt-2"><i class="fa-solid fa-user-plus">&nbsp;&nbsp;REGISTER</i></button>
-                    </form>
+                    </div>
+                <div class="col-md-6">
+                    <img src="{% static 'img/reg.webp' %}" alt="Image" style="width: 550px; height: 400px; padding: 1rem;" >
                 </div>
             </div>
-        <div class="col-md-6">
-            <img src="{% static 'img/reg.webp' %}" alt="Image" style="width: 550px; height: 400px; padding: 1rem;" >
+        </div>
         </div>
     </div>
 </div>
 {% endblock content %}
-
-<!-- Block Footer -->
-{% block footer %} style="color: #d3d3d3;" {% endblock %}
 
 <!-- Block Encrypt -->
 {% block encrypt %} {% endblock %}
 
 <!-- Block Decrypt -->
 {% block decrypt %} {% endblock %}
+
+<!-- Block Footer-Position -->
+{% block footer-position %} class="fixed-bottom bg-dark text-center text-lg-start text-light" {% endblock %}
+
+<!-- Block Footer -->
+{% block footer %} style="color: greenyellow;" {% endblock %}

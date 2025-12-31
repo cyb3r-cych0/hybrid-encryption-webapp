@@ -1,6 +1,9 @@
 {% extends 'components/cards/base_card.html' %}
 
-{% block link %} fa-solid fa-search {% endblock %}
-{% block link-title %} Search Record
-    <a href="{% url 'search_cipher_records_backend' %}"><button class="btn btn-outline-secondary w-100 p-1 mt-3"><i class="fa-solid fa-magnifying-glass-arrow-right">&nbsp;&nbsp;Proceed</i></button></a>
+{% block link %} fa-solid fa-search mt-5 {% endblock %}
+{% block link-title %}
+    <a href="{% url 'search_cipher_records' %}">
+        <button class="btn btn-info ml-5 mb-3 shadow-lg border-info rounded-3 border-1">
+            <i class="fa-solid fa-magnifying-glass-arrow-right">&nbsp;&nbsp;GO TO SEARCH CIPHER</i>
+        </button></a>
 {% endblock %}

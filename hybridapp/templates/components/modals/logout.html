@@ -17,5 +17,8 @@
 
 <!-- Modal Footer -->
 {% block modal-footer %}
-<a href="{% url 'logout' %}" class="btn btn-outline-danger btn-sm"><i class="fas fa-user-xmark">&nbsp;&nbsp;logout</i></a>
+<form method="post" action="{% url 'logout' %}">
+  {% csrf_token %}
+  <button class="btn btn-outline-danger btn-sm" type="submit"><i class="fas fa-user-xmark">&nbsp;&nbsp;logout</i></button>
+</form>
 {% endblock %}

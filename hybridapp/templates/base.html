@@ -31,7 +31,7 @@
                         <div class="col-lg-12 col-md-12">
                             <div class="logo">
                                 <img src="{% static 'img/icon.png' %}" alt="Logo">
-                                <h1><span>CB</span>DET</h1>
+                                <h1><span>NEBU</span>CRYPT</h1>
                             </div>
                         </div>
                     </div>
@@ -48,7 +48,7 @@
                     {% block nav-content %}
                         <div class="col-sm">
                             <a href="#" class="navbar-brand flex-grow-1 text-center text-light">
-                                <i class="fa-solid fa-car mb-3" style="color: #fff; font-size: 20px"></i>   &nbsp;&nbsp; <h2 style="color: #fff; font-size: 20px">CBDET</h2>
+                                <i class="fa-solid fa-car mb-3" style="color: #fff; font-size: 20px"></i>   &nbsp;&nbsp; <h2 style="color: #fff; font-size: 20px">NebuCrypT</h2>
                             </a>
                         </div>
                      {% endblock %}
@@ -60,7 +60,6 @@
                                 <div class="navbar-nav mr-5">
                                     <a href="{% url 'frontend' %}" class="nav-item nav-link">Home</a>
                                     <a href="{% url 'encrypt' %}" class="nav-item nav-link">Encryption</a>
-                                    <a href="{% url 'decrypt' %}" class="nav-item nav-link">Decryption</a>
                                     <a href="{% url 'frontend' %}" class="nav-item nav-link">System-Info</a>
                                 </div>
                             </div>
@@ -70,8 +69,12 @@
                     <!-- Button (Right Side) -->
                     <div class="ml-auto m-2">
                         {% block nav-btn %}
-                            <a href="{% url 'backend' %}" class="btn btn-custom" id="btn-nav-login"><i class="fas fa-right-to-bracket">&nbsp;&nbsp;Login</i></a>
-                            <a href="{% url 'register_user' %}" class="btn btn-custom" id="btn-nav-register"><i class="fas fa-arrow-right-to-bracket">&nbsp;&nbsp;Register</i></a>
+                            <a href="{% url 'backend' %}" class="btn btn-custom" id="btn-nav-login">
+                                <i class="fas fa-right-to-bracket">&nbsp;&nbsp;Login</i>
+                            </a>
+                            <a href="{% url 'register_user' %}" class="btn btn-custom" id="btn-nav-register">
+                                <i class="fas fa-arrow-right-to-bracket">&nbsp;&nbsp;Register</i>
+                            </a>
                         {% endblock %}
                     </div>
                 </nav>
@@ -79,75 +82,167 @@
         </div>
 
         <!-- === Block Content (ROOT) === -->
+        {% block sidebar %}
+        <div class="container mt-5 mb-1 pb-1 col-lg-11" style="width: 100%; font-size: 14px">
+            <div class="col-md-12 mt-5">
+                <div class="card">
+                    <div class="card-header bg-info text-dark">
+                       <i class="fa fa-circle-info">&nbsp;&nbsp;WELCOME {{ user }}</i>
+                    </div>
+                    <div class="card-body">
+                        <div class="row m-1">
+                            <div class="col-md-3">
+                                <a class="text-decoration-none text-dark" href="#">
+                                    <div class="card my-card shadow text-center p-3 " style="color: green;">
+                                        <h5 class="border" style="color: black;">User Role</h5>
+                                        {% if user.is_staff == False %}
+                                            <h1><i class="fa fa-user">&nbsp;&nbsp;Standard</i></h1>
+                                        {% elif user.is_staff == True %}
+                                            <h1><i class="fa fa-user">&nbsp;&nbsp;Admin</i></h1>
+                                        {% endif %}
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-md-3">
+                                <a class="text-decoration-none text-dark" href="{% url 'view_users_backend'%}">
+                                    <div class="card my-card shadow text-center p-3" style="color: green;">
+                                        <h5 class="border" style="color: black;">Active Users</h5>
+                                        <h1><i class="fa fa-user-group">&nbsp;&nbsp;{{ active_users }}</i></h1>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-md-3">
+                                <a class="text-decoration-none text-dark" href="{% url 'view_users_backend'%}">
+                                    <div class="card my-card shadow text-center p-3" style="color: green;">
+                                        <h5 class="border" style="color: black;">Standard Users</h5>
+                                        <h1><i class="fa fa-user-group" >&nbsp;&nbsp;{{ standard_users }}</i></h1>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-md-3">
+                                <a class="text-decoration-none text-dark" href="{% url 'view_users_backend'%}">
+                                    <div class="card my-card shadow text-center p-3" style="color: green;">
+                                        <h5 class="border" style="color: black;">Admin Users </h5>
+                                        <h1><i class="fa fa-user-group" >&nbsp;&nbsp;{{ admin_users }}</i></h1>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row m-1 mt-5">
+                            <div class="col-md-3">
+                                <a class="text-decoration-none text-dark" href="{% url 'view_cipher_records'%}">
+                                    <div class="card my-card shadow text-center p-3" style="color: green;">
+                                        <h5 class="border" style="color: black;">Total Encrypted Data</h5>
+                                        <h1><i class="fa fa-lock color-red" >&nbsp;&nbsp;{{ total_ciphers }}</i></h1>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-md-3">
+                                <a class="text-decoration-none text-dark" href="#">
+                                    <div class="card my-card shadow text-center p-3" style="color: green;">
+                                        <h5 class="border" style="color: black;">Total Decrypted Data</h5>
+                                        <h1><i class="fa fa-lock-open">&nbsp;&nbsp;{{ total_deciphers }}</i></h1>
+                                    </div>
+                                </a>
+                            </div>
+
+                            <div class="col-md-3">
+                                <a class="text-decoration-none text-dark" href="{% url 'view_cipher_records'%}">
+                                    <div class="card my-card shadow text-center p-3" style="color: green;">
+                                        <h5 class="border" style="color: black;">Keys Generated</h5>
+                                        <h1><i class="fa fa-unlock-keyhole" >&nbsp;&nbsp;{{ cipher_keys }}</i></h1>
+                                    </div>
+                                </a>
+                            </div>
+
+                            <div class="col-md-3">
+                                <a class="text-decoration-none text-dark" href="#">
+                                    <div class="card my-card shadow text-center p-3" style="color: green;">
+                                        <h5 class="border" style="color: black;">Integrity Rate</h5>
+                                        <h1><i class="fa fa-file-shield">&nbsp;&nbsp;{{ integrity_rate }}%</i></h1>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endblock %}
         {% block content %} {% endblock content %}
+
 
         <!-- Includes (NO PK) -->
         {% include 'components/modals/logout.html' %}
 
         <!-- Encryption Start -->
         {% block encrypt %}
-            <div class="about">
-                <div class="container">
-                    <div class="row align-items-center">
-                        <div class="col-lg-6">
-                            <div class="about-img mt-5">
-                                <img src="{% static 'img/encrypt.webp' %}" alt="Image" style="height: 450px; padding: 1.5rem">
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="section-header text-left">
-                                <p>Encryption</p>
-                                <h2>Encrypt Records</h2>
-                            </div>
-                            <div class="about-content">
-                                <p>Type of record extentions:</p>
-                                <ul>
-                                    <li><i class="far fa-check-circle"></i>.txt</li>
-                                    <li><i class="far fa-check-circle"></i>.jpg</li>
-                                    <li><i class="far fa-check-circle"></i>.jpeg</li>
-                                    <li><i class="far fa-check-circle"></i>.csv</li>
-                                </ul>
-                                <a class="btn btn-custom" href="{% url 'encrypt' %}"><i class="fas fa-caret-right">&nbsp;&nbsp;GO TO ENCRYPTION</i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<!--            <div class="about">-->
+<!--                <div class="container">-->
+<!--                    <div class="row align-items-center">-->
+<!--                        <div class="col-lg-6">-->
+<!--                            <div class="about-img mt-5">-->
+<!--                                <img src="{% static 'img/encrypt.webp' %}" alt="Image" style="height: 450px; padding: 1.5rem">-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="col-lg-6">-->
+<!--                            <div class="section-header text-left">-->
+<!--                                <p>Encryption</p>-->
+<!--                                <h2>Encrypt Records</h2>-->
+<!--                            </div>-->
+<!--                            <div class="about-content">-->
+<!--                                <p>Type of record extentions:</p>-->
+<!--                                <ul>-->
+<!--                                    <li><i class="far fa-check-circle"></i>.txt</li>-->
+<!--                                    <li><i class="far fa-check-circle"></i>.jpg</li>-->
+<!--                                    <li><i class="far fa-check-circle"></i>.jpeg</li>-->
+<!--                                    <li><i class="far fa-check-circle"></i>.csv</li>-->
+<!--                                </ul>-->
+<!--                                <a class="btn btn-custom" href="{% url 'encrypt' %}">-->
+<!--                                    <i class="fas fa-caret-right">&nbsp;&nbsp;GO TO ENCRYPTION</i>-->
+<!--                                </a>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
         {% endblock %}
         <!-- Encryption End -->
 
         <!-- Decryption Start -->
         {% block decrypt %}
-            <div class="about">
-                <div class="container">
-                    <div class="row align-items-center">
+<!--            <div class="about">-->
+<!--                <div class="container">-->
+<!--                    <div class="row align-items-center">-->
 
-                        <div class="col-lg-6">
-                            <div class="section-header text-left">
-                                <p>Decryption</p>
-                                <h2>Decrypt Records</h2>
-                            </div>
-                            <div class="about-content">
-                                <p>
-                                    Type of record extentions:
-                                </p>
-                                <ul>
-                                    <li><i class="far fa-check-circle"></i>.bin</li>
-                                    <li><i class="far fa-check-circle"></i>.txt</li>
-                                    <li><i class="far fa-check-circle"></i>.enc</li>
-                                    <li><i class="far fa-check-circle"></i>.*</li>
-                                </ul>
-                                <a class="btn btn-custom" href="{% url 'decrypt' %}"><i class="fas fa-caret-right">&nbsp;&nbsp;GO TO DECRYPTION</i></a>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="about-img">
-                                <img src="{% static 'img/decryption.webp' %}" alt="Image" style="height: 450px; padding: 1.5rem">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<!--                        <div class="col-lg-6">-->
+<!--                            <div class="section-header text-left">-->
+<!--                                <p>Decryption</p>-->
+<!--                                <h2>Decrypt Records</h2>-->
+<!--                            </div>-->
+<!--                            <div class="about-content">-->
+<!--                                <p>-->
+<!--                                    Type of record extentions:-->
+<!--                                </p>-->
+<!--                                <ul>-->
+<!--                                    <li><i class="far fa-check-circle"></i>.bin</li>-->
+<!--                                    <li><i class="far fa-check-circle"></i>.txt</li>-->
+<!--                                    <li><i class="far fa-check-circle"></i>.enc</li>-->
+<!--                                    <li><i class="far fa-check-circle"></i>.*</li>-->
+<!--                                </ul>-->
+<!--                                <a class="btn btn-custom" href="{% url 'decrypt' %}">-->
+<!--                                    <i class="fas fa-caret-right">&nbsp;&nbsp;GO TO DECRYPTION</i>-->
+<!--                                </a>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="col-lg-6">-->
+<!--                            <div class="about-img">-->
+<!--                                <img src="{% static 'img/decryption.webp' %}" alt="Image" style="height: 450px; padding: 1.5rem">-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
         {% endblock %}
         <!-- Decrypt End -->
 
@@ -156,7 +251,7 @@
                 <div class="text-center p-3 m-1" style="background-color: rgba(0, 0, 0, 0.2);">
                     &copy; {% now "Y" %}
                     <a class="text-light" href="#" style="text-decoration: none;">
-                        <span  {% block footer %} style="color: greenyellow;" {% endblock %} >cyb3r-cych0</span>
+                        <span  {% block footer %} style="color: greenyellow;" {% endblock %} >NebuCrypT</span>
                     </a>
                 </div>
             </footer>

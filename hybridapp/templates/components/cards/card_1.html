@@ -1,6 +1,10 @@
 {% extends 'components/cards/base_card.html' %}
 
-{% block link %} fa-solid fa-lock {% endblock %}
-{% block link-title %} Encrypt Record
-    <a href="{% url 'encrypt' %}"><button class="btn btn-outline-secondary w-100 p-1 mt-3 "><i class="fas fa-lock">&nbsp;&nbsp;Proceed</i></button></a>
+{% block link %} fa-solid fa-lock mt-5 {% endblock %}
+{% block link-title %}
+    <a href="{% url 'encrypt' %}">
+        <button class="btn W-100 btn-info ml-3 mb-3 rounded-3 focus-ring shadow-lg border-1 border-info">
+            <i class="fas fa-lock ">&nbsp;&nbsp;GOT TO Encrypt Dashboard</i>
+        </button>
+    </a>
 {% endblock %}

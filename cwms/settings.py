@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'hybridapp',
     'crispy_forms',
     'crispy_bootstrap5',
-    'bootstrap5',
+    'django_bootstrap5',
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
@@ -89,17 +89,14 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': 'my_database',
-    #     'USER': str(os.environ.get('DATABASE_USER')),
-    #     'PASSWORD': str(os.environ.get('DATABASE_PASSWORD')),
-    #     'HOST': '127.0.0.1',
-    #     'PORT': '3306',
-    #     'OPTIONS': {
-    #         'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
-    #     }
-    # }
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': str(os.environ.get('DATABASE_NAME')),
+#         'USER': str(os.environ.get('DATABASE_USER')),
+#         'PASSWORD': str(os.environ.get('DATABASE_PASSWORD')),
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
 }
 
 

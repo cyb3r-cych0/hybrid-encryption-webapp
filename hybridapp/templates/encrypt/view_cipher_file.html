@@ -1,46 +1,44 @@
 {% extends 'base.html' %}
 {% load static %}
 
+<!-- Block Title -->
+<title>{% block title %} NebuCrypT | File-Cipher Details {% endblock %}</title>
+
+
 <!-- Navbar links control -->
 {% block links %}{% endblock %}
 
 
 <!-- Block NavBar Content -->
 {% block nav-content %}
-  {% if user.is_staff == False %}
-    <i class="fa-solid fa-user-check mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Standard-User &nbsp;{{ user }}</i>
-  {% elif user.is_staff == True %}
-    <i class="fa-solid fa-user mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Admin-User &nbsp;{{ user  }}</i>
-  {% endif %}
+    <i class="fa-solid fa-user-check mb-3" style="color: #fff; font-size: 20px">&nbsp;&nbsp;Welcome &nbsp;{{ user }}</i>
 {% endblock %}
-
-
-<!-- Block Title -->
-<title>{% block title %} CBDET | File-Record Details {% endblock %}</title>
 
 
 <!-- Logout Button -->
 {% block nav-btn %}
-    <a class="btn btn-custom" id="btn-nav-view" onclick="goBack()">
+    <i class="fas fa-clock" style="color:white;">&nbsp;&nbsp;{{ date }}</i>
+
+<a class="btn btn-custom rounded-3" id="btn-nav-view" onclick="goBack()">
         <i class="fa fa-chevron-left">&nbsp;&nbsp; Back</i>
     </a>
-    <a class="btn btn-custom" id="btn-nav-back" href="{% url 'encrypt' %}" >
+    <a class="btn btn-custom rounded-3" id="btn-nav-back" href="{% url 'encrypt' %}" >
         <i class="fas fa-table-columns">&nbsp;&nbsp;Dashboard</i>
     </a>
-    <a class="btn btn-custom" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout">
+    <a class="btn btn-custom rounded-3" id="btn-nav" data-bs-toggle="modal" data-bs-target="#logout">
         <i class="fa fa-right-from-bracket">&nbsp;&nbsp; Logout</i>
     </a>
 {% endblock %}
 
 
 {% block topbar %}
-<div class="top-bar mt-4 pt-5">
+<div class="top-bar mt-5 pt-5">
         <div class="container mt-5">
             <div class="row align-items-center">
-                <div class="col-lg-4 col-md-12">
+                <div class="col-lg-8 mb-3">
                     <div class="logo">
                         <img src="{% static 'img/icon.ico' %}" alt="Logo">
-                        <h1><span>CB</span>DET<span></span></h1>
+                        <h1><span></span>Cipher<span>&nbsp;File<small>&nbsp;&nbsp;Details</small></span></h1>
                     </div>
                 </div>
             </div>
@@ -49,36 +47,131 @@
 {% endblock %}
 
 
-<!-- Page Content -->
-{% block content %}
-<br>
-<div class="container mt-1 mb-5 pb-2">
-    <button class="btn btn-warning w-100 mt-3 mb-2 no-pointer">
-        <i class="fa-solid fa-circle-info">&nbsp;&nbsp;FILE-CIPHER &nbsp;DETAILS</i>
-    </button>
-
-    <div id="pt" class="col-12">
-        <div class="card p-3 mt-3 mb-4">
-            <div class="row" >
-                <h3>FILE-RECORD CIPHER INFORMATION</h3>
-                <div class="container m-3">
-                    <p>RECORD ID  : {{ file.file_id }} </p>
-                    <p>USER ID: NAME: {{ file.user }} &nbsp;|&nbsp; EMAIL: {{ file.user.email }}</p>
-                    <p>DATE ENCRYPTED: {{ file.file_date }}</p>
-                    <p>FILE NAME: {{ file.file_name }}</p>
-                    <p>FILE CIPHER: {{ file.file_cipher }}</p>
+{% block sidebar %}
+<!--Topside-->
+<div class="container mt-5 mb-1 col-lg-10" style="width: 95%; font-size: 14px">
+    <div class="col-md-12 mt-5">
+        <div class="card bg-info text-white border-0 rounded-4 shadow-lg">
+            <div class="card-body border-0">
+                <div class="row m-1">
+                    <div class="col-md-4">
+                        <div class="card my-card shadow text-center text-info p-3 border-0 rounded-3">
+                            <h6 style="color: #082567;">Logged User</h6>
+                            {% if user.is_superuser %}
+                                <div class="marquee-container">
+                                    <span class="marquee-text">
+                                        <h5><i class="fa fa-user-tag"> {{ user }} - Super-Lv. 3</i></h5>
+                                    </span>
+                                </div>
+                            {% elif user.is_staff %}
+                                <div class="marquee-container">
+                                    <span class="marquee-text">
+                                        <h5><i class="fa fa-user-tag"> {{ user }} - Admin-Lv. 2</i></h5>
+                                    </span>
+                                </div>
+                            {% else %}
+                                <div class="marquee-container">
+                                    <span class="marquee-text">
+                                        <h5><i class="fa fa-user-tag"> {{ user }} - Standard-Lv. 1</i></h5>
+                                    </span>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                            <div class="card my-card shadow text-center p-3 border-0 text-info rounded-3" style="color: green;">
+                                <h6 style="color: #082567;">Encrypted By: Email</h6>
+                                <h5><i class="fa fa-envelope-circle-check" >&nbsp;&nbsp;{{ file.user.email }}</i></h5>
+                            </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card my-card shadow text-center p-3 border-0 text-info rounded-3" style="color: green;">
+                            <h6 style="color: #082567;">Encrypted By: Name</h6>
+                            <h5><i class="fa fa-user-tag">&nbsp;&nbsp;{{ file.user.username }}</i></h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="row m-1 mt-2">
+                    <div class="col-md-4">
+                        <div class="card my-card shadow text-center p-3 border-0 text-info rounded-3" style="color:green;">
+                            <h6 style="color: #082567;">File ID</h6>
+                            <h5><i class="fa fa-file-circle-check" >&nbsp;&nbsp;{{ file.file_id }}</i></h5>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                            <div class="card my-card shadow text-center p-3 border-0 text-info rounded-3" style="color:green;">
+                                <h6 style="color: #082567;">File Name </h6>
+                                <h5><i class="fa-solid fa-file-lines">&nbsp;&nbsp;{{ file.file_name }}</i></h5>
+                            </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="card my-card shadow text-center p-3 border-0 text-info rounded-3" style="color: green;">
+                            <h6 style="color: #082567;">Date Encrypted</h6>
+                                <h5><i class="fa-solid fa-calendar-day">&nbsp;&nbsp;{{ file.file_date }}</i></h5>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-6">
-        <a href="">
-            <button onclick="myfun('pt')" type="button" class="btn btn-outline-primary m-1 p-2">
-                <i class="fas fa-print">&nbsp;&nbsp;Print</i>
-            </button>
-        </a>
+</div><!--End Topside-->
+{% endblock %}
+
+
+<!-- Page Content -->
+{% block content %}
+<div class="container mt-5 mb-5 col-lg-11" style="width: 95%; font-size: 14px">
+    <div class="container py-3 mt-3 col-lg-10" >
+        <div class="col-md-12 mt-4">
+            <div class="card-header rounded-3 py-3 mb-3 text-bg-success border-0 shadow-lg">
+                <h6 class="my-0 fw-normal" style="color: white;">
+                    <i class="fa fa-lightbulb">&nbsp;&nbsp; Select Action</i>
+                </h6>
+            </div>
+            <div class="row m-0 p-1">
+                <div class="card-body col-md-4 text-center">
+                    <div class="bg-light rounded-4 shadow-lg border-0 py-5">
+                        <h4><i class="fa fa-eye text-bg-success rounded-3 p-2">&nbsp;View File</i></h4>
+                        <a href="{% url 'cipher_file' file.id %}">
+                            <button type="button" class="w-90 btn btn-md btn-outline-success mt-4 rounded-3 shadow-lg">
+                                <i class="fas fa-expand">&nbsp;&nbsp;View</i>
+                            </button>
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body col-md-4 text-center">
+                    <div class=" bg-light rounded-4 shadow-lg border-0 py-5">
+                        <h4><i class="fa fa-download text-bg-success rounded-3 p-2">&nbsp;Download File</i></h4>
+                         <a href="#">
+                            <button type="button" class="w-90 btn btn-md btn-outline-success mt-4 rounded-3 shadow-lg">
+                                <i class="fas fa-file-arrow-down">&nbsp;&nbsp;Download</i>
+                            </button>
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body col-md-4 text-center">
+                    <div class="bg-light rounded-4 shadow-lg border-0 py-5">
+                        <h4><i class="fa fa-key text-bg-success rounded-3 p-2">&nbsp;Decrypt File</i></h4>
+                        {% if user.is_staff == True %}
+                            <a href="{% url 'decrypt_file' file.id %}">
+                                <button type="button" class="w-90 btn btn-md btn-outline-success mt-4 rounded-3 shadow-lg">
+                                    <i class="fas fa-unlock-keyhole">&nbsp;&nbsp;Decrypt</i>
+                                </button>
+                            </a>
+                        {% elif user.is_staff == False %}
+                                <button type="button" class="w-90 btn btn-md btn-outline-danger mt-4 rounded-3 shadow-lg disabled">
+                                    <i class="fas fa-unlock-keyhole">&nbsp;&nbsp;Decrypt</i>
+                                </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div> <!-- END // container -->
+
+
+<!-- Page Content -->
 {% endblock content %}
 
 <!-- Block Encrypt -->
@@ -87,5 +180,8 @@
 <!-- Block Decrypt -->
 {% block decrypt %} {% endblock %}
 
+<!-- Block Footer-Position -->
+{% block footer-position %} class="fixed-bottom bg-dark text-center text-lg-start text-light" {% endblock %}
+
 <!-- Block Footer -->
-{% block footer %} style="color: gold;" {% endblock %}
+{% block footer %} style="color: greenyellow;" {% endblock %}

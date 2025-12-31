@@ -1,4 +1,3 @@
-import django.db.models
 from django.utils import timezone
 from django.conf import settings
 from django.db import models
@@ -64,12 +63,12 @@ class TextFile(models.Model):
         return self.textfile_name
 
 
-class DecryptInfo(models.Model):
-    case_id = models.CharField(blank=False, max_length=255)
-    file_name = models.CharField(max_length=255)
+class CipherInfo(models.Model):
+    cipher_id = models.CharField(blank=False, max_length=255)
+    cipher_name = models.CharField(max_length=255)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
     decrypt_date = models.DateField(default=timezone.now)
     integrity_check = models.BooleanField()
 
     def __str__(self):
-        return self.case_id
+        return self.cipher_id

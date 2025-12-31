@@ -19,12 +19,38 @@ from django.urls import reverse
 from django.views.decorators.cache import cache_control
 from django.utils.decorators import method_decorator
 from django.views.generic import View
+from django.utils import timezone
 
 from .forms import TextForm, RegisterForm, TextFileForm, FileForm
-from .models import KeyPair, File, Text, TextFile, DecryptInfo
+from .models import KeyPair, File, Text, TextFile, CipherInfo
+
 
 
 """ START FRONTEND / BACKEND"""
+
+import psutil
+from django.http import JsonResponse
+from django.db import connection
+
+
+def system_status_api(request):
+    # 1. Get Metrics
+    cpu = psutil.cpu_percent()
+    ram = psutil.virtual_memory().percent
+
+    # 2. Check DB
+    try:
+        connection.ensure_connection()
+        db_status = "Online"
+    except:
+        db_status = "Offline"
+
+    # Return data as JSON
+    return JsonResponse({
+        'cpu': cpu,
+        'ram': ram,
+        'db': db_status
+    })
 
 class FrontEnd(View):
     @staticmethod
@@ -37,7 +63,48 @@ class FrontEnd(View):
 class BackEnd(View):
     @staticmethod
     def get(request):
-        return render(request, 'backend.html')
+        date = timezone.now()
+        user = request.user
+
+        try:
+            users = User.objects.all().count()
+            active_users = User.objects.filter(is_active=True).count()
+            admin_users = User.objects.filter(is_superuser=True).count()
+            standard_users = User.objects.filter(is_staff=False).count()
+
+            texts = Text.objects.all().count()
+            files = File.objects.all().count()
+            textfiles = TextFile.objects.all().count()
+            total_ciphers = files + texts + textfiles
+
+            total_deciphers = CipherInfo.objects.all().count()
+
+            cipher_keys = KeyPair.objects.all().count()
+
+            integrity_check = CipherInfo.objects.filter(integrity_check=True).count()
+
+            if integrity_check == 0:
+                integrity_rate = 0
+            else:
+                integrity_rate = integrity_check / total_deciphers * 100
+
+
+            context = {
+                'user': user,
+                'users': users,
+                'active_users': active_users,
+                'admin_users': admin_users,
+                'standard_users': standard_users,
+                'total_ciphers': total_ciphers,
+                'total_deciphers': total_deciphers,
+                'cipher_keys': cipher_keys,
+                'integrity_rate': integrity_rate,
+                'date': date,
+            }
+            return render(request, 'backend.html', context)
+        except Exception as e:
+            messages.error(request, f'FAILED! Login Failed {str(e)}')
+            return redirect('login')
 
 """ END FRONTEND / BACKEND"""
 
@@ -56,16 +123,20 @@ class RegisterUser(View):
     @staticmethod
     def post(request):
         form = RegisterForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'SUCCESS! User Registered __ Encryption Keys Generated __ ')
-            return redirect('login')
-        else:
-            messages.error(request, 'FAILED! Registration Unsuccessful __ Error: Form is not valid __')
-            context = {
-                'form': form
-            }
-            return render(request, 'registration/register_user.html', context)
+        try:
+            if form.is_valid():
+                form.save()
+                username = form.cleaned_data.get('username')
+                messages.success(request, f'SUCCESS! User {username} Registered')
+                return redirect('login')
+            else:
+                messages.error(request, 'FAILED! Registration Unsuccessful')
+                context = {
+                    'form': form
+                }
+                return render(request, 'registration/register_user.html', context)
+        except Exception as e:
+            return redirect('register_user')
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
@@ -73,10 +144,19 @@ class RegisterUser(View):
 class ViewUsersBackend(View):
     @staticmethod
     def get(request):
-        users = User.objects.all()
         user = request.user
+        is_superuser =request.user.is_superuser
+
+        users_table = User.objects.filter().order_by('id')[:5]
+        active_users = User.objects.filter(is_active=True).count()
+        staff_users = User.objects.filter(is_staff=True).count()
+        standard_users = User.objects.filter(is_staff=False).count()
+
         context = {
-            'users': users,
+            'users': users_table,
+            'active_users': active_users,
+            'staff_users': staff_users,
+            'standard_users': standard_users,
             'user': user
         }
         return render(request, 'backend/view_users_backend.html', context)
@@ -114,7 +194,7 @@ class ViewUserDetailsBackend(View):
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
 @method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class ViewUserRecordsBackend(View):
+class ViewAllUsersBackend(View):
     @staticmethod
     def get(request, id):
         user = request.user
@@ -133,61 +213,7 @@ class ViewUserRecordsBackend(View):
             'text': text,
             'textfile': textfile
         }
-        return render(request, 'backend/view_user_records_backend.html', context)
-
-
-@method_decorator(login_required(login_url='login'), name='dispatch')
-@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class FilterUserRecordsBackend(View):
-    @staticmethod
-    def post(request, id):
-        is_superuser = request.user.is_superuser
-        user_details = get_object_or_404(User, id=id)
-        user = request.user
-        try:
-            from_date = request.POST.get('from_date')
-            to_date = request.POST.get('to_date')
-
-            search_file_result = File.objects.filter(user=user_details, file_date__range=[from_date, to_date])
-            search_text_result = Text.objects.filter(user=user_details, text_date__range=[from_date, to_date])
-            search_textfile_result = TextFile.objects.filter(user=user_details, textfile_date__range=[from_date, to_date])
-
-            # Extract date values from the filtered query sets
-            date_values = [item.textfile_date for item in search_textfile_result]
-            date = date_values[0] if date_values else None
-
-            context = {
-                'files': search_file_result,
-                'texts': search_text_result,
-                'textfiles': search_textfile_result,
-                'date_values': date_values,
-                'date': date,
-                'is_superuser': is_superuser,
-                'user_details': user_details,
-                'user': user
-            }
-            return render(request, 'backend/filter_user_records_backend.html', context)
-        except Exception as e:
-            messages.error(request, f'Error: Please Choose Valid Date To Filter!')
-            context = {
-                'is_superuser': is_superuser,
-                'user_details': user_details,
-                'user': user
-            }
-            return render(request, 'backend/filter_user_records_backend.html', context)
-
-    @staticmethod
-    def get(request, id):
-        is_superuser = request.user.is_superuser
-        user_details = get_object_or_404(User, id=id)
-        user = request.user
-        messages.error(request, f'Select Calender Date To Filter Searched Records.')
-        context = {
-            'is_superuser': is_superuser,
-            'user_details': user_details,
-            'user': user
-        }
-        return render(request, 'backend/filter_user_records_backend.html', context)
+        return render(request, 'backend/view_all_users.html', context)
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
@@ -199,17 +225,33 @@ class SearchUsersBackend(View):
         query = request.GET.get('q')
         try:
             if query:
-                users = User.objects.filter(username__icontains=query)
-                count = users.count()
+                active_users = User.objects.filter(is_active=True).count()
+                staff_users = User.objects.filter(is_staff=True).count()
+                standard_users = User.objects.filter(is_staff=False).count()
+
+                q_users = User.objects.filter(username__icontains=query)
+                count = q_users.count()
                 context = {
                     'user': user,
-                    'users': users,
-                    'count': count
+                    'count': count,
+                    'q_users': q_users,
+                    'active_users': active_users,
+                    'staff_users': staff_users,
+                    'standard_users': standard_users
                 }
-                messages.success(request, f'{count} - Matching Records Found')
+                messages.success(request, f'{count} - Matching Users Found')
             else:
-                context = {'user': user}
-                messages.error(request, f'Type Record ID In TextBox To Search All Records')
+                active_users = User.objects.filter(is_active=True).count()
+                staff_users = User.objects.filter(is_staff=True).count()
+                standard_users = User.objects.filter(is_staff=False).count()
+
+                context = {
+                    'user': user,
+                    'active_users': active_users,
+                    'staff_users': staff_users,
+                    'standard_users': standard_users
+                }
+                messages.error(request, f'Type User Name or  ID In TextBox To Search All Users')
             return render(request, 'backend/search_users_backend.html', context)
         except Exception as e:
             messages.error(request, f'Error: {str(e)}')
@@ -226,14 +268,21 @@ class EncryptTextFile(View):
     @staticmethod
     def get(request):
         form = TextFileForm()
+        textfile = TextFile.objects.filter(user=request.user).order_by('-id')[:2]
+        date = timezone.now()
+
         context = {
-            'form': form
+            'form': form,
+            'textfile': textfile,
+            'date': date
         }
         return render(request, 'encrypt/encrypt_textfile.html', context)
 
     @staticmethod
     def post(request):
         form = TextFileForm(request.POST, request.FILES)
+        textfile = TextFile.objects.filter(user=request.user).order_by('-id')[:2]
+        date = timezone.now()
         if form.is_valid():
             try:
                 user = request.user
@@ -288,12 +337,14 @@ class EncryptTextFile(View):
                 # software feedback
                 if new_case:
                     messages.success(request, f'SUCCESS! TextFile Encrypted __ {textfile_name} Cipher Saved __')
-                    return redirect('encrypt')
+                    return redirect('encrypt_textfile')
             except Exception as e:
                 messages.error(request, f'FAILED! TextFile Not Encrypted __ Error: {str(e)} __')
                 return redirect('encrypt_textfile')
         context = {
-            'form': form
+            'form': form,
+            'textfile': textfile,
+            'date': date
         }
         return render(request, 'encrypt/encrypt_textfile.html', context)
 
@@ -304,14 +355,20 @@ class EncryptText(View):
     @staticmethod
     def get(request):
         form = TextForm()
+        text = Text.objects.filter(user=request.user).order_by('-id')[:2]
+        date = timezone.now()
         context = {
-            'form': form
+            'form': form,
+            'text': text,
+            'date': date
         }
         return render(request, 'encrypt/encrypt_text.html', context)
 
     @staticmethod
     def post(request):
         form = TextForm(request.POST, request.FILES)
+        text = Text.objects.filter(user=request.user).order_by('-id')[:2]
+        date = timezone.now()
         if form.is_valid():
             try:
                 user = request.user
@@ -348,12 +405,14 @@ class EncryptText(View):
                     messages.success(
                         request, f'SUCCESS! Text Encrypted __ {cipher_text.text_name} Cipher Saved __'
                     )
-                    return redirect('encrypt')
+                    return redirect('encrypt_text')
             except Exception as e:
                 messages.error(request, f'FAILED! Text Not Encrypted __ Error: {str(e)} __')
                 return redirect('encrypt_text')
         context = {
-            'form': form
+            'form': form,
+            'text': text,
+            'date': date
         }
         return render(request, 'encrypt/encrypt_text.html', context)
 
@@ -364,14 +423,20 @@ class EncryptFile(View):
     @staticmethod
     def get(request):
         form = FileForm()
+        file = File.objects.filter(user=request.user).order_by('-id')[:1]
+        date = timezone.now()
         context = {
-            'form': form
+            'form': form,
+            'file': file,
+            'date': date,
         }
         return render(request, 'encrypt/encrypt_file.html', context)
 
     @staticmethod
     def post(request):
         form = FileForm(request.POST, request.FILES)
+        file = File.objects.filter(user=request.user).order_by('-id')[:2]
+        date = timezone.now()
         if form.is_valid():
             try:
                 user = request.user
@@ -408,14 +473,16 @@ class EncryptFile(View):
                     messages.success(
                         request, f'SUCCESS! File Encrypted __ {cipher_file.file_name} Cipher Saved __'
                     )
-                    return redirect('encrypt')
+                    return redirect('encrypt_file')
             except Exception as e:
                 messages.error(
                     request, f'FAILED! File Not Encrypted __ Error: {str(e)} __'
                 )
                 return redirect('encrypt_file')
         context = {
-            'form': form
+            'form': form,
+            'file': file,
+            'date': date
         }
         return render(request, 'encrypt/encrypt_file.html', context)
 
@@ -426,12 +493,12 @@ class EncryptFile(View):
 
 class DecryptDetails:
     @staticmethod
-    def save_decrypt_details(user, case_id, file_name, integrity_check):
+    def save_decrypt_details(user, cipher_id, cipher_name, integrity_check):
         # Save the decrypt details to the database
-        DecryptInfo.objects.create(
+        CipherInfo.objects.create(
             user=user,
-            case_id=case_id,
-            file_name=file_name,
+            cipher_id=cipher_id,
+            cipher_name=cipher_name,
             integrity_check=integrity_check
         )
 
@@ -558,7 +625,7 @@ class DecryptTextFile(View):
                 textfile_name = encrypted_file.textfile_name
                 decrypt_details_obj.save_decrypt_details(user, textfile_id, textfile_name, integrity_check)
 
-                return HttpResponseRedirect(reverse('decrypt'))
+                return HttpResponse(f'<div class="alert alert-success">Action Unsuccessful!{error_message}</div>')
 
             if response:
                 return response  # Return the response if decryption was successful
@@ -751,187 +818,54 @@ class DecryptFile(View):
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
 @method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class SearchCipherRecordsBackend(View):
-    @staticmethod
-    def get(request):
-        user = request.user
-        is_superuser = user.is_superuser
-        query = request.GET.get('q')
-        try:
-            if query:
-                if is_superuser:
-                    files = File.objects.filter(file_id__icontains=query)
-                    texts = Text.objects.filter(text_id__icontains=query)
-                    textfiles = TextFile.objects.filter(textfile_id__icontains=query)
-                    count = files.count() + texts.count() + textfiles.count()
-                else:
-                    files = File.objects.filter(user=user, file_id__icontains=query)
-                    texts = Text.objects.filter(user=user, text_id__icontains=query)
-                    textfiles = TextFile.objects.filter(user=user, textfile_id__icontains=query)
-                    count = files.count() + texts.count() + textfiles.count()
-
-                context = {
-                    'files': files,
-                    'texts': texts,
-                    'textfiles': textfiles,
-                    'query': query,
-                    'count': count,
-                    'user': user
-                }
-            else:
-                context = {'user': user}
-                messages.error(request, f'Type Record ID In TextBox To Search All Records')
-            return render(request, 'backend/search_cipher_records_backend.html', context)
-        except Exception as e:
-            messages.error(request, f'Error: {str(e)}')
-            return redirect('search_cipher_records_backend')
-
-
-@method_decorator(login_required(login_url='login'), name='dispatch')
-@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
 class SearchCipherRecords(View):
     @staticmethod
     def get(request):
         user = request.user
         query = request.GET.get('q')
+        date = timezone.now()
         try:
             if query:
-                # Perform search in both tables
                 files = File.objects.filter(file_id__icontains=query)
                 texts = Text.objects.filter(text_id__icontains=query)
                 textfiles = TextFile.objects.filter(textfile_id__icontains=query)
                 count = files.count() + texts.count() + textfiles.count()
+
+                q_files = File.objects.filter(file_id__icontains=user).count()
+                q_texts = Text.objects.filter(text_id__icontains=user).count()
+                q_textfiles = TextFile.objects.filter(textfile_id__icontains=user).count()
+
                 context = {
                     'files': files,
                     'texts': texts,
                     'textfiles': textfiles,
+                    'q_files': q_files,
+                    'q_texts': q_texts,
+                    'q_textfiles': q_textfiles,
                     'query': query,
                     'count': count,
+                    'user': user,
+                    'date': date
+                }
+                messages.success(request, f'{count} - Matching Data Found')
+                return render(request, 'encrypt/search_cipher_records.html', context)
+            else:
+                q_files = File.objects.filter(file_id__icontains=user).count()
+                q_texts = Text.objects.filter(text_id__icontains=user).count()
+                q_textfiles = TextFile.objects.filter(textfile_id__icontains=user).count()
+
+                context = {
+                    'q_files': q_files,
+                    'q_texts': q_texts,
+                    'q_textfiles': q_textfiles,
+                    'date': date,
                     'user': user
                 }
-                messages.success(request, f'{count} - Matching Cases Found')
-            else:
-                context = {'user': user}  # Empty context if no query provided
-                messages.error(request, f'Type Record ID In TextBox To Search All Records')
-            return render(request, 'encrypt/search_cipher_records.html', context)
+                messages.warning(request, f'Type Record ID In TextBox To Search All Records')
+                return render(request, 'encrypt/search_cipher_records.html', context)
         except Exception as e:
             messages.error(request, f'Error: {str(e)}')
             return redirect('search_cipher_records')
-
-
-@method_decorator(login_required(login_url='login'), name='dispatch')
-@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class SearchRecordsDecrypt(View):
-    @staticmethod
-    def get(request):
-        user = request.user
-        query = request.GET.get('q')
-        try:
-            if query:
-                files = File.objects.filter(file_id__icontains=query)
-                texts = Text.objects.filter(text_id__icontains=query)
-                textfiles = TextFile.objects.filter(textfile_id__icontains=query)
-                count = files.count() + texts.count() + textfiles.count()
-                context = {
-                    'files': files,
-                    'texts': texts,
-                    'textfiles': textfiles,
-                    'query': query,
-                    'count': count,
-                    'user': user
-                }
-                messages.success(request, f'{count} - Matching Records Found')
-            else:
-                context = {'user': user}  # Empty context if no query provided
-                messages.warning(request, f'Type Record ID In TextBox To Search All Records')
-            return render(request, 'decrypt/search_records_decrypt.html', context)
-        except Exception as e:
-            messages.error(request, f'Error: {str(e)}')
-            return redirect('search_records_decrypt')
-
-
-@method_decorator(login_required(login_url='login'), name='dispatch')
-@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class SearchTextDecrypt(View):
-    @staticmethod
-    def get(request):
-        user = request.user
-        query = request.GET.get('text_id')
-        try:
-            if query:
-                texts = Text.objects.filter(text_id__icontains=query)
-                count = texts.count()
-                context = {
-                    'texts': texts,
-                    'query': query,
-                    'count': count,
-                    'user': user
-                }
-                messages.success(request, f'{count} - Matching Records Found')
-            else:
-                context = {'user': user}
-                messages.error(request, f'Type Record ID In TextBox To Search Text Records')
-            return render(request, 'decrypt/search_cipher_text.html', context)
-        except Exception as e:
-            messages.error(request, f'Error: {str(e)}')
-            return redirect('search_cipher_text')
-
-
-@method_decorator(login_required(login_url='login'), name='dispatch')
-@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class SearchFileDecrypt(View):
-    @staticmethod
-    def get(request):
-        user = request.user
-        query = request.GET.get('file_id')
-        try:
-            if query:
-                files = File.objects.filter(file_id__icontains=query)
-                count = files.count()
-                context = {
-                    'files': files,
-                    'query': query,
-                    'count': count,
-                    'user': user
-                }
-                messages.success(request, f'{count} - Matching Records Found')
-            else:
-                context = {'user': user}  # Empty context if no query provided
-                messages.error(request, f'Type File ID In TextBox To Search File Records!')
-            return render(request, 'decrypt/search_cipher_file.html', context)
-        except Exception as e:
-            messages.error(request, f'Error: {str(e)}!')
-            return redirect('search_cipher_file')
-
-
-@method_decorator(login_required(login_url='login'), name='dispatch')
-@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class SearchTextFileDecrypt(View):
-    @staticmethod
-    def get(request):
-        user = request.user
-        query = request.GET.get('textfile_id')
-        try:
-            if query:
-                textfiles = TextFile.objects.filter(textfile_id__icontains=query)
-                count = textfiles.count()
-                context = {
-                    'textfiles': textfiles,
-                    'query': query,
-                    'count': count,
-                    'user': user
-                }
-                messages.success(request, f'{count} - Matching Records Found')
-            else:
-                context = {'user': user}
-                messages.error(request, f'Type TextFile ID In TextBox To Search Textile Records!')
-            return render(request, 'decrypt/search_cipher_textfile.html', context)
-        except Exception as e:
-            messages.error(request, f'Error: {str(e)}!')
-            return redirect('search_cipher_textfile')
-
-""" END SEARCH CIPHER RECORDS """
-
 
 """ START ENCRYPT DASHBOARD """
 
@@ -941,6 +875,7 @@ class EncryptDashboard(View):
     @staticmethod
     def get(request):
         try:
+            date = timezone.now()
             user = request.user
             texts = Text.objects.filter(user=user).count()
             files = File.objects.filter(user=user).count()
@@ -952,18 +887,67 @@ class EncryptDashboard(View):
             file = File.objects.filter(user=user).order_by('-id')[:1]
             textfile = TextFile.objects.filter(user_id=user).order_by('-id')[:1]
 
+            key_pair = KeyPair.objects.filter(user=user).count()
+
             context = {
                 'user': user,
                 'file': file,
                 'text': text,
+                'date': date,
                 'textfile': textfile,
-                'total_files': total_files
+                'total_files': total_files,
+                'key_pair': key_pair,
             }
             return render(request, 'backend/encrypt.html', context)
         except Exception as e:
             messages.error(request, f'Error: {str(e)}')
             return redirect('encrypt')
 
+
+@method_decorator(login_required(login_url='login'), name='dispatch')
+@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
+class ViewCipherRecords(View):
+    @staticmethod
+    def get(request):
+        is_superuser = request.user.is_superuser
+        user = request.user
+        if is_superuser:
+            texts = Text.objects.all().order_by('-id')[:1]
+            textfiles = TextFile.objects.all().order_by('-id')[:1]
+            files = File.objects.all().order_by('-id')[:1]
+
+            texts_count = Text.objects.all().count()
+            textfiles_count = TextFile.objects.all().count()
+            files_count = File.objects.all().count()
+            encrypted_ciphers_count = texts_count + textfiles_count + files_count
+            decrypted_ciphers_count = CipherInfo.objects.all().count()
+        else:
+            texts = Text.objects.filter(user=user).order_by('-id')[:1]
+            files = File.objects.filter(user=user).order_by('-id')[:1]
+            textfiles = TextFile.objects.filter(user=user).order_by('-id')[:1]
+
+            texts_count = Text.objects.filter(user=user).count()
+            textfiles_count = TextFile.objects.filter(user=user).count()
+            files_count = File.objects.filter(user=user).count()
+            encrypted_ciphers_count = texts_count + textfiles_count + files_count
+            decrypted_ciphers_count = CipherInfo.objects.filter(user=user).count()
+
+        context = {
+            'texts_count': texts_count,
+            'textfiles_count': textfiles_count,
+            'files_count': files_count,
+            'encrypted_ciphers_count': encrypted_ciphers_count,
+            'decrypted_ciphers_count': decrypted_ciphers_count,
+            'files': files,
+            'texts': texts,
+            'textfiles': textfiles
+        }
+        return render(request, 'encrypt/view_cipher_records.html', context)
+
+""" END ENCRYPT DASHBOARD """
+
+
+""" START VIEW CIPHER RECORDS """
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
 @method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
@@ -980,95 +964,6 @@ class ViewCipherText(View):
             'user': user
         }
         return render(request, 'encrypt/view_cipher_text.html', context)
-
-
-@method_decorator(login_required(login_url='login'), name='dispatch')
-@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class ViewCipherRecords(View):
-    @staticmethod
-    def get(request):
-        user = request.user
-        texts = Text.objects.filter(user=user).order_by('-id')[:10]
-        files = File.objects.filter(user=user).order_by('-id')[:10]
-        textfiles = TextFile.objects.filter(user=user).order_by('-id')[:10]
-
-        context = {
-            'files': files,
-            'texts': texts,
-            'textfiles': textfiles
-        }
-        return render(request, 'encrypt/view_cipher_records.html', context)
-
-""" END ENCRYPT DASHBOARD """
-
-
-""" START VIEW CIPHER RECORDS """
-
-@method_decorator(login_required(login_url='login'), name='dispatch')
-@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class ViewCipherTextDecrypt(View):
-    @staticmethod
-    def get(request, id):
-        user = request.user
-        try:
-            text = get_object_or_404(Text, id=id)
-        except Exception as e:
-            raise Http404(f'File Details Not Found! Error: {str(e)}')
-        context = {
-            'text': text,
-            'user': user
-        }
-        return render(request, 'decrypt/view_cipher_text.html', context)
-
-
-@method_decorator(login_required(login_url='login'), name='dispatch')
-@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class ViewCipherTextBackend(View):
-    @staticmethod
-    def get(request, id):
-        user = request.user
-        try:
-            text = get_object_or_404(Text, id=id)
-        except Exception as e:
-            raise Http404(f'File Details Not Found! Error:{str(e)}')
-        context = {
-            'text': text,
-            'user': user
-        }
-        return render(request, 'backend/view_cipher_text_backend.html', context)
-
-@method_decorator(login_required(login_url='login'), name='dispatch')
-@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class ViewCipherTextFileBackend(View):
-    @staticmethod
-    def get(request, id):
-        user = request.user
-        try:
-            textfile = get_object_or_404(TextFile, id=id)
-        except Exception as e:
-            raise Http404(f'File Details Not Found! Error: {str(e)}')
-        context = {
-            'textfile': textfile,
-            'user': user
-        }
-        return render(request, 'backend/view_cipher_textfile_backend.html', context)
-
-
-@method_decorator(login_required(login_url='login'), name='dispatch')
-@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class ViewCipherTextFileDecrypt(View):
-    @staticmethod
-    def get(request, id):
-        user = request.user
-        try:
-            textfile = get_object_or_404(TextFile, id=id)
-        except Exception as e:
-            raise Http404(f'File Details Not Found! Error: {str(e)}')
-        context = {
-            'textfile': textfile,
-            'user': user
-        }
-        return render(request, 'decrypt/view_cipher_textfile.html', context)
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
@@ -1094,20 +989,22 @@ class ViewCipherFileEncrypt(View):
     @staticmethod
     def get(request, id):
         user = request.user
+        date = timezone.now()
         try:
             file = get_object_or_404(File, id=id)
         except Exception as e:
             raise Http404(f'File Details Not Found! Error: {str(e)}')
         context = {
             'file': file,
-            'user': user
+            'user': user,
+            'date': date
         }
         return render(request, 'encrypt/view_cipher_file.html', context)
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
 @method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class ViewCipherFileBackend(View):
+class CipherFile(View):
     @staticmethod
     def get(request, id):
         user = request.user
@@ -1119,312 +1016,73 @@ class ViewCipherFileBackend(View):
             'file': file,
             'user': user
         }
-        return render(request, 'backend/view_cipher_file_backend.html', context)
+        return render(request, 'encrypt/cipher_file.html', context)
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
 @method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class ViewCipherFileDecrypt(View):
+class CipherText(View):
     @staticmethod
     def get(request, id):
         user = request.user
         try:
-            file = get_object_or_404(File, id=id)
+            text = get_object_or_404(Text, id=id)
         except Exception as e:
             raise Http404(f'File Details Not Found! Error: {str(e)}')
         context = {
-            'file': file,
+            'text': text,
             'user': user
         }
-        return render(request, 'decrypt/view_cipher_file.html', context)
+        return render(request, 'encrypt/cipher_text.html', context)
+
+
+@method_decorator(login_required(login_url='login'), name='dispatch')
+@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
+class CipherTextFile(View):
+    @staticmethod
+    def get(request, id):
+        user = request.user
+        try:
+            textfile = get_object_or_404(TextFile, id=id)
+        except Exception as e:
+            raise Http404(f'File Details Not Found! Error: {str(e)}')
+        context = {
+            'textfile': textfile,
+            'user': user
+        }
+        return render(request, 'encrypt/cipher_textfile.html', context)
 
 """ END VIEW RECORDS"""
-
-
-""" START BACKEND DASHBOARD """
-
-@method_decorator(login_required(login_url='login'), name='dispatch')
-@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class DecryptDashboard(View):
-    @staticmethod
-    def get(request):
-        is_superuser = request.user.is_superuser
-
-        text = Text.objects.all().order_by('-id')[:1]
-        file = File.objects.all().order_by('-id')[:1]
-        textfile = TextFile.objects.all().order_by('-id')[:1]
-        texts = Text.objects.all().count()
-        files = File.objects.all().count()
-        textfiles = TextFile.objects.all().count()
-        decrypted_records = DecryptInfo.objects.all().count()
-        sum_decrypted_records = files + texts + textfiles
-
-        context = {
-            'is_superuser': is_superuser,
-            'file': file,
-            'text': text,
-            'textfile': textfile,
-            'decrypted_records': decrypted_records,
-            'sum_decrypted_records': sum_decrypted_records
-
-        }
-        return render(request, 'backend/decrypt.html', context)
-
-
-@method_decorator(login_required(login_url='login'), name='dispatch')
-@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class ViewCipherRecordsDecrypt(View):
-    @staticmethod
-    def get(request):
-        is_superuser = request.user.is_superuser
-        if is_superuser:
-            try:
-                texts = Text.objects.all().order_by('-id')[:10]
-                files = File.objects.all().order_by('-id')[:10]
-                textfiles = TextFile.objects.all().order_by('-id')[:10]
-                context = {
-                    'files': files,
-                    'texts': texts,
-                    'textfiles': textfiles
-                }
-                return render(request, 'decrypt/view_cipher_records_all.html', context)
-            except Exception as e:
-                messages.error(request, f'Error: {str(e)}')
-                return render(request, 'decrypt/view_cipher_records_all.html')
-        else:
-            messages.error(request, f'Error: Unauthorized User {request.user}')
-            return redirect('view_cipher_records_all')
-
-
-@method_decorator(login_required(login_url='login'), name='dispatch')
-@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class ViewCipherRecordsBackend(View):
-    @staticmethod
-    def get(request):
-        is_superuser = request.user.is_superuser
-        user = request.user
-        try:
-            if is_superuser:
-                texts = Text.objects.all().order_by('-id')[:10] or []
-                files = File.objects.all().order_by('-id')[:10] or []
-                textfiles = TextFile.objects.all().order_by('-id')[:10] or []
-            else:
-                texts = Text.objects.filter(user=user).order_by('-id')[:10] or []
-                files = File.objects.filter(user=user).order_by('-id')[:10] or []
-                textfiles = TextFile.objects.filter(user=user).order_by('-id')[:10] or []
-
-            context = {
-                'texts': texts,
-                'files': files,
-                'textfiles': textfiles,
-                'user': user
-            }
-            return render(request, 'backend/view_cipher_records_backend.html', context)
-        except Exception as e:
-            messages.error(request, f'No Files Found! __ Error: {str(e)}')
-            return render(request, 'backend/view_cipher_records_backend.html', {'user': user})
-
-""" END BACKEND DASHBOARD """
 
 
 """ START FILTER CASES"""
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
 @method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class FilterTextFilesDecrypt(View):
-    @staticmethod
-    def get(request):
-        is_superuser = request.user.is_superuser,
-        user = request.user
-        context = {
-            'is_superuser': is_superuser,
-            'user': user,
-        }
-        return render(request, 'decrypt/filter_cipher_textfile.html', context)
-
-    @staticmethod
-    def post(request):
-        is_superuser = request.user.is_superuser
-        user = request.user
-        try:
-            from_date = request.POST.get('from_date')
-            to_date = request.POST.get('to_date')
-
-            if is_superuser:
-                filter_textfiles = TextFile.objects.filter(textfile_date__range=(from_date, to_date))
-            else:
-                filter_textfiles = TextFile.objects.filter(user=user, textfile_date__range=(from_date, to_date))
-
-            date_values = [item.textfile_date for item in filter_textfiles]
-            for date_value in date_values:
-                date = date_value
-
-            context = {
-                'textfiles': filter_textfiles,
-                'is_superuser': is_superuser,
-                'date': date
-            }
-            return render(request, 'decrypt/filter_cipher_textfile.html', context)
-        except Exception as e:
-            messages.error(request, f'Error: {str(e)}')
-            return redirect('filter_cipher_textfile')
-
-
-@method_decorator(login_required(login_url='login'), name='dispatch')
-@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class FilterTextsDecrypt(View):
-    @staticmethod
-    def get(request):
-        is_superuser = request.user.is_superuser
-        user = request.user
-        context = {
-            'is_superuser': is_superuser,
-            'user': user
-        }
-        return render(request, 'decrypt/filter_cipher_text.html', context)
-
-    @staticmethod
-    def post(request):
-        is_superuser = request.user.is_superuser
-        user = request.user
-        try:
-            if request.method == 'POST':
-                from_date = request.POST.get('from_date')
-                to_date = request.POST.get('to_date')
-
-                if is_superuser:
-                    filter_texts = Text.objects.filter(text_date__range=(from_date, to_date))
-                else:
-                    filter_texts = Text.objects.filter(user=user, text_date__range=(from_date, to_date))
-
-                date_values = [item.text_date for item in filter_texts]
-                for date_value in date_values:
-                    date = date_value
-                context = {
-                    'texts': filter_texts,
-                    'is_superuser': is_superuser,
-                    'date': date,
-                }
-                return render(request, 'decrypt/filter_cipher_text.html', context)
-            else:
-                messages.error(request, f'Select Calender Date To Filter Searched Texts.')
-                context = {
-                    'is_superuser': is_superuser
-                }
-                return render(request, 'decrypt/filter_cipher_text.html', context)
-        except Exception as e:
-            messages.error(request, f'Error:. {str(e)}')
-            return redirect('filter_cipher_text')
-
-
-@method_decorator(login_required(login_url='login'), name='dispatch')
-@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class FilterFilesDecrypt(View):
-    @staticmethod
-    def get(request):
-        is_superuser = request.user.is_superuser
-        user = request.user
-        context = {
-            'is_superuser': is_superuser,
-            'user': user
-        }
-        return render(request, 'decrypt/filter_cipher_file.html', context)
-
-    @staticmethod
-    def post(request):
-        is_superuser = request.user.is_superuser
-        user = request.user
-        try:
-            if request.method == 'POST':
-                from_date = request.POST.get('from_date')
-                to_date = request.POST.get('to_date')
-
-                if is_superuser:
-                    filter_files = File.objects.filter(file_date__range=(from_date, to_date))
-                else:
-                    filter_files = File.objects.filter(user=user, file_date__range=(from_date, to_date))
-
-                date_values = [item.file_date for item in filter_files]
-                for date_value in date_values:
-                    date = date_value
-                context = {
-                    'files': filter_files,
-                    'date': date,
-                    'is_superuser': is_superuser
-                }
-                return render(request, 'decrypt/filter_cipher_file.html', context)
-            else:
-                messages.error(request, f'Select Calender Date To Filter Searched Files.')
-                context = {
-                    'is_superuser': is_superuser
-                }
-                return render(request, 'decrypt/filter_cipher_file.html', context)
-        except Exception as e:
-            messages.error(request, f'Error: {str(e)}!')
-            return redirect('filter_cipher_file')
-
-
-@method_decorator(login_required(login_url='login'), name='dispatch')
-@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class FilterCipherRecordsBackend(View):
-    @staticmethod
-    def get(request):
-        is_superuser = request.user.is_superuser
-        user = request.user
-        context = {
-            'is_superuser': is_superuser,
-            'user': user
-        }
-        return render(request, 'backend/filter_cipher_records_backend.html', context)
-
-    @staticmethod
-    def post(request):
-        is_superuser = request.user.is_superuser
-        user =  request.user
-        try:
-            if request.method == 'POST':
-                from_date = request.POST.get('from_date')
-                to_date = request.POST.get('to_date')
-
-                if is_superuser:
-                    filter_files = File.objects.filter(file_date__range=(from_date, to_date))
-                    filter_texts = Text.objects.filter(text_date__range=(from_date, to_date))
-                    filter_textfiles = TextFile.objects.filter(textfile_date__range=(from_date, to_date))
-                else:
-                    filter_files = File.objects.filter(user=user, file_date__range=(from_date, to_date))
-                    filter_texts = Text.objects.filter(user=user, text_date__range=(from_date, to_date))
-                    filter_textfiles = TextFile.objects.filter(user=user, textfile_date__range=(from_date, to_date))
-
-                context = {
-                    'files': filter_files,
-                    'texts': filter_texts,
-                    'textfiles': filter_textfiles,
-                    'is_superuser': is_superuser
-                }
-                return render(request, 'backend/filter_cipher_records_backend.html', context)
-            else:
-                messages.error(request, f'Select Calender Date To Filter Searched Cases.')
-                context = {
-                    'is_superuser': is_superuser
-                }
-                return render(request, 'backend/filter_cipher_records_backend.html', context)
-        except Exception as e:
-            messages.error(request, f'Error: {str(e)}!')
-            return redirect('filter_cipher_records_backend')
-
-
-@method_decorator(login_required(login_url='login'), name='dispatch')
-@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
 class FilterCipherRecords(View):
     @staticmethod
     def get(request):
-        is_superuser = request.user.is_superuser
         user = request.user
-        context = {
-            'is_superuser': is_superuser,
-            'user': user
-        }
-        return render(request, 'encrypt/filter_cipher_records.html', context)
+        is_superuser = request.user.is_superuser
+        try:
+            if is_superuser:
+                q_texts = Text.objects.all().count()
+                q_files = File.objects.all().count()
+                q_textfiles = TextFile.objects.all().count()
+            else:
+                q_texts = Text.objects.filter(text_id__icontains=user).count()
+                q_files = File.objects.filter(file_id__icontains=user).count()
+                q_textfiles = TextFile.objects.filter(textfile_id__icontains=user).count()
+
+            context = {
+                'user': user,
+                'q_texts': q_texts,
+                'q_files': q_files,
+                'q_textfiles': q_textfiles
+            }
+            return render(request, 'encrypt/filter_cipher_records.html', context)
+        except Exception as e:
+            return redirect('filter_cipher_records')
 
     @staticmethod
     def post(request):
@@ -1439,77 +1097,45 @@ class FilterCipherRecords(View):
                     filter_files = File.objects.filter(file_date__range=(from_date, to_date))
                     filter_texts = Text.objects.filter(text_date__range=(from_date, to_date))
                     filter_textfiles = TextFile.objects.filter(textfile_date__range=(from_date, to_date))
+
+                    q_texts = Text.objects.all().count()
+                    q_files = File.objects.all().count()
+                    q_textfiles = TextFile.objects.all().count()
                 else:
                     filter_files = File.objects.filter(user=user, file_date__range=(from_date, to_date))
                     filter_texts = Text.objects.filter(user=user, text_date__range=(from_date, to_date))
                     filter_textfiles = TextFile.objects.filter(user=user, textfile_date__range=(from_date, to_date))
 
+                    q_texts = Text.objects.filter(text_id__icontains=user).count()
+                    q_files = File.objects.filter(file_id__icontains=user).count()
+                    q_textfiles = TextFile.objects.filter(textfile_id__icontains=user).count()
+
                 context = {
                     'files': filter_files,
                     'texts': filter_texts,
                     'textfiles': filter_textfiles,
-                    'is_superuser': is_superuser
+                    'user': user,
+                    'q_texts': q_texts,
+                    'q_files': q_files,
+                    'q_textfiles': q_textfiles,
                 }
                 return render(request, 'encrypt/filter_cipher_records.html', context)
             else:
-                messages.error(request, f'Select Calender Date To Filter Searched Cases.')
+                q_texts = Text.objects.filter(text_id__icontains=user).count()
+                q_files = File.objects.filter(file_id__icontains=user).count()
+                q_textfiles = TextFile.objects.filter(textfile_id__icontains=user).count()
+
                 context = {
-                    'is_superuser': is_superuser
+                    'user': user,
+                    'q_texts': q_texts,
+                    'q_files': q_files,
+                    'q_textfiles': q_textfiles
                 }
+                messages.error(request, f'Select Calender Date To Filter Ciphers.')
                 return render(request, 'encrypt/filter_cipher_records.html', context)
         except Exception as e:
             messages.error(request, f'Error: {str(e)}!')
             return redirect('filter_cipher_records')
-
-
-@method_decorator(login_required(login_url='login'), name='dispatch')
-@method_decorator(cache_control(no_cache=True, must_revalidate=True, no_store=True), name='dispatch')
-class FilterRecordsDecrypt(View):
-    @staticmethod
-    def get(request):
-        is_superuser = request.user.is_superuser
-        user = request.user
-        context = {
-            'is_superuser': is_superuser,
-            'user': user
-        }
-        return render(request, 'decrypt/filter_records_decrypt.html', context)
-
-    @staticmethod
-    def post(request):
-        is_superuser = request.user.is_superuser
-        user = request.user
-        try:
-            if request.method == 'POST':
-                from_date = request.POST.get('from_date')
-                to_date = request.POST.get('to_date')
-
-                if is_superuser:
-                    filter_files = File.objects.filter(file_date__range=(from_date, to_date))
-                    filter_texts = Text.objects.filter(text_date__range=(from_date, to_date))
-                    filter_textfiles = TextFile.objects.filter(textfile_date__range=(from_date, to_date))
-                else:
-                    filter_files = File.objects.filter(user=user, file_date__range=(from_date, to_date))
-                    filter_texts = Text.objects.filter(user=user, text_date__range=(from_date, to_date))
-                    filter_textfiles = TextFile.objects.filter(user=user, textfile_date__range=(from_date, to_date))
-
-                context = {
-                    'files': filter_files,
-                    'texts': filter_texts,
-                    'textfiles': filter_textfiles,
-                    'is_superuser': is_superuser
-                }
-                return render(request, 'decrypt/filter_records_decrypt.html', context)
-            else:
-                messages.error(request, f'Select Calender Date To Filter Searched Cases.')
-                context = {
-                    'is_superuser': is_superuser
-                }
-                return render(request, 'decrypt/filter_records_decrypt.html', context)
-        except Exception as e:
-            messages.error(request, f'Error: {str(e)}!')
-            return redirect('filter_records_decrypt')
-
 
 """ END FILTER CASES """
 
@@ -1522,7 +1148,7 @@ class ViewDecryptDetails(View):
         is_superuser = request.user.is_superuser
         if is_superuser:
             try:
-                decrypt_details = DecryptInfo.objects.all().order_by('-id')[:10]
+                decrypt_details = CipherInfo.objects.all().order_by('-id')[:10]
                 context = {
                     'decrypt_details': decrypt_details,
                 }
@@ -1542,7 +1168,7 @@ class ViewDecryptedDetails(View):
     def get(request, id):
         user = request.user
         try:
-            info = get_object_or_404(DecryptInfo, id=id)
+            info = get_object_or_404(CipherInfo, id=id)
         except Exception as e:
             raise Http404(f'File Details Not Found! Error: {str(e)}')
         context = {
@@ -1557,13 +1183,13 @@ class ViewDecryptedDetails(View):
 class DeleteDecryptInfo(View):
     @staticmethod
     def get(request, id):
-        listing_decrypt_info = get_object_or_404(DecryptInfo, id=id)
+        listing_decrypt_info = get_object_or_404(CipherInfo, id=id)
         return render(request, 'confirm_delete.html', {'object': listing_decrypt_info})
 
     @staticmethod
     def post(request, id):
         is_superuser = request.user.is_superuser
-        listing_decrypt_info = get_object_or_404(DecryptInfo, id=id)
+        listing_decrypt_info = get_object_or_404(CipherInfo, id=id)
         try:
             if is_superuser:
                 listing_decrypt_info.delete()

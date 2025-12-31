@@ -2,11 +2,11 @@
 {% load static %}
 
 <!-- Block Title -->
-<title>{% block title %} CBDET |  Home {% endblock %}</title>
+<title>{% block title %} NebuCrypt |  Home {% endblock %}</title>
 
 <!-- Block NavBar Content -->
 {% block nav-content %}
-    <i class="fa-solid fa-house mb-2 ml-2 " style="color: #fff; font-size: 20px">&nbsp;&nbsp;Home</i>    <h2 style="color: #fff; font-size: 20px; margin-right: 200px;"></h2>
+    <i class="fa-solid fa-house mb-2 ml-2 " style="color: #fff; font-size: 20px">&nbsp;&nbsp;Home</i> <h2 style="color: #fff; font-size: 20px; margin-right: 200px;"></h2>
 {% endblock %}
 
 {% block content %}
@@ -15,14 +15,14 @@
     <div class="container-fluid">
         <div class="owl-carousel">
             <div class="carousel-item">
-                <div class="carousel-img">
-                    <img src="{% static 'img/erp_bg.avif' %}" alt="Image">
+                <div class="carousel-img rounded-3 border-0">
+                    <img src="{% static 'img/erp_bg.avif' %}" alt="Image" class="img-fluid" style="max-width: 100%;">
                 </div>
                 <div class="carousel-text">
                     <h3>key to data forensic transformation</h3>
-                    <h1>Cloud Based Data Encryption Tool</h1>
+                    <h1 style="margin:20px">AES-RSA </h1>
                     <p>
-                        Equipped Digital Solutions
+                        Equipped Encryption Digital Solutions
                     </p>
                 </div>
             </div>
@@ -31,3 +31,74 @@
 </div>
 <!-- Carousel End -->
 {% endblock content %}
+
+
+{% block sidebar %}
+<div class="container py-3 mt-3 col-lg-9" >
+        <div class="col">
+            <div class="card mb-5 rounded-3 shadow-lg border-secondary border-0">
+              <div class="card-header py-3 text-bg-success border-success border-0">
+                <h6 class="my-0 fw-normal" style="color: white;">
+                    <i class="fa fa-server">&nbsp;&nbsp;STATS</i>
+                </h6>
+              </div>
+            <div class="card-body border-0 rounded-3">
+                <div class="row m-1">
+                    <div class="col-md-4">
+                            <div class="card my-card shadow-lg border-0 text-center p-3" style="color: green;">
+                                <h5 style="color: #082567;">Database Status</h5>
+                                <h4><i class="fa fa-database" >&nbsp;&nbsp;<span id="db-val">LOADING...</span></i></h4>
+                            </div>
+                    </div>
+                    <div class="col-md-4">
+                            <div class="card my-card shadow-lg border-0 text-center p-3" style="color: green;">
+                                <h5 style="color: #082567;">Memory Usage</h5>
+                                <h4><i class="fa fa-memory" >&nbsp;&nbsp;<span id="ram-val">LOADING...</span>%</i></h4>
+                            </div>
+                    </div>
+                    <div class="col-md-4">
+                            <div class="card my-card shadow-lg border-0 text-center p-3" style="color: green;">
+                                <h5 style="color: #082567;">CPU Usage</h5>
+                                <h4><i class="fa fa-microchip">&nbsp;&nbsp;<span id="cpu-val">LOADING...</span>%</i></h4>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function updateMetrics() {
+        $.ajax({
+            url: '{% url "system_status_api" %}', // The URL to your JSON view
+            type: 'GET',
+            success: function(data) {
+                // Update only the text inside the spans
+                $('#cpu-val').text(data.cpu);
+                $('#ram-val').text(data.ram);
+                $('#db-val').text(data.db);
+            },
+            error: function() {
+                console.log("Error fetching data");
+            }
+        });
+    }
+    // Run every 3000ms (3 seconds)
+    setInterval(updateMetrics, 3000);
+
+    // Also run once immediately on page load
+    updateMetrics();
+</script>
+{% endblock %}
+
+<!-- Block Encrypt -->
+{% block encrypt %} {% endblock %}
+
+<!-- Block Decrypt -->
+{% block decrypt %} {% endblock %}
+
+<!-- Block Footer-Position -->
+{% block footer-position %} class="fixed-bottom bg-dark text-center text-lg-start text-light" {% endblock %}
+
+<!-- Block Footer -->
+{% block footer %} style="color: greenyellow;" {% endblock %}
